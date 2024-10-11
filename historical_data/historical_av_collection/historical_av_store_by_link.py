@@ -25,19 +25,18 @@ from historical_alphaVantage_collection import collect_av_link
 
 key = ms.av_key
 symbol = 'SPY'
-date = '2024-10-10'
-
+date = '2024-10-09'
 
 underlying_url = str(
     "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY"
     f"&symbol={symbol}&date={date}&outputsize=full&apikey={key}"
     )
+
 spotr = requests.get(underlying_url)
 spots = pd.DataFrame(spotr.json()['Time Series (Daily)']).T
 spots = spots.astype(float)['4. close']
 
-dates = spots.index.tolist()[:1000]
-
+dates = spots.index.tolist()[1:1000]
 
 
 for date in dates:
@@ -65,6 +64,9 @@ for date in dates:
                 print(f"collected {printdate}")
             break
 
-        except Exception as OSError:
-            print(f"error for {printdate}:\n{OSError}")
-            time.sleep(5)
+        except Exception as e:
+            print(f"error for {printdate}:\n{e}")
+            print('retrying in...')
+            for i in range(1,5):
+                print(5-i)
+                time.sleep(1)
