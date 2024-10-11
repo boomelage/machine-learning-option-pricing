@@ -32,7 +32,6 @@ sys.path.append(barriers_dir)
 h5_file_path = os.path.join(barriers_dir,'SPX barriers.h5')
 
 
-
 # vaillas_dir = os.path.join(current_dir,'historical_vanilla_generation')
 # sys.path.append(vaillas_dir)
 # h5_file_path = os.path.join(vaillas_dir,'SPX vanillas.h5')
@@ -127,3 +126,6 @@ plt.ylabel(f'frequency ({round(percent_exclusion,2)}% of data excluded)')
 plt.yticks(rotation = 45)
 plt.show()
 plt.clf()
+
+
+
