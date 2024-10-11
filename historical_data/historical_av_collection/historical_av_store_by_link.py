@@ -10,7 +10,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(current_dir)
 import pandas as pd
 from tqdm import tqdm
-
 from model_settings import ms
 import requests
 import numpy as np
@@ -22,51 +21,32 @@ import QuantLib as ql
 from datetime import datetime
 import time
 from historical_alphaVantage_collection import collect_av_link
-
-key = ms.av_key
-symbol = 'SPY'
-date = '2024-10-09'
-
-underlying_url = str(
-    "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY"
-    f"&symbol={symbol}&date={date}&outputsize=full&apikey={key}"
-    )
-
-spotr = requests.get(underlying_url)
-spots = pd.DataFrame(spotr.json()['Time Series (Daily)']).T
-spots = spots.astype(float)['4. close']
-
-dates = spots.index.tolist()[1:1000]
-
+from historical_av_data_checker import dates, spots, symbol, key
 
 for date in dates:
     spot = float(spots[date])
     link = collect_av_link(date, symbol, spot, key)
     printdate = datetime.strptime(date, '%Y-%m-%d').strftime('%A, %Y-%m-%d')
-    while True:
-        try:
-            with pd.HDFStore(r'alphaVantage vanillas.h5') as store:
-                hdf_datekey = str('date_' + date.replace('-', '_'))
-                
-                store.append(
-                    f"{hdf_datekey}/raw_data", link['raw_data'],
-                    format='table', append=True
-                )
-                store.append(
-                    f"{hdf_datekey}/surface", link['surface'],
-                    format='table', append=True
-                )
-                store.append(
-                    f"{hdf_datekey}/hottest_contracts", 
-                    link['hottest_contracts'],
-                    format='table', append=True
-                )
-                print(f"collected {printdate}")
-            break
+    try:
+        with pd.HDFStore(r'alphaVantage vanillas.h5') as store:
+            hdf_datekey = str('date_' + date.replace('-', '_'))
+            
+            store.append(
+                f"{hdf_datekey}/raw_data", link['raw_data'],
+                format='table', append=True
+            )
+            store.append(
+                f"{hdf_datekey}/surface", link['surface'],
+                format='table', append=True
+            )
+            store.append(
+                f"{hdf_datekey}/hottest_contracts", 
+                link['hottest_contracts'],
+                format='table', append=True
+            )
+            print(f"collected {printdate}")
+            store.close()
+    except Exception as e:
+        print(e)
+        store.close()
 
-        except Exception as e:
-            print(f"error for {printdate}:\n{e}")
-            print('retrying in...')
-            for i in range(1,5):
-                print(5-i)
-                time.sleep(1)

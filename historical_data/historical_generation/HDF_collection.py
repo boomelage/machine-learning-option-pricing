@@ -36,7 +36,9 @@ h5_file_path = os.path.join(barriers_dir,'SPX barriers.h5')
 # sys.path.append(vaillas_dir)
 # h5_file_path = os.path.join(vaillas_dir,'SPX vanillas.h5')
 
-
+# vaillas_dir = os.path.join(parent_dir,'historical_av_collection')
+# sys.path.append(vaillas_dir)
+# h5_file_path = os.path.join(vaillas_dir,'alphaVantage vanillas.h5')
 
 """"""
 collection_start_time = time.time()
