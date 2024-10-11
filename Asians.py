@@ -4,8 +4,7 @@ Created on Wed Oct  2 13:52:21 2024
 
 """
 import QuantLib as ql
-from settings import model_settings
-ms = model_settings()
+from model_settings import ms
 
 """
 # =============================================================================
