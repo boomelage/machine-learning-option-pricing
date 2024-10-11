@@ -74,4 +74,4 @@ spots = spots.astype(float)['4. close']
 dates = spots.index.tolist()
 pddates = pd.Series(dates)
 collection_end_index = (pddates[pddates == date].index + 1).values[0]
-dates = dates[collection_end_index:collection_end_index+1000]
+dates = dates[collection_end_index:]

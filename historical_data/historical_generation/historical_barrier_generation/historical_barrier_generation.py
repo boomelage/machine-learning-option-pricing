@@ -56,7 +56,6 @@ historical_calibrated = historical_calibrated[
     historical_calibrated['date']>latest
 ]
 
-print(historical_calibrated.iloc[0])
 bar = tqdm(
     total = historical_calibrated.shape[0],
     desc = 'generating',
