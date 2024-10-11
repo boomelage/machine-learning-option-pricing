@@ -39,6 +39,7 @@ from model_settings import ms
 from data_query import dirdatacsv
 os.chdir(current_dir)
 
+
 """
 ###########
 # routine #
@@ -49,7 +50,13 @@ historical_calibrated = pd.read_csv(dirdatacsv()[0])
 historical_calibrated = historical_calibrated.iloc[:,1:].copy(
     ).reset_index(drop=True)
 historical_calibrated['date'] = pd.to_datetime(historical_calibrated['date'])
+from HDF_collection import contracts
+latest = contracts.describe().loc['max','calculation_date']
+historical_calibrated = historical_calibrated[
+    historical_calibrated['date']>latest
+]
 
+print(historical_calibrated.iloc[0])
 bar = tqdm(
     total = historical_calibrated.shape[0],
     desc = 'generating',
