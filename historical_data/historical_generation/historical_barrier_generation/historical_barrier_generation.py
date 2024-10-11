@@ -55,7 +55,7 @@ latest = contracts.describe().loc['max','calculation_date']
 historical_calibrated = historical_calibrated[
     historical_calibrated['date']>latest
 ]
-
+print(latest)
 bar = tqdm(
     total = historical_calibrated.shape[0],
     desc = 'generating',

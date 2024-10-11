@@ -38,18 +38,14 @@ while True:
 		store.close()
 
 
-# import matplotlib.pyplot as plt
-# plt.figure()
-# plt.plot(spots, color='purple')
-# plt.xticks(rotation=45)
-# plt.ylabel('spot price')
-# plt.title('SPY')
-# plt.show()
-# plt.clf()
-
-
-
-
+import matplotlib.pyplot as plt
+plt.figure()
+plt.plot(spots, color='purple')
+plt.xticks(rotation=45)
+plt.ylabel('spot price')
+plt.title('SPY')
+plt.show()
+plt.clf()
 
 earliest_date = spots.reset_index().describe().iloc[2,0].strftime('%Y-%m-%d')
 
@@ -75,3 +71,4 @@ dates = spots.index.tolist()
 pddates = pd.Series(dates)
 collection_end_index = (pddates[pddates == date].index + 1).values[0]
 dates = dates[collection_end_index:]
+
