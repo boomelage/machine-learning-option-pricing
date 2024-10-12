@@ -15,17 +15,18 @@ from matplotlib import cm
 import QuantLib as ql
 from datetime import datetime
 import time
-
+from historical_av_underlying_fetcher import spots, symbol
     
-def collect_av_link(date,symbol,spot,key):
+def collect_av_link(date):
     printdate = datetime.strptime(date, '%Y-%m-%d').strftime('%A, %Y-%m-%d')
+    spot = spots[date]
     for attmpt in range(2):
         try:
             options_url = str(
                 "https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&"
                 f"symbol={symbol}"
                 f"&date={date}"
-                f"&apikey={key}"
+                f"&apikey={ms.av_key}"
                       )
             r = requests.get(options_url)
             
@@ -47,8 +48,8 @@ def collect_av_link(date,symbol,spot,key):
             df = df[(df['days_to_maturity']>=30)&(df['days_to_maturity']<=400)]
             
             df = df[df['volume']>0].copy()
-            
             df['spot_price'] = spot
+
             df['moneyness'] = ms.vmoneyness(df['spot_price'],df['strike'],df['type'])
             df = df[(df['moneyness']<0)&(df['moneyness']>-0.5)]
             indexed = df.copy().set_index(['strike','days_to_maturity'])

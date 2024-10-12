@@ -21,11 +21,12 @@ import QuantLib as ql
 from datetime import datetime
 import time
 from historical_alphaVantage_collection import collect_av_link
-from historical_av_data_checker import dates, spots, symbol, key
+from historical_av_underlying_fetcher import spots
+dates = spots.index
 
 for date in dates:
     spot = float(spots[date])
-    link = collect_av_link(date, symbol, spot, key)
+    link = collect_av_link(date)
     printdate = datetime.strptime(date, '%Y-%m-%d').strftime('%A, %Y-%m-%d')
     try:
         with pd.HDFStore(r'alphaVantage vanillas.h5') as store:
