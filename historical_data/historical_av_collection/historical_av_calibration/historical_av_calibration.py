@@ -24,7 +24,16 @@ sys.path.append(parent_dir)
 storefile = os.path.join(parent_dir,'alphaVantage vanillas.h5')
 from historical_av_key_collector import keys_df
 keys_df = keys_df.dropna(subset=['surface_key','contract_key','raw_data_key']).fillna(0).copy()
-keys_df = keys_df[keys_df['calibration_key']==0]
+keys_df = keys_df[
+    (
+    (keys_df['calibration_key']==0)
+    &
+    (keys_df['date']!=datetime(2019,12,24))
+    &
+    (keys_df['date']!=datetime(2019,12,13))
+    )
+]
+
 print(keys_df.describe().iloc[0])
 
 for i,row in keys_df.iterrows():

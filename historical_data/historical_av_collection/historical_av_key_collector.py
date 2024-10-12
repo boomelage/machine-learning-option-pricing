@@ -43,7 +43,6 @@ keys_df = pd.DataFrame(
 )
 
 keys_df['date'] = keys_df['surface_key'].str.extract(r'date_(\d{4}_\d{2}_\d{2})')[0]
-
 keys_df['date'] = pd.to_datetime(keys_df['date'], format='%Y_%m_%d')
 
 print(keys_df)
