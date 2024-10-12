@@ -145,27 +145,27 @@ for surface_key in surface_keys:
 	print(heston_parameters)
 
 
-	calibration_test_data = raw_data.copy()[['strike','type','last','implied_volatility','days_to_maturity']]
-	calibration_test_data.columns = ['strike_price','w','market_price','volatility','days_to_maturity']
-	calibration_test_data['spot_price'] = s
-	calibration_test_data['risk_free_rate'] = r
-	calibration_test_data['dividend_rate'] = g
-	calibration_test_data = calibration_test_data[calibration_test_data['days_to_maturity'].isin(contracts['days_to_maturity'])]
-	calibration_test_data = calibration_test_data[calibration_test_data['days_to_maturity'].isin(contracts['days_to_maturity'])]
+	calibration_data = raw_data.copy()[['strike','type','last','implied_volatility','days_to_maturity']]
+	calibration_data.columns = ['strike_price','w','market_price','volatility','days_to_maturity']
+	calibration_data['spot_price'] = s
+	calibration_data['risk_free_rate'] = r
+	calibration_data['dividend_rate'] = g
+	calibration_data = calibration_data[calibration_data['days_to_maturity'].isin(contracts['days_to_maturity'])]
+	calibration_data = calibration_data[calibration_data['days_to_maturity'].isin(contracts['days_to_maturity'])]
 
-	calibration_test_data[heston_parameters.index.tolist()] = np.tile(heston_parameters,(calibration_test_data.shape[0],1))
-	calibration_test_data.loc[:,'moneyness'] = ms.vmoneyness(
-		calibration_test_data['spot_price'].values,
-		calibration_test_data['strike_price'].values,
-		calibration_test_data['w'].values
+	calibration_data[heston_parameters.index.tolist()] = np.tile(heston_parameters,(calibration_data.shape[0],1))
+	calibration_data.loc[:,'moneyness'] = ms.vmoneyness(
+		calibration_data['spot_price'].values,
+		calibration_data['strike_price'].values,
+		calibration_data['w'].values
 		)
-	calibration_test_data['calculation_date'] = calculation_datetime
-	calibration_test_data['black_scholes'] = ms.vector_black_scholes(calibration_test_data)
-	calibration_test_data['heston_price'] = ms.vector_heston_price(calibration_test_data)
-	calibration_test_data.loc[:,'relative_error'] = calibration_test_data['heston_price'].values/calibration_test_data['black_scholes'].values-1
-	large_errors = calibration_test_data.copy()[calibration_test_data['relative_error']>=0.2]
-	calibration_errors[calculation_datetime] = np.mean(np.abs(calibration_test_data['relative_error']))
-	historical_av_calibrations.append(calibration_test_data)
+	calibration_data['calculation_date'] = calculation_datetime
+	calibration_data['black_scholes'] = ms.vector_black_scholes(calibration_data)
+	calibration_data['heston_price'] = ms.vector_heston_price(calibration_data)
+	calibration_data.loc[:,'relative_error'] = calibration_data['heston_price'].values/calibration_data['black_scholes'].values-1
+	large_errors = calibration_data.copy()[calibration_data['relative_error']>=0.2]
+	calibration_errors[calculation_datetime] = np.mean(np.abs(calibration_data['relative_error']))
+	historical_av_calibrations.append(calibration_data)
 
 historical_av_calibrations_df = pd.concat(historical_av_calibrations,ignore_index=True).to_csv(r'AlphaVantageCalibrated.csv')
     
