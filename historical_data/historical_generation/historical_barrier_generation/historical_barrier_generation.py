@@ -153,5 +153,3 @@ for rowi, row in historical_calibrated.iterrows():
         pass
     bar.update(1)
 bar.close()
-
-
