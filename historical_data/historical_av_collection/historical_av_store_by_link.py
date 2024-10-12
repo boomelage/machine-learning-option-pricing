@@ -49,4 +49,3 @@ for date in dates:
     except Exception as e:
         print(e)
         store.close()
-

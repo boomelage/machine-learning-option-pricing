@@ -10,7 +10,11 @@ from datetime import datetime
 from itertools import product
 from pathlib import Path
 from model_settings import ms
-
+current_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(current_dir)
+parent_dir = str(Path().resolve().parent)
+os.chdir(current_dir)
+sys.path.append(parent_dir)
 
 def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     barrier_features = pd.DataFrame(
@@ -27,55 +31,18 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     return barrier_features
 
 
+from historical_av_key_collector import keys_df
 
-current_dir = str(Path().resolve())
-parent_dir = str(Path().resolve().parent)
+keys_df = keys_df.dropna(subset='calibration_key').fillna(0)
+keys_df = keys_df.copy()[keys_df['priced_securities_key']==0]
 
-while True:
-	try:
 
-		store = pd.HDFStore(os.path.join(parent_dir,'alphaVantage vanillas.h5'))
-		keys = store.keys()
-
-		contracts_keys = pd.Series([key for key in keys if key.find('hottest_contracts')!=-1])
-		raw_data_keys = pd.Series([key for key in keys if key.find('raw_data')!=-1])
-		surface_keys = pd.Series([key for key in keys if key.find('surface')!=-1])
-		calibrations_keys = pd.Series([key for key in keys if key.find('calibration_test')!=-1])
-		priced_secturities_keys = pd.Series([key for key in keys if key.find('priced_securities')!=-1])
-
-		break
-	except OSError:
-		print(OSError)
-		print('retrying in...')
-		for i in range(2):
-			print(2-i)
-			time.sleep(1)
-	finally:
-		store.close()
-
-keys_df = pd.DataFrame(
-	{
-	'contracts_key':contracts_keys,
-	'raw_data_key':raw_data_keys,
-	'surface_key':surface_keys,
-	'calibration_key':calibrations_keys,
-	'priced_securities_key':priced_secturities_keys
-	}
-).fillna(0)
-print(f'\n{keys_df}')
-keys_df = keys_df[
-	(
-		(keys_df['calibration_key']!=0)
-		# &
-		# (keys_df['priced_securities_key']==0)
-	)
-]
-print(f'\n{keys_df}')
+print(f"\n{keys_df[['contract_key','priced_securities_key']]}")
 
 bar = tqdm(total = keys_df.shape[0])
 
 for i,row in keys_df.iterrows():
-	contracts_key = row['contracts_key']
+	contract_key = row['contract_key']
 	raw_data_key = row['raw_data_key']
 	surface_key = row['surface_key']
 	calibration_key = row['calibration_key']
@@ -84,7 +51,7 @@ for i,row in keys_df.iterrows():
 	while True:
 		try:
 			store = pd.HDFStore(os.path.join(parent_dir,'alphaVantage vanillas.h5'))
-			hottest_contracts = store[contracts_key]
+			hottest_contracts = store[contract_key]
 			raw_data = store[raw_data_key]
 			surface = store[surface_key]
 			calibration = store[calibration_key]
@@ -165,14 +132,15 @@ for i,row in keys_df.iterrows():
 	features['rebate'] = rebate
 	features['dividend_rate'] = g
 	features['risk_free_rate'] = r
-	features.loc[:,'theta'] = heston_parameters['theta']
-	features.loc[:,'kappa'] = heston_parameters['kappa']
-	features.loc[:,'rho'] = heston_parameters['rho']
-	features.loc[:,'eta'] = heston_parameters['eta']
-	features.loc[:,'v0'] = heston_parameters['v0']
-	features['calculation_date'] = calculation_datetime
-	features['expiration_date'] =  calculation_datetime + pd.to_timedelta(
-			features['days_to_maturity'], unit='D')
+	features['theta'] = heston_parameters['theta']
+	features['kappa'] = heston_parameters['kappa']
+	features['rho'] = heston_parameters['rho']
+	features['eta'] = heston_parameters['eta']
+	features['v0'] = heston_parameters['v0']
+	features['calculation_date'] = calculation_datetime.strftime('%Y-%m-%d')
+	features['expiration_date'] =  (calculation_datetime + pd.to_timedelta(
+			features['days_to_maturity'], unit='D'))
+	features['expiration_date'] = features['expiration_date'].dt.strftime('%Y-%m-%d')
 
 	features['heston_vanilla'] = ms.vector_heston_price(features)
 	features['barrier_price'] = ms.vector_barrier_price(features)
@@ -180,11 +148,16 @@ for i,row in keys_df.iterrows():
 	while True:
 		try:
 			store = pd.HDFStore(os.path.join(parent_dir,'alphaVantage vanillas.h5'))
-			store.append(f"{date_key_component}priced_securities", features, format='table',append=True)
+			store.put(
+				f"{date_key_component}priced_securities", 
+				features, 
+				format='table',
+				# append=True
+				)
 			print(f'\ndata stored for {printdate}')
 			break
-		except OSError:
-			print(f"\nerror for {printdate}:\nOSError")
+		except Exception as e:
+			print(f"\nerror for {printdate}:\n{e}")
 			print('retrying in...')
 			for i in range(2):
 				print(2-i)
