@@ -15,6 +15,7 @@ os.chdir(current_dir)
 parent_dir = str(Path().resolve().parent)
 os.chdir(current_dir)
 sys.path.append(parent_dir)
+from historical_av_underlying_fetcher import symbol
 
 def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     barrier_features = pd.DataFrame(
@@ -33,11 +34,9 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
 
 from historical_av_key_collector import keys_df
 
-keys_df = keys_df.dropna(subset='calibration_key').fillna(0)
-keys_df = keys_df.copy()[keys_df['priced_securities_key']==0]
-
-
-print(f"\n{keys_df[['contract_key','priced_securities_key']]}")
+# keys_df = keys_df.dropna(subset='calibration_key').fillna(0)
+# keys_df = keys_df.copy()[keys_df['priced_securities_key']==0]
+# print(f"\n{keys_df[['contract_key','priced_securities_key']]}")
 
 bar = tqdm(total = keys_df.shape[0])
 
@@ -50,7 +49,7 @@ for i,row in keys_df.iterrows():
 
 	while True:
 		try:
-			store = pd.HDFStore(os.path.join(parent_dir,'alphaVantage vanillas.h5'))
+			store = pd.HDFStore(os.path.join(parent_dir,f'alphaVantage {symbol}.h5'))
 			hottest_contracts = store[contract_key]
 			raw_data = store[raw_data_key]
 			surface = store[surface_key]
@@ -147,7 +146,7 @@ for i,row in keys_df.iterrows():
 
 	while True:
 		try:
-			store = pd.HDFStore(os.path.join(parent_dir,'alphaVantage vanillas.h5'))
+			store = pd.HDFStore(os.path.join(parent_dir,f'alphaVantage {symbol}.h5'))
 			store.put(
 				f"{date_key_component}priced_securities", 
 				features, 

@@ -11,7 +11,7 @@ import time
 
 current_dir = os.path.abspath(str(Path()))
 
-store = pd.HDFStore(r'alphaVantage Vanillas.h5')
+store = pd.HDFStore(rf'alphaVantage {symbol}.h5')
 keys = store.keys()
 
 print(len(keys))

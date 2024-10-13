@@ -21,32 +21,37 @@ import QuantLib as ql
 from datetime import datetime
 import time
 from historical_alphaVantage_collection import collect_av_link
-from historical_av_underlying_fetcher import spots
+from historical_av_underlying_fetcher import spots, symbol
 dates = spots.index
 
 for date in dates:
     spot = float(spots[date])
     link = collect_av_link(date)
     printdate = datetime.strptime(date, '%Y-%m-%d').strftime('%A, %Y-%m-%d')
-    try:
-        with pd.HDFStore(r'alphaVantage vanillas.h5') as store:
-            hdf_datekey = str('date_' + date.replace('-', '_'))
-            
-            store.append(
-                f"{hdf_datekey}/raw_data", link['raw_data'],
-                format='table', append=True
-            )
-            store.append(
-                f"{hdf_datekey}/surface", link['surface'],
-                format='table', append=True
-            )
-            store.append(
-                f"{hdf_datekey}/hottest_contracts", 
-                link['hottest_contracts'],
-                format='table', append=True
-            )
-            print(f"collected {printdate}")
+    while True:
+        try:
+            with pd.HDFStore(f'alphaVantage {symbol}.h5') as store:
+                hdf_datekey = str('date_' + date.replace('-', '_'))
+                
+                store.append(
+                    f"{hdf_datekey}/raw_data", link['raw_data'],
+                    format='table', append=True
+                )
+                store.append(
+                    f"{hdf_datekey}/surface", link['surface'],
+                    format='table', append=True
+                )
+                store.append(
+                    f"{hdf_datekey}/hottest_contracts", 
+                    link['hottest_contracts'],
+                    format='table', append=True
+                )
+                print(f"collected {printdate}")
+                break
+        except Exception as e:
+            print(e)
+            print('retrying in...')
+            for i in range(2):
+                print(2-i)
+        finally:
             store.close()
-    except Exception as e:
-        print(e)
-        store.close()
