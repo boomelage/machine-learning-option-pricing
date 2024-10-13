@@ -4,7 +4,8 @@ import time
 from model_settings import ms
 from historical_av_key_collector import keys_df, symbol, h5_name, available_dates
 from historical_av_underlying_fetcher import historical_spots
-keys_df = keys_df.dropna(subset=['raw_data_key','spot_price'])
+keys_df = keys_df.copy().dropna(subset=['raw_data_key','spot_price']).fillna(0)
+keys_df = keys_df[keys_df['surface_key']==0]
 
 print(f"reconstructing {keys_df.shape[0]} surfaces")
 
@@ -39,7 +40,7 @@ for i,row in keys_df.iterrows():
 
 	df = df[df['volume']>0].copy()
 	df['spot_price'] = spot
-
+	df['type'] = df['type'].str.lower()
 	df['moneyness'] = ms.vmoneyness(df['spot_price'],df['strike'],df['type'])
 	df = df[(df['moneyness']<0)&(df['moneyness']>-0.5)]
 	indexed = df.copy().set_index(['strike','days_to_maturity'])
@@ -85,7 +86,8 @@ for i,row in keys_df.iterrows():
 				store.put(h5_key, vol_matrix, format='table', append=False)
 				print(f"volatility surface stored for {date}")
 			break
-		except Exception:
+		except Exception as e:
+			print(e)
 			time.sleep(2)
 		finally:
 			store.close()
