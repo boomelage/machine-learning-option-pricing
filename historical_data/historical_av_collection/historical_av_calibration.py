@@ -14,6 +14,7 @@ for i,row in keys_df.iterrows():
 	raw_data_key = row['raw_data_key']
 	surface_key = row['surface_key']
 	spot_price_key = row['spot_price']
+	date_key = row['date']
 
 	while True:
 		try:
@@ -21,6 +22,7 @@ for i,row in keys_df.iterrows():
 				raw_data = store[raw_data_key]
 				vol_matrix = store[surface_key]
 				s = store[spot_price_key].iloc[0]
+				date = store[date_key].iloc[0]
 			break
 		except Exception as e:
 			print(e)
@@ -28,7 +30,6 @@ for i,row in keys_df.iterrows():
 		finally:
 			store.close()
 
-	date = row['date']
 	calculation_datetime = datetime.strptime(date,'%Y-%m-%d')
 	calculation_date = ql.Date(
 		calculation_datetime.day,
