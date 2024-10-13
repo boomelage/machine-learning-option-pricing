@@ -1,12 +1,11 @@
 import requests
 import pandas as pd
 from model_settings import ms
-from historical_av_key_collector import keys_df
+from historical_av_key_collector import keys_df, symbol
 """
 https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=demo
 """
-symbol = r'SPY'
-
+symbol='SPY'
 url = str(
 	'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+
 	symbol+'&outputsize=full&apikey='+
