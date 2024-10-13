@@ -2,9 +2,8 @@ import pandas as pd
 import numpy as np
 import time
 from model_settings import ms
-from historical_av_key_collector import keys_df, symbol, h5_name, available_dates
-from historical_av_underlying_fetcher import historical_spots
-keys_df = keys_df.copy().dropna(subset=['raw_data_key','spot_price']).fillna(0)
+from historical_av_key_collector import keys_df, symbol, h5_name
+keys_df = keys_df.copy().dropna(subset=['raw_data_key','spot_price','date']).fillna(0)
 keys_df = keys_df[keys_df['surface_key']==0]
 
 print(f"reconstructing {keys_df.shape[0]} surfaces")
@@ -15,7 +14,7 @@ for i,row in keys_df.iterrows():
 			with pd.HDFStore(h5_name) as store:
 				raw_data = store[row['raw_data_key']]
 				spot = store[row['spot_price']].iloc[0]
-				date = row['date']
+				date = store[row['date']].iloc[0]
 			break
 		except Exception as e:
 			print(e)
