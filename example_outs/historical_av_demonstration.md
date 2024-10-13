@@ -332,9 +332,11 @@ calibration_test_data['spot_price'] = s
 calibration_test_data['risk_free_rate'] = r
 calibration_test_data['dividend_rate'] = g
 calibration_test_data = calibration_test_data[calibration_test_data['days_to_maturity'].isin(df['days_to_maturity'])]
-calibration_test_data = calibration_test_data[calibration_test_data['days_to_maturity'].isin(df['days_to_maturity'])]
 calibration_test_data[heston_parameters.index.tolist()] = np.tile(heston_parameters,(calibration_test_data.shape[0],1))
-calibration_test_data.loc[:,'moneyness'] = ms.vmoneyness(calibration_test_data['spot_price'].values,calibration_test_data['strike_price'].values,calibration_test_data['w'].values)
+calibration_test_data.loc[:,'moneyness'] = ms.vmoneyness(
+    calibration_test_data['spot_price'].values,
+    calibration_test_data['strike_price'].values,
+    calibration_test_data['w'].values)
 calibration_test_data['calculation_date'] = calculation_datetime
 calibration_test_data['black_scholes'] = ms.vector_black_scholes(calibration_test_data)
 calibration_test_data['heston_price'] = ms.vector_heston_price(calibration_test_data)
@@ -476,7 +478,7 @@ for t in T:
     plt.figure(figsize=plt.figaspect(0.6),dpi=120)
     prices= featuresby_t.loc[t,'barrier_price']
     plt.hist(prices,bins=int(np.sqrt(prices.shape[0])))
-    plt.title(f'ditribution of barrier option prices for {t} day maturity')
+    plt.title(f'distribution of barrier option prices for {t} day maturity')
     plt.show()
     plt.clf()
 ```
@@ -644,6 +646,9 @@ dnnBarriers, runtime, specs = bt.run_dnn(preprocessor, train_X, train_y)
     activation: relu
     solver: sgd
     alpha: 0.0001
+    
+
+    E:\Python\Lib\site-packages\sklearn\neural_network\_multilayer_perceptron.py:690: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (1000) reached and the optimization hasn't converged yet.
     
 
 
@@ -1145,12 +1150,12 @@ insample, outsample, errors = bt.test_prediction_accuracy(dnnBarriers, test_data
 
     
     in sample:
-         RSME: 8.830593682825514
-         MAE: 5.789700328324171
+         RSME: 7.8649783877823
+         MAE: 5.393343100056204
     
     out of sample:
-         RSME: 13.703583142804638
-         MAE: 8.78316054886463
+         RSME: 14.187620009295333
+         MAE: 10.11333157054156
     
 
 
@@ -1222,10 +1227,10 @@ outsample
       <td>DownOut</td>
       <td>19.484414</td>
       <td>1.522133</td>
-      <td>1.448788</td>
-      <td>1.448788</td>
-      <td>11.761410</td>
-      <td>10.312622</td>
+      <td>1.731024</td>
+      <td>1.731024</td>
+      <td>21.582767</td>
+      <td>19.851743</td>
     </tr>
     <tr>
       <th>121</th>
@@ -1246,10 +1251,10 @@ outsample
       <td>DownIn</td>
       <td>19.484414</td>
       <td>17.915424</td>
-      <td>17.893007</td>
-      <td>17.893007</td>
-      <td>23.372133</td>
-      <td>5.479126</td>
+      <td>17.794223</td>
+      <td>17.794223</td>
+      <td>23.673304</td>
+      <td>5.879082</td>
     </tr>
     <tr>
       <th>122</th>
@@ -1270,10 +1275,10 @@ outsample
       <td>DownOut</td>
       <td>169.069416</td>
       <td>166.662254</td>
-      <td>166.215945</td>
-      <td>166.215945</td>
-      <td>161.150021</td>
-      <td>-5.065923</td>
+      <td>166.535414</td>
+      <td>166.535414</td>
+      <td>111.670760</td>
+      <td>-54.864654</td>
     </tr>
     <tr>
       <th>123</th>
@@ -1294,10 +1299,10 @@ outsample
       <td>DownIn</td>
       <td>169.069416</td>
       <td>2.579340</td>
-      <td>2.377049</td>
-      <td>2.377049</td>
-      <td>37.681178</td>
-      <td>35.304129</td>
+      <td>2.480801</td>
+      <td>2.480801</td>
+      <td>10.694152</td>
+      <td>8.213351</td>
     </tr>
     <tr>
       <th>124</th>
@@ -1318,10 +1323,10 @@ outsample
       <td>DownOut</td>
       <td>19.484414</td>
       <td>0.349273</td>
-      <td>0.385923</td>
-      <td>0.385923</td>
-      <td>3.091410</td>
-      <td>2.705487</td>
+      <td>0.287819</td>
+      <td>0.287819</td>
+      <td>15.624066</td>
+      <td>15.336247</td>
     </tr>
     <tr>
       <th>...</th>
@@ -1366,10 +1371,10 @@ outsample
       <td>DownIn</td>
       <td>19.479203</td>
       <td>7.525905</td>
-      <td>7.575938</td>
-      <td>7.575938</td>
-      <td>14.026380</td>
-      <td>6.450442</td>
+      <td>7.472503</td>
+      <td>7.472503</td>
+      <td>12.773168</td>
+      <td>5.300665</td>
     </tr>
     <tr>
       <th>976</th>
@@ -1390,10 +1395,10 @@ outsample
       <td>DownOut</td>
       <td>81.519635</td>
       <td>1.813163</td>
-      <td>2.103878</td>
-      <td>2.103878</td>
-      <td>21.166711</td>
-      <td>19.062832</td>
+      <td>1.916128</td>
+      <td>1.916128</td>
+      <td>16.422943</td>
+      <td>14.506815</td>
     </tr>
     <tr>
       <th>977</th>
@@ -1414,10 +1419,10 @@ outsample
       <td>DownIn</td>
       <td>81.519635</td>
       <td>81.241938</td>
-      <td>81.150233</td>
-      <td>81.150233</td>
-      <td>44.597382</td>
-      <td>-36.552851</td>
+      <td>81.124581</td>
+      <td>81.124581</td>
+      <td>71.460263</td>
+      <td>-9.664318</td>
     </tr>
     <tr>
       <th>978</th>
@@ -1438,10 +1443,10 @@ outsample
       <td>DownOut</td>
       <td>19.479203</td>
       <td>2.446905</td>
-      <td>2.552396</td>
-      <td>2.552396</td>
-      <td>23.796745</td>
-      <td>21.244348</td>
+      <td>2.544363</td>
+      <td>2.544363</td>
+      <td>0.589685</td>
+      <td>-1.954678</td>
     </tr>
     <tr>
       <th>979</th>
@@ -1462,10 +1467,10 @@ outsample
       <td>DownIn</td>
       <td>19.479203</td>
       <td>18.645028</td>
-      <td>18.479867</td>
-      <td>18.479867</td>
-      <td>22.022701</td>
-      <td>3.542834</td>
+      <td>18.516014</td>
+      <td>18.516014</td>
+      <td>34.695838</td>
+      <td>16.179824</td>
     </tr>
   </tbody>
 </table>
@@ -1473,8 +1478,3 @@ outsample
 </div>
 
 
-
-
-```python
-
-```
