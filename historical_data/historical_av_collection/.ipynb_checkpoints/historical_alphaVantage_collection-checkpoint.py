@@ -8,18 +8,12 @@ Created on Thu Oct 10 09:41:51 2024
 from model_settings import ms
 import requests
 import numpy as np
-from scipy import interpolate
 import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib import cm
-import QuantLib as ql
 from datetime import datetime
 import time
-from historical_av_underlying_fetcher import spots, symbol
-    
-def collect_av_link(date):
+
+def collect_av_link(date,spot,symbol):
     printdate = datetime.strptime(date, '%Y-%m-%d').strftime('%A, %Y-%m-%d')
-    spot = spots[date]
     for attmpt in range(2):
         try:
             options_url = str(
