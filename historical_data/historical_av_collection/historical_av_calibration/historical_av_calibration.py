@@ -148,9 +148,9 @@ for i,row in keys_df.iterrows():
     calibration_data['calculation_date'] = calculation_datetime.strftime('%Y-%m-%d')
     calibration_data['black_scholes'] = ms.vector_black_scholes(calibration_data)
     calibration_data['heston_price'] = ms.vector_heston_price(calibration_data)
-    calibration_data.loc[:,'relative_error'] = calibration_data['heston_price'].values/calibration_data['black_scholes'].values-1
-    avg = np.mean(np.abs(calibration_data['relative_error']))
-    print(f"\n{printdate}\n{heston_parameters}\naverage absolute relative error: {round(avg*100,4)}%")
+    calibration_data.loc[:,'absolute_error'] = calibration_data['heston_price'].values/calibration_data['black_scholes'].values-1
+    avg = np.mean(np.abs(calibration_data['absolute_error']))
+    print(f"\n{printdate}\n{heston_parameters}\naverage absolute error: {round(avg,3)}")
 
     """
     HDF5 storage
