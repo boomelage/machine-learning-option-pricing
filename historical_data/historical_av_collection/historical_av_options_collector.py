@@ -13,10 +13,22 @@ from model_settings import ms
 import requests
 from datetime import datetime
 import time
-from historical_alphaVantage_collection import collect_av_link
 from historical_av_underlying_fetcher import spots, symbol
 
-print(spots)
+
+def collect_av_link(date,spot,symbol):
+    options_url = str(
+        "https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&"
+        f"symbol={symbol}"
+        f"&date={date}"
+        f"&apikey={ms.av_key}"
+              )
+    r = requests.get(options_url)
+    data = r.json()
+    raw_data = pd.DataFrame(data['data'])
+    return raw_data
+
+
 for i in range(len(spots)):
     date = spots.iloc[i].name
     spot = spots.iloc[i]
@@ -31,17 +43,23 @@ for i in range(len(spots)):
                     format='table',
                     append=False
                 )
+                store.put(
+                    f"date_{date.replace('-','_')}/spot_price",
+                    pd.Series(float(spot.iloc[0])),
+                    format='fixed',
+                    append=False
+                )
+                store.put(
+                    f"date_{date.replace('-','_')}/date",
+                    pd.Series(str(date)),
+                    format='fixed',
+                    append=False
+                )
             print(f'collecting: {printdate}')
             break
-        except OSError:
-            print(OSError)
-            print('retrying in...')
-            for i in range(2):
-                print(2-i)
         except Exception as e:
             print(e)
-            print(printdate)
-            continue
+            time.sleep(2)
         finally:
             store.close()
             print('collected')
