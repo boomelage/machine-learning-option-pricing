@@ -559,82 +559,44 @@ predict the prices of our two year barrier options while only having seen the ot
 
 ```python
 from convsklearn import barrier_trainer
-```
-
-
-```python
 bt = barrier_trainer
 ```
 
-
-```python
-help(bt)
-```
-
-    Help on convsklearn in module convsklearn.convsklearn object:
+    test size: 1.0%
+    random state: None
+    maximum iterations: 1000
     
-    class convsklearn(builtins.object)
-     |  convsklearn(target_name, numerical_features, categorical_features, transformers, target_transformer_pipeline, n_layers=None, random_state=None, test_size=0.01, max_iter=1000, solver='sgd', alpha=0.0001, learning_rate='adaptive', activation_function='relu', rf_n_estimators=50, rf_min_samples_leaf=2000)
-     |
-     |  Methods defined here:
-     |
-     |  __init__(self, target_name, numerical_features, categorical_features, transformers, target_transformer_pipeline, n_layers=None, random_state=None, test_size=0.01, max_iter=1000, solver='sgd', alpha=0.0001, learning_rate='adaptive', activation_function='relu', rf_n_estimators=50, rf_min_samples_leaf=2000)
-     |      Initialize self.  See help(type(self)) for accurate signature.
-     |
-     |  get_train_test_arrays(self, train_data, test_data, feature_set=None, target_name=None)
-     |
-     |  plot_model_performance(self, df, X_name, Y_name, xlabel, ylabel, runtime, title)
-     |
-     |  preprocess(self)
-     |
-     |  run_dnn(self, preprocessor, train_X, train_y)
-     |
-     |  run_lm(self, train_X, train_y)
-     |
-     |  run_nnet(self, preprocessor, train_X, train_y)
-     |
-     |  run_rf(self, preprocessor, train_X, train_y)
-     |
-     |  test_model(self, test_data, test_X, test_y, model_fit)
-     |
-     |  test_prediction_accuracy(self, model_fit, test_data, train_data)
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables
-     |
-     |  __weakref__
-     |      list of weak references to the object
+    target: 
+    observed_price
+    
+    features: 
+    ['spot_price', 'strike_price', 'days_to_maturity', 'risk_free_rate', 'dividend_rate', 'kappa', 'theta', 'rho', 'eta', 'v0', 'barrier', 'barrier_type_name', 'w']
+    
+    feature transformer(s):
+    ('StandardScaler', StandardScaler(), ['spot_price', 'strike_price', 'days_to_maturity', 'risk_free_rate', 'dividend_rate', 'kappa', 'theta', 'rho', 'eta', 'v0', 'barrier'])
+    
+    ('OneHotEncoder', OneHotEncoder(sparse_output=False), ['barrier_type_name', 'w'])
+    
+    target transformer(s):
+    StandardScaler()
     
     
 
 
 ```python
-features['observed_price'] = ms.noisyfier(features.loc[:,'barrier_price'])
+features['observed_price'] = ms.noisyfier(features.loc[:,'barrier_price']) # apply slight peturbation in the form of a random normal with standard deviation 0.15
 train_data = features[features['days_to_maturity']!=720]
 test_data = features[features['days_to_maturity']==720]
-```
-
-
-```python
 arrs = bt.get_train_test_arrays(train_data,test_data)
-```
-
-
-```python
-arrs
 train_X = arrs['train_X']
 train_y = arrs['train_y']
 test_X = arrs['test_X']
 test_y = arrs['train_y']
 preprocessor = bt.preprocess()
-```
-
-
-```python
-dnnBarriers, runtime, specs = bt.run_dnn(preprocessor, train_X, train_y)
+dnn_barriers, runtime, specs = bt.run_dnn(preprocessor, train_X, train_y)
+insample, outsample, errors = bt.test_prediction_accuracy(dnn_barriers, test_data, train_data)
+print(dnn_barriers)
+print(outsample)
 ```
 
     
@@ -647,834 +609,109 @@ dnnBarriers, runtime, specs = bt.run_dnn(preprocessor, train_X, train_y)
     solver: sgd
     alpha: 0.0001
     
-
-    E:\Python\Lib\site-packages\sklearn\neural_network\_multilayer_perceptron.py:690: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (1000) reached and the optimization hasn't converged yet.
-    
-
-
-```python
-dnnBarriers
-```
-
-
-
-
-<style>#sk-container-id-2 {
-  /* Definition of color scheme common for light and dark mode */
-  --sklearn-color-text: black;
-  --sklearn-color-line: gray;
-  /* Definition of color scheme for unfitted estimators */
-  --sklearn-color-unfitted-level-0: #fff5e6;
-  --sklearn-color-unfitted-level-1: #f6e4d2;
-  --sklearn-color-unfitted-level-2: #ffe0b3;
-  --sklearn-color-unfitted-level-3: chocolate;
-  /* Definition of color scheme for fitted estimators */
-  --sklearn-color-fitted-level-0: #f0f8ff;
-  --sklearn-color-fitted-level-1: #d4ebff;
-  --sklearn-color-fitted-level-2: #b3dbfd;
-  --sklearn-color-fitted-level-3: cornflowerblue;
-
-  /* Specific color for light theme */
-  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
-  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
-  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
-  --sklearn-color-icon: #696969;
-
-  @media (prefers-color-scheme: dark) {
-    /* Redefinition of color scheme for dark theme */
-    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
-    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
-    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
-    --sklearn-color-icon: #878787;
-  }
-}
-
-#sk-container-id-2 {
-  color: var(--sklearn-color-text);
-}
-
-#sk-container-id-2 pre {
-  padding: 0;
-}
-
-#sk-container-id-2 input.sk-hidden--visually {
-  border: 0;
-  clip: rect(1px 1px 1px 1px);
-  clip: rect(1px, 1px, 1px, 1px);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
-}
-
-#sk-container-id-2 div.sk-dashed-wrapped {
-  border: 1px dashed var(--sklearn-color-line);
-  margin: 0 0.4em 0.5em 0.4em;
-  box-sizing: border-box;
-  padding-bottom: 0.4em;
-  background-color: var(--sklearn-color-background);
-}
-
-#sk-container-id-2 div.sk-container {
-  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
-     but bootstrap.min.css set `[hidden] { display: none !important; }`
-     so we also need the `!important` here to be able to override the
-     default hidden behavior on the sphinx rendered scikit-learn.org.
-     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
-  display: inline-block !important;
-  position: relative;
-}
-
-#sk-container-id-2 div.sk-text-repr-fallback {
-  display: none;
-}
-
-div.sk-parallel-item,
-div.sk-serial,
-div.sk-item {
-  /* draw centered vertical line to link estimators */
-  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
-  background-size: 2px 100%;
-  background-repeat: no-repeat;
-  background-position: center center;
-}
-
-/* Parallel-specific style estimator block */
-
-#sk-container-id-2 div.sk-parallel-item::after {
-  content: "";
-  width: 100%;
-  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
-  flex-grow: 1;
-}
-
-#sk-container-id-2 div.sk-parallel {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  background-color: var(--sklearn-color-background);
-  position: relative;
-}
-
-#sk-container-id-2 div.sk-parallel-item {
-  display: flex;
-  flex-direction: column;
-}
-
-#sk-container-id-2 div.sk-parallel-item:first-child::after {
-  align-self: flex-end;
-  width: 50%;
-}
-
-#sk-container-id-2 div.sk-parallel-item:last-child::after {
-  align-self: flex-start;
-  width: 50%;
-}
-
-#sk-container-id-2 div.sk-parallel-item:only-child::after {
-  width: 0;
-}
-
-/* Serial-specific style estimator block */
-
-#sk-container-id-2 div.sk-serial {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: var(--sklearn-color-background);
-  padding-right: 1em;
-  padding-left: 1em;
-}
-
-
-/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
-clickable and can be expanded/collapsed.
-- Pipeline and ColumnTransformer use this feature and define the default style
-- Estimators will overwrite some part of the style using the `sk-estimator` class
-*/
-
-/* Pipeline and ColumnTransformer style (default) */
-
-#sk-container-id-2 div.sk-toggleable {
-  /* Default theme specific background. It is overwritten whether we have a
-  specific estimator or a Pipeline/ColumnTransformer */
-  background-color: var(--sklearn-color-background);
-}
-
-/* Toggleable label */
-#sk-container-id-2 label.sk-toggleable__label {
-  cursor: pointer;
-  display: block;
-  width: 100%;
-  margin-bottom: 0;
-  padding: 0.5em;
-  box-sizing: border-box;
-  text-align: center;
-}
-
-#sk-container-id-2 label.sk-toggleable__label-arrow:before {
-  /* Arrow on the left of the label */
-  content: "▸";
-  float: left;
-  margin-right: 0.25em;
-  color: var(--sklearn-color-icon);
-}
-
-#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {
-  color: var(--sklearn-color-text);
-}
-
-/* Toggleable content - dropdown */
-
-#sk-container-id-2 div.sk-toggleable__content {
-  max-height: 0;
-  max-width: 0;
-  overflow: hidden;
-  text-align: left;
-  /* unfitted */
-  background-color: var(--sklearn-color-unfitted-level-0);
-}
-
-#sk-container-id-2 div.sk-toggleable__content.fitted {
-  /* fitted */
-  background-color: var(--sklearn-color-fitted-level-0);
-}
-
-#sk-container-id-2 div.sk-toggleable__content pre {
-  margin: 0.2em;
-  border-radius: 0.25em;
-  color: var(--sklearn-color-text);
-  /* unfitted */
-  background-color: var(--sklearn-color-unfitted-level-0);
-}
-
-#sk-container-id-2 div.sk-toggleable__content.fitted pre {
-  /* unfitted */
-  background-color: var(--sklearn-color-fitted-level-0);
-}
-
-#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {
-  /* Expand drop-down */
-  max-height: 200px;
-  max-width: 100%;
-  overflow: auto;
-}
-
-#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
-  content: "▾";
-}
-
-/* Pipeline/ColumnTransformer-specific style */
-
-#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
-  color: var(--sklearn-color-text);
-  background-color: var(--sklearn-color-unfitted-level-2);
-}
-
-#sk-container-id-2 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
-  background-color: var(--sklearn-color-fitted-level-2);
-}
-
-/* Estimator-specific style */
-
-/* Colorize estimator box */
-#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
-  /* unfitted */
-  background-color: var(--sklearn-color-unfitted-level-2);
-}
-
-#sk-container-id-2 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
-  /* fitted */
-  background-color: var(--sklearn-color-fitted-level-2);
-}
-
-#sk-container-id-2 div.sk-label label.sk-toggleable__label,
-#sk-container-id-2 div.sk-label label {
-  /* The background is the default theme color */
-  color: var(--sklearn-color-text-on-default-background);
-}
-
-/* On hover, darken the color of the background */
-#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {
-  color: var(--sklearn-color-text);
-  background-color: var(--sklearn-color-unfitted-level-2);
-}
-
-/* Label box, darken color on hover, fitted */
-#sk-container-id-2 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
-  color: var(--sklearn-color-text);
-  background-color: var(--sklearn-color-fitted-level-2);
-}
-
-/* Estimator label */
-
-#sk-container-id-2 div.sk-label label {
-  font-family: monospace;
-  font-weight: bold;
-  display: inline-block;
-  line-height: 1.2em;
-}
-
-#sk-container-id-2 div.sk-label-container {
-  text-align: center;
-}
-
-/* Estimator-specific */
-#sk-container-id-2 div.sk-estimator {
-  font-family: monospace;
-  border: 1px dotted var(--sklearn-color-border-box);
-  border-radius: 0.25em;
-  box-sizing: border-box;
-  margin-bottom: 0.5em;
-  /* unfitted */
-  background-color: var(--sklearn-color-unfitted-level-0);
-}
-
-#sk-container-id-2 div.sk-estimator.fitted {
-  /* fitted */
-  background-color: var(--sklearn-color-fitted-level-0);
-}
-
-/* on hover */
-#sk-container-id-2 div.sk-estimator:hover {
-  /* unfitted */
-  background-color: var(--sklearn-color-unfitted-level-2);
-}
-
-#sk-container-id-2 div.sk-estimator.fitted:hover {
-  /* fitted */
-  background-color: var(--sklearn-color-fitted-level-2);
-}
-
-/* Specification for estimator info (e.g. "i" and "?") */
-
-/* Common style for "i" and "?" */
-
-.sk-estimator-doc-link,
-a:link.sk-estimator-doc-link,
-a:visited.sk-estimator-doc-link {
-  float: right;
-  font-size: smaller;
-  line-height: 1em;
-  font-family: monospace;
-  background-color: var(--sklearn-color-background);
-  border-radius: 1em;
-  height: 1em;
-  width: 1em;
-  text-decoration: none !important;
-  margin-left: 1ex;
-  /* unfitted */
-  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
-  color: var(--sklearn-color-unfitted-level-1);
-}
-
-.sk-estimator-doc-link.fitted,
-a:link.sk-estimator-doc-link.fitted,
-a:visited.sk-estimator-doc-link.fitted {
-  /* fitted */
-  border: var(--sklearn-color-fitted-level-1) 1pt solid;
-  color: var(--sklearn-color-fitted-level-1);
-}
-
-/* On hover */
-div.sk-estimator:hover .sk-estimator-doc-link:hover,
-.sk-estimator-doc-link:hover,
-div.sk-label-container:hover .sk-estimator-doc-link:hover,
-.sk-estimator-doc-link:hover {
-  /* unfitted */
-  background-color: var(--sklearn-color-unfitted-level-3);
-  color: var(--sklearn-color-background);
-  text-decoration: none;
-}
-
-div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
-.sk-estimator-doc-link.fitted:hover,
-div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
-.sk-estimator-doc-link.fitted:hover {
-  /* fitted */
-  background-color: var(--sklearn-color-fitted-level-3);
-  color: var(--sklearn-color-background);
-  text-decoration: none;
-}
-
-/* Span, style for the box shown on hovering the info icon */
-.sk-estimator-doc-link span {
-  display: none;
-  z-index: 9999;
-  position: relative;
-  font-weight: normal;
-  right: .2ex;
-  padding: .5ex;
-  margin: .5ex;
-  width: min-content;
-  min-width: 20ex;
-  max-width: 50ex;
-  color: var(--sklearn-color-text);
-  box-shadow: 2pt 2pt 4pt #999;
-  /* unfitted */
-  background: var(--sklearn-color-unfitted-level-0);
-  border: .5pt solid var(--sklearn-color-unfitted-level-3);
-}
-
-.sk-estimator-doc-link.fitted span {
-  /* fitted */
-  background: var(--sklearn-color-fitted-level-0);
-  border: var(--sklearn-color-fitted-level-3);
-}
-
-.sk-estimator-doc-link:hover span {
-  display: block;
-}
-
-/* "?"-specific style due to the `<a>` HTML tag */
-
-#sk-container-id-2 a.estimator_doc_link {
-  float: right;
-  font-size: 1rem;
-  line-height: 1em;
-  font-family: monospace;
-  background-color: var(--sklearn-color-background);
-  border-radius: 1rem;
-  height: 1rem;
-  width: 1rem;
-  text-decoration: none;
-  /* unfitted */
-  color: var(--sklearn-color-unfitted-level-1);
-  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
-}
-
-#sk-container-id-2 a.estimator_doc_link.fitted {
-  /* fitted */
-  border: var(--sklearn-color-fitted-level-1) 1pt solid;
-  color: var(--sklearn-color-fitted-level-1);
-}
-
-/* On hover */
-#sk-container-id-2 a.estimator_doc_link:hover {
-  /* unfitted */
-  background-color: var(--sklearn-color-unfitted-level-3);
-  color: var(--sklearn-color-background);
-  text-decoration: none;
-}
-
-#sk-container-id-2 a.estimator_doc_link.fitted:hover {
-  /* fitted */
-  background-color: var(--sklearn-color-fitted-level-3);
-}
-</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>TransformedTargetRegressor(regressor=Pipeline(steps=[(&#x27;preprocessor&#x27;,
-                                                      ColumnTransformer(transformers=[(&#x27;StandardScaler&#x27;,
-                                                                                       StandardScaler(),
-                                                                                       [&#x27;spot_price&#x27;,
-                                                                                        &#x27;strike_price&#x27;,
-                                                                                        &#x27;days_to_maturity&#x27;,
-                                                                                        &#x27;risk_free_rate&#x27;,
-                                                                                        &#x27;dividend_rate&#x27;,
-                                                                                        &#x27;kappa&#x27;,
-                                                                                        &#x27;theta&#x27;,
-                                                                                        &#x27;rho&#x27;,
-                                                                                        &#x27;eta&#x27;,
-                                                                                        &#x27;v0&#x27;,
-                                                                                        &#x27;barrier&#x27;]),
-                                                                                      (&#x27;OneHotEncoder&#x27;,
-                                                                                       OneHotEncoder(sparse_output=False),
-                                                                                       [&#x27;barrier_type_name&#x27;,
-                                                                                        &#x27;w&#x27;])])),
-                                                     (&#x27;regressor&#x27;,
-                                                      MLPRegressor(hidden_layer_sizes=(13,
-                                                                                       13,
-                                                                                       13),
-                                                                   learning_rate=&#x27;adaptive&#x27;,
-                                                                   max_iter=1000,
-                                                                   solver=&#x27;sgd&#x27;))]),
-                           transformer=Pipeline(steps=[(&#x27;StandardScaler&#x27;,
-                                                        StandardScaler())]))</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-11" type="checkbox" ><label for="sk-estimator-id-11" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;TransformedTargetRegressor<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.TransformedTargetRegressor.html">?<span>Documentation for TransformedTargetRegressor</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>TransformedTargetRegressor(regressor=Pipeline(steps=[(&#x27;preprocessor&#x27;,
-                                                      ColumnTransformer(transformers=[(&#x27;StandardScaler&#x27;,
-                                                                                       StandardScaler(),
-                                                                                       [&#x27;spot_price&#x27;,
-                                                                                        &#x27;strike_price&#x27;,
-                                                                                        &#x27;days_to_maturity&#x27;,
-                                                                                        &#x27;risk_free_rate&#x27;,
-                                                                                        &#x27;dividend_rate&#x27;,
-                                                                                        &#x27;kappa&#x27;,
-                                                                                        &#x27;theta&#x27;,
-                                                                                        &#x27;rho&#x27;,
-                                                                                        &#x27;eta&#x27;,
-                                                                                        &#x27;v0&#x27;,
-                                                                                        &#x27;barrier&#x27;]),
-                                                                                      (&#x27;OneHotEncoder&#x27;,
-                                                                                       OneHotEncoder(sparse_output=False),
-                                                                                       [&#x27;barrier_type_name&#x27;,
-                                                                                        &#x27;w&#x27;])])),
-                                                     (&#x27;regressor&#x27;,
-                                                      MLPRegressor(hidden_layer_sizes=(13,
-                                                                                       13,
-                                                                                       13),
-                                                                   learning_rate=&#x27;adaptive&#x27;,
-                                                                   max_iter=1000,
-                                                                   solver=&#x27;sgd&#x27;))]),
-                           transformer=Pipeline(steps=[(&#x27;StandardScaler&#x27;,
-                                                        StandardScaler())]))</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-12" type="checkbox" ><label for="sk-estimator-id-12" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">regressor: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;preprocessor&#x27;,
-                 ColumnTransformer(transformers=[(&#x27;StandardScaler&#x27;,
-                                                  StandardScaler(),
-                                                  [&#x27;spot_price&#x27;, &#x27;strike_price&#x27;,
-                                                   &#x27;days_to_maturity&#x27;,
-                                                   &#x27;risk_free_rate&#x27;,
-                                                   &#x27;dividend_rate&#x27;, &#x27;kappa&#x27;,
-                                                   &#x27;theta&#x27;, &#x27;rho&#x27;, &#x27;eta&#x27;, &#x27;v0&#x27;,
-                                                   &#x27;barrier&#x27;]),
-                                                 (&#x27;OneHotEncoder&#x27;,
-                                                  OneHotEncoder(sparse_output=False),
-                                                  [&#x27;barrier_type_name&#x27;,
-                                                   &#x27;w&#x27;])])),
-                (&#x27;regressor&#x27;,
-                 MLPRegressor(hidden_layer_sizes=(13, 13, 13),
-                              learning_rate=&#x27;adaptive&#x27;, max_iter=1000,
-                              solver=&#x27;sgd&#x27;))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-13" type="checkbox" ><label for="sk-estimator-id-13" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;preprocessor: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for preprocessor: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#x27;StandardScaler&#x27;, StandardScaler(),
-                                 [&#x27;spot_price&#x27;, &#x27;strike_price&#x27;,
-                                  &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;,
-                                  &#x27;dividend_rate&#x27;, &#x27;kappa&#x27;, &#x27;theta&#x27;, &#x27;rho&#x27;,
-                                  &#x27;eta&#x27;, &#x27;v0&#x27;, &#x27;barrier&#x27;]),
-                                (&#x27;OneHotEncoder&#x27;,
-                                 OneHotEncoder(sparse_output=False),
-                                 [&#x27;barrier_type_name&#x27;, &#x27;w&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-14" type="checkbox" ><label for="sk-estimator-id-14" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">StandardScaler</label><div class="sk-toggleable__content fitted"><pre>[&#x27;spot_price&#x27;, &#x27;strike_price&#x27;, &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;, &#x27;dividend_rate&#x27;, &#x27;kappa&#x27;, &#x27;theta&#x27;, &#x27;rho&#x27;, &#x27;eta&#x27;, &#x27;v0&#x27;, &#x27;barrier&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;StandardScaler<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content fitted"><pre>StandardScaler()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-16" type="checkbox" ><label for="sk-estimator-id-16" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">OneHotEncoder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;barrier_type_name&#x27;, &#x27;w&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-17" type="checkbox" ><label for="sk-estimator-id-17" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;OneHotEncoder<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.OneHotEncoder.html">?<span>Documentation for OneHotEncoder</span></a></label><div class="sk-toggleable__content fitted"><pre>OneHotEncoder(sparse_output=False)</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-18" type="checkbox" ><label for="sk-estimator-id-18" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;MLPRegressor<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.neural_network.MLPRegressor.html">?<span>Documentation for MLPRegressor</span></a></label><div class="sk-toggleable__content fitted"><pre>MLPRegressor(hidden_layer_sizes=(13, 13, 13), learning_rate=&#x27;adaptive&#x27;,
-             max_iter=1000, solver=&#x27;sgd&#x27;)</pre></div> </div></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-19" type="checkbox" ><label for="sk-estimator-id-19" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">transformer: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;StandardScaler&#x27;, StandardScaler())])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-20" type="checkbox" ><label for="sk-estimator-id-20" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;StandardScaler<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content fitted"><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
-
-
-
-
-```python
-insample, outsample, errors = bt.test_prediction_accuracy(dnnBarriers, test_data, train_data)
-```
-
-    
     in sample:
-         RSME: 7.8649783877823
-         MAE: 5.393343100056204
+         RSME: 7.7295195806531405
+         MAE: 5.056006552160728
     
     out of sample:
-         RSME: 14.187620009295333
-         MAE: 10.11333157054156
+         RSME: 13.826936968647077
+         MAE: 9.877072255579307
+    TransformedTargetRegressor(regressor=Pipeline(steps=[('preprocessor',
+                                                          ColumnTransformer(transformers=[('StandardScaler',
+                                                                                           StandardScaler(),
+                                                                                           ['spot_price',
+                                                                                            'strike_price',
+                                                                                            'days_to_maturity',
+                                                                                            'risk_free_rate',
+                                                                                            'dividend_rate',
+                                                                                            'kappa',
+                                                                                            'theta',
+                                                                                            'rho',
+                                                                                            'eta',
+                                                                                            'v0',
+                                                                                            'barrier']),
+                                                                                          ('OneHotEncoder',
+                                                                                           OneHotEncoder(sparse_output=False),
+                                                                                           ['barrier_type_name',
+                                                                                            'w'])])),
+                                                         ('regressor',
+                                                          MLPRegressor(hidden_layer_sizes=(13,
+                                                                                           13,
+                                                                                           13),
+                                                                       learning_rate='adaptive',
+                                                                       max_iter=1000,
+                                                                       solver='sgd'))]),
+                               transformer=Pipeline(steps=[('StandardScaler',
+                                                            StandardScaler())]))
+         spot_price  strike_price  days_to_maturity  barrier  rebate     w  \
+    120      573.76           459               720      286     0.0   put   
+    121      573.76           459               720      286     0.0   put   
+    122      573.76           459               720      286     0.0  call   
+    123      573.76           459               720      286     0.0  call   
+    124      573.76           459               720      357     0.0   put   
+    ..          ...           ...               ...      ...     ...   ...   
+    975      573.76           688               720      497     0.0  call   
+    976      573.76           688               720      568     0.0   put   
+    977      573.76           688               720      568     0.0   put   
+    978      573.76           688               720      568     0.0  call   
+    979      573.76           688               720      568     0.0  call   
+    
+         risk_free_rate  dividend_rate    theta     kappa  ...  calculation_date  \
+    120            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    121            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    122            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    123            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    124            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    ..              ...            ...      ...       ...  ...               ...   
+    975            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    976            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    977            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    978            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    979            0.04            0.0  0.12875  0.507891  ...        2024-10-08   
+    
+         outin  moneyness barrier_type_name vanilla_price  barrier_price  \
+    120    Out  -0.200014           DownOut     19.484414       1.522133   
+    121     In  -0.200014            DownIn     19.484414      17.915424   
+    122    Out   0.250022           DownOut    169.069416     166.662254   
+    123     In   0.250022            DownIn    169.069416       2.579340   
+    124    Out  -0.200014           DownOut     19.484414       0.349273   
+    ..     ...        ...               ...           ...            ...   
+    975     In  -0.166047            DownIn     19.479203       7.525905   
+    976    Out   0.199108           DownOut     81.519635       1.813163   
+    977     In   0.199108            DownIn     81.519635      81.241938   
+    978    Out  -0.166047           DownOut     19.479203       2.446905   
+    979     In  -0.166047            DownIn     19.479203      18.645028   
+    
+        observed_price  outofsample_target  outofsample_prediction  \
+    120       1.465758            1.465758                7.541702   
+    121      17.951974           17.951974               16.012198   
+    122     166.294801          166.294801              144.997890   
+    123       2.452313            2.452313               16.521453   
+    124       0.189842            0.189842                3.148170   
+    ..             ...                 ...                     ...   
+    975       7.470836            7.470836               23.046715   
+    976       1.851457            1.851457               17.721679   
+    977      81.205481           81.205481               88.832182   
+    978       2.357371            2.357371                3.552887   
+    979      18.810441           18.810441               28.784200   
+    
+         outofsample_error  
+    120           6.075944  
+    121          -1.939776  
+    122         -21.296911  
+    123          14.069139  
+    124           2.958328  
+    ..                 ...  
+    975          15.575879  
+    976          15.870222  
+    977           7.626702  
+    978           1.195516  
+    979           9.973759  
+    
+    [140 rows x 23 columns]
     
 
 
 ```python
-outsample
+
 ```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>spot_price</th>
-      <th>strike_price</th>
-      <th>days_to_maturity</th>
-      <th>barrier</th>
-      <th>rebate</th>
-      <th>w</th>
-      <th>risk_free_rate</th>
-      <th>dividend_rate</th>
-      <th>theta</th>
-      <th>kappa</th>
-      <th>...</th>
-      <th>calculation_date</th>
-      <th>outin</th>
-      <th>moneyness</th>
-      <th>barrier_type_name</th>
-      <th>vanilla_price</th>
-      <th>barrier_price</th>
-      <th>observed_price</th>
-      <th>outofsample_target</th>
-      <th>outofsample_prediction</th>
-      <th>outofsample_error</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>120</th>
-      <td>573.76</td>
-      <td>459</td>
-      <td>720</td>
-      <td>286</td>
-      <td>0.0</td>
-      <td>put</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>Out</td>
-      <td>-0.200014</td>
-      <td>DownOut</td>
-      <td>19.484414</td>
-      <td>1.522133</td>
-      <td>1.731024</td>
-      <td>1.731024</td>
-      <td>21.582767</td>
-      <td>19.851743</td>
-    </tr>
-    <tr>
-      <th>121</th>
-      <td>573.76</td>
-      <td>459</td>
-      <td>720</td>
-      <td>286</td>
-      <td>0.0</td>
-      <td>put</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>In</td>
-      <td>-0.200014</td>
-      <td>DownIn</td>
-      <td>19.484414</td>
-      <td>17.915424</td>
-      <td>17.794223</td>
-      <td>17.794223</td>
-      <td>23.673304</td>
-      <td>5.879082</td>
-    </tr>
-    <tr>
-      <th>122</th>
-      <td>573.76</td>
-      <td>459</td>
-      <td>720</td>
-      <td>286</td>
-      <td>0.0</td>
-      <td>call</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>Out</td>
-      <td>0.250022</td>
-      <td>DownOut</td>
-      <td>169.069416</td>
-      <td>166.662254</td>
-      <td>166.535414</td>
-      <td>166.535414</td>
-      <td>111.670760</td>
-      <td>-54.864654</td>
-    </tr>
-    <tr>
-      <th>123</th>
-      <td>573.76</td>
-      <td>459</td>
-      <td>720</td>
-      <td>286</td>
-      <td>0.0</td>
-      <td>call</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>In</td>
-      <td>0.250022</td>
-      <td>DownIn</td>
-      <td>169.069416</td>
-      <td>2.579340</td>
-      <td>2.480801</td>
-      <td>2.480801</td>
-      <td>10.694152</td>
-      <td>8.213351</td>
-    </tr>
-    <tr>
-      <th>124</th>
-      <td>573.76</td>
-      <td>459</td>
-      <td>720</td>
-      <td>357</td>
-      <td>0.0</td>
-      <td>put</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>Out</td>
-      <td>-0.200014</td>
-      <td>DownOut</td>
-      <td>19.484414</td>
-      <td>0.349273</td>
-      <td>0.287819</td>
-      <td>0.287819</td>
-      <td>15.624066</td>
-      <td>15.336247</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>975</th>
-      <td>573.76</td>
-      <td>688</td>
-      <td>720</td>
-      <td>497</td>
-      <td>0.0</td>
-      <td>call</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>In</td>
-      <td>-0.166047</td>
-      <td>DownIn</td>
-      <td>19.479203</td>
-      <td>7.525905</td>
-      <td>7.472503</td>
-      <td>7.472503</td>
-      <td>12.773168</td>
-      <td>5.300665</td>
-    </tr>
-    <tr>
-      <th>976</th>
-      <td>573.76</td>
-      <td>688</td>
-      <td>720</td>
-      <td>568</td>
-      <td>0.0</td>
-      <td>put</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>Out</td>
-      <td>0.199108</td>
-      <td>DownOut</td>
-      <td>81.519635</td>
-      <td>1.813163</td>
-      <td>1.916128</td>
-      <td>1.916128</td>
-      <td>16.422943</td>
-      <td>14.506815</td>
-    </tr>
-    <tr>
-      <th>977</th>
-      <td>573.76</td>
-      <td>688</td>
-      <td>720</td>
-      <td>568</td>
-      <td>0.0</td>
-      <td>put</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>In</td>
-      <td>0.199108</td>
-      <td>DownIn</td>
-      <td>81.519635</td>
-      <td>81.241938</td>
-      <td>81.124581</td>
-      <td>81.124581</td>
-      <td>71.460263</td>
-      <td>-9.664318</td>
-    </tr>
-    <tr>
-      <th>978</th>
-      <td>573.76</td>
-      <td>688</td>
-      <td>720</td>
-      <td>568</td>
-      <td>0.0</td>
-      <td>call</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>Out</td>
-      <td>-0.166047</td>
-      <td>DownOut</td>
-      <td>19.479203</td>
-      <td>2.446905</td>
-      <td>2.544363</td>
-      <td>2.544363</td>
-      <td>0.589685</td>
-      <td>-1.954678</td>
-    </tr>
-    <tr>
-      <th>979</th>
-      <td>573.76</td>
-      <td>688</td>
-      <td>720</td>
-      <td>568</td>
-      <td>0.0</td>
-      <td>call</td>
-      <td>0.04</td>
-      <td>0.0</td>
-      <td>0.12875</td>
-      <td>0.507891</td>
-      <td>...</td>
-      <td>2024-10-08</td>
-      <td>In</td>
-      <td>-0.166047</td>
-      <td>DownIn</td>
-      <td>19.479203</td>
-      <td>18.645028</td>
-      <td>18.516014</td>
-      <td>18.516014</td>
-      <td>34.695838</td>
-      <td>16.179824</td>
-    </tr>
-  </tbody>
-</table>
-<p>140 rows × 23 columns</p>
-</div>
-
-
