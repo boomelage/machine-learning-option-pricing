@@ -26,7 +26,7 @@ dates = spots.index
 
 for date in dates:
     spot = float(spots[date])
-    link = collect_av_link(date)
+    link = collect_av_link(date,spot,symbol)
     printdate = datetime.strptime(date, '%Y-%m-%d').strftime('%A, %Y-%m-%d')
     while True:
         try:
