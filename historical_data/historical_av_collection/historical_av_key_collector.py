@@ -15,16 +15,14 @@ os.chdir(current_dir)
 sys.path.append(parent_dir)
 
 symbol = 'SPY'
-
+h5_name = f'alphaVantage {symbol}.h5'
 while True:
     try:
-        store = pd.HDFStore(os.path.join(current_dir,f'alphaVantage {symbol}.h5'))
+        store = pd.HDFStore(os.path.join(current_dir,h5_name))
         keys = store.keys()
-        contract_keys = pd.Series([key for key in keys if key.find('hottest_contracts')!=-1])
         raw_data_keys = pd.Series([key for key in keys if key.find('raw_data')!=-1])
         surface_keys = pd.Series([key for key in keys if key.find('surface')!=-1])
-        calibration_keys = pd.Series([key for key in keys if key.find('calibration')!=-1])
-        prices_securities_keys = pd.Series([key for key in keys if key.find('priced_securities')!=-1])
+        spot_price_keys = pd.Series([key for key in keys if key.find('spot_price')!=-1])
         break
     except Exception as e:
         print(e)
@@ -36,14 +34,19 @@ while True:
 
 keys_df = pd.DataFrame(
     {
-     'contract_key':contract_keys,
      'raw_data_key':raw_data_keys,
      'surface_key':surface_keys,
-     'calibration_key':calibration_keys,
-     'priced_securities_key':prices_securities_keys
+     'spot_price':spot_price_keys
      }    
 )
 
-keys_df['date'] = keys_df['surface_key'].str.extract(r'date_(\d{4}_\d{2}_\d{2})')[0]
-keys_df['date'] = keys_df['date'].str.replace('_','-')
-print(f"\navailable data for {symbol}:\n{keys_df['date']}")
+
+try:
+    available_dates = keys_df['raw_data_key'].copy().str.extract(r'date_(\d{4}_\d{2}_\d{2})')[0].squeeze()
+    available_dates = available_dates.str.replace('_','-')
+    keys_df['date'] = available_dates
+except Exception as e:
+    pass
+print(f"\ncontracts data available for {symbol}:\n{available_dates}\n")
+
+print(keys_df['surface_key'])
