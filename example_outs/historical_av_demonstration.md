@@ -104,7 +104,7 @@ plt.clf()
 
 # example calibraion
 
-now why not select the one trading day and porceed with an example calibration of our Heston (1993) model
+now why not select the one trading day and proceed with an example calibration of our Heston (1993) model
 
 
 ```python
