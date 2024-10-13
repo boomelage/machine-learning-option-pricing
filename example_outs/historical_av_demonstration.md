@@ -403,7 +403,7 @@ print(f"calibration testing dataset:\n{calibration_test_data.describe()}")
 
 # train data generation
 now that we have calibrated our pricing engine, let us proceed with generating 
-all real barrier option contract combinations for this trading day
+all real down barrier option contract combinations for this trading day
 
 ```python
 K = np.linspace(s*0.8,s*1.2,7).astype(int).tolist()
