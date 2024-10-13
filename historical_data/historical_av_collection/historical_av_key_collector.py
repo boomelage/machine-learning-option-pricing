@@ -14,9 +14,11 @@ parent_dir = str(Path().resolve().parent)
 os.chdir(current_dir)
 sys.path.append(parent_dir)
 
+symbol = 'SPY'
+
 while True:
     try:
-        store = pd.HDFStore(os.path.join(current_dir,'alphaVantage vanillas.h5'))
+        store = pd.HDFStore(os.path.join(current_dir,f'alphaVantage {symbol}.h5'))
         keys = store.keys()
         contract_keys = pd.Series([key for key in keys if key.find('hottest_contracts')!=-1])
         raw_data_keys = pd.Series([key for key in keys if key.find('raw_data')!=-1])

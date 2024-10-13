@@ -20,17 +20,12 @@ os.chdir(current_dir)
 parent_dir = str(Path().resolve().parent)
 os.chdir(current_dir)
 sys.path.append(parent_dir)
-
-storefile = os.path.join(parent_dir,'alphaVantage vanillas.h5')
-from historical_av_key_collector import keys_df
-keys_df = keys_df.dropna(subset=['surface_key','contract_key','raw_data_key']).fillna(0).copy()
+from historical_av_key_collector import keys_df, symbol
+storefile = os.path.join(parent_dir,f'alphaVantage {symbol}.h5')
+keys_df = keys_df.copy()[['surface_key','contract_key','raw_data_key','calibration_key']].fillna(0)
 keys_df = keys_df[
     (
     (keys_df['calibration_key']==0)
-    &
-    (keys_df['date']!=datetime(2019,12,24))
-    &
-    (keys_df['date']!=datetime(2019,12,13))
     )
 ]
 
@@ -173,8 +168,8 @@ for i,row in keys_df.iterrows():
         except Exception as e:
             print(e)
             print('retrying in...')
-            for i in range (0,5):
-                print(5-i)
+            for i in range (2):
+                print(2-i)
                 time.sleep(1)
         finally:
             store.close()
