@@ -1,25 +1,28 @@
 import pandas as pd
 import numpy as np
+import time
 from model_settings import ms
 from historical_av_key_collector import keys_df, symbol, h5_name, available_dates
 from historical_av_underlying_fetcher import historical_spots
 keys_df = keys_df.dropna(subset=['raw_data_key','spot_price'])
 
+print(f"reconstructing {keys_df.shape[0]} surfaces")
 
-chain = {}
-store = pd.HDFStore(h5_name)
 for i,row in keys_df.iterrows():
-	link = {}
-	link['raw_data'] = store[row['raw_data_key']]
-	link['spot_price'] = float(store[row['spot_price']].iloc[0])
-	chain[row['date']] = link
-store.close()
+	while True:
+		try:
+			with pd.HDFStore(h5_name) as store:
+				raw_data = store[row['raw_data_key']]
+				spot = store[row['spot_price']].iloc[0]
+				date = row['date']
+			break
+		except Exception as e:
+			print(e)
+			time.sleep(2)
+		finally:
+			store.close()
 
-matrix_chain = {}
-dates = keys_df['date']
-for i,date in enumerate(dates):
-	raw_data = chain[date]['raw_data']
-	spot = chain[date]['spot_price']
+
 	df = raw_data.copy()
 	columns_to_convert = ['strike', 'last', 'mark',
 	       'bid', 'bid_size', 'ask', 'ask_size', 'volume', 'open_interest',
@@ -73,30 +76,16 @@ for i,date in enumerate(dates):
 	            pass
 
 	vol_matrix = vol_matrix.dropna().copy()
-	T = vol_matrix.columns.tolist()
-	K = vol_matrix.index.tolist()
-
-	cols_to_map = [
-	        'contractID', 'symbol', 'expiration', 'type', 'last', 'mark',
-	        'bid', 'bid_size', 'ask', 'ask_size', 'volume', 'open_interest', 'date',
-	        'implied_volatility', 'delta', 'gamma', 'theta', 'vega', 'rho',
-	        'spot_price', 'moneyness'
-	]
-	for col in cols_to_map:
-	    for i,row in hottest_contracts.iterrows():
-	        hottest_contracts.at[i,col] = indexed.loc[(row['k'],row['t']),col]
-	        
-	hottest_contracts = hottest_contracts.rename(
-	    columns={'t':'days_to_maturity','k':'strike_price'}).copy()
-	matrix_chain[date] = vol_matrix
-
-while True:
-    try:
-        with pd.HDFStore(h5_name) as store:
-            for date, matrix in matrix_chain.items():
-                h5_key = f"date_{date.replace('-','_')}/surface"
-                store.put(h5_key, matrix, format='table', append=False)
-                print(f"volatility surface stored for {date}")
-        break
-    except OSError as e:
-        time.sleep(2)
+	print(vol_matrix)
+	print(date)
+	while True:
+		try:
+			with pd.HDFStore(h5_name) as store:
+				h5_key = f"date_{date.replace('-','_')}/surface"
+				store.put(h5_key, vol_matrix, format='table', append=False)
+				print(f"volatility surface stored for {date}")
+			break
+		except Exception:
+			time.sleep(2)
+		finally:
+			store.close()

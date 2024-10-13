@@ -48,5 +48,6 @@ try:
 except Exception as e:
     pass
 print(f"\ncontracts data available for {symbol}:\n{available_dates}\n")
-
-print(keys_df['surface_key'])
+pd.set_option("display.max_columns",None)
+print(keys_df)
+pd.reset_option("display.max_columns")
