@@ -14,11 +14,12 @@ from datetime import timedelta
 from model_settings import ms
 from historical_av_plot_vol_surface import plot_vol_surface
 
-symbol='SPY'
+symbol='NVDA'
 url = str(
 	'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+
 	symbol+'&outputsize=full&apikey='+
 	ms.av_key)
+print(symbol)
 r = requests.get(url)
 spots = pd.Series(pd.DataFrame(r.json()['Time Series (Daily)']).transpose()['4. close'].squeeze())
 spots = pd.to_numeric(spots,errors='coerce')
@@ -32,17 +33,18 @@ print(spots)
     compounding: continuous
     frequency: annual
     
-    2024-10-11    579.5800
-    2024-10-10    576.1300
-    2024-10-09    577.1400
-    2024-10-08    573.1700
-    2024-10-07    567.8000
-                    ...   
-    1999-11-05    137.8750
-    1999-11-04    136.5312
-    1999-11-03    135.5000
-    1999-11-02    134.5937
-    1999-11-01    135.5625
+    NVDA
+    2024-10-11    134.80
+    2024-10-10    134.81
+    2024-10-09    132.65
+    2024-10-08    132.89
+    2024-10-07    127.72
+                   ...  
+    1999-11-05     28.25
+    1999-11-04     29.19
+    1999-11-03     27.44
+    1999-11-02     25.00
+    1999-11-01     23.50
     Name: 4. close, Length: 6277, dtype: float64
     
 
@@ -79,7 +81,7 @@ for date in dates:
 bar.close()
 ```
 
-    100%|████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:07<00:00,  1.41s/it]
+    100%|████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:06<00:00,  1.20s/it]
     
 
 
@@ -110,7 +112,7 @@ now why not select the one trading day and porceed with an example calibration o
 
 
 ```python
-date = dates[3]
+date = dates[0]
 raw_data = chain[date]
 calculation_datetime = datetime.strptime(date,'%Y-%m-%d')
 calculation_date = ql.Date(
@@ -118,10 +120,11 @@ calculation_date = ql.Date(
     calculation_datetime.month,
     calculation_datetime.year,
 )
-print(str(calculation_datetime.strftime('%A, '))+str(calculation_date))
+notebook_printdate = str(calculation_datetime.strftime('%A, '))+str(calculation_date)
+print(notebook_printdate)
 ```
 
-    Tuesday, October 8th, 2024
+    Friday, October 11th, 2024
     
 
 ## modelling the volatility surface
@@ -207,45 +210,27 @@ plot_vol_surface(vol_matrix)
 ```
 
     
-    SPY spot price: 567.8
+    NVDA spot price: 127.72
     
-               31       38       52       73       84       101      115      164  \
-    500.0  0.31159  0.29803  0.27851  0.26617  0.25839  0.25336  0.24940  0.24071   
-    510.0  0.29117  0.27928  0.26144  0.25199  0.24513  0.24086  0.23751  0.23095   
-    520.0  0.27013  0.26098  0.24544  0.23827  0.23217  0.22882  0.22608  0.22120   
-    525.0  0.26083  0.25199  0.23781  0.23156  0.22577  0.22288  0.22013  0.21632   
-    530.0  0.25138  0.24330  0.23004  0.22486  0.21983  0.21693  0.21464  0.21160   
-    540.0  0.23278  0.22608  0.21495  0.21160  0.20718  0.20519  0.20352  0.20199   
-    550.0  0.21495  0.20931  0.20016  0.19818  0.19452  0.19330  0.19239  0.19254   
-    555.0  0.20580  0.20077  0.19254  0.19147  0.18812  0.18751  0.18690  0.18797   
-    560.0  0.19650  0.19224  0.18492  0.18461  0.18187  0.18187  0.18157  0.18355   
-    565.0  0.18705  0.18340  0.17745  0.17791  0.17577  0.17608  0.17623  0.17928   
-    570.0  0.18004  0.17562  0.17044  0.16663  0.15702  0.15763  0.15794  0.15931   
-    575.0  0.17013  0.16663  0.16221  0.15962  0.15077  0.15199  0.15260  0.15474   
-    580.0  0.16114  0.15779  0.15428  0.15276  0.14483  0.14651  0.14742  0.15001   
-    585.0  0.15245  0.14940  0.14712  0.14651  0.13919  0.14132  0.14224  0.14529   
-    590.0  0.14483  0.14209  0.14026  0.14071  0.13385  0.13645  0.13766  0.14117   
-    600.0  0.13263  0.13035  0.12913  0.13035  0.12440  0.12760  0.12913  0.13385   
-    605.0  0.12913  0.12669  0.12486  0.12608  0.12044  0.12364  0.12547  0.13050   
-    
-               346  
-    500.0  0.23080  
-    510.0  0.22486  
-    520.0  0.21907  
-    525.0  0.21617  
-    530.0  0.21342  
-    540.0  0.20748  
-    550.0  0.20169  
-    555.0  0.19894  
-    560.0  0.19620  
-    565.0  0.19346  
-    570.0  0.15550  
-    575.0  0.15245  
-    580.0  0.14971  
-    585.0  0.14681  
-    590.0  0.14391  
-    600.0  0.13827  
-    605.0  0.13538  
+               35       49       70       98       161      188      217      252
+    70.0   0.89969  0.61311  0.75427  0.69055  0.64253  0.62226  0.60031  0.59573
+    100.0  0.60213  0.60244  0.57500  0.55000  0.55823  0.54802  0.53826  0.54208
+    110.0  0.53720  0.50427  0.55046  0.52668  0.54497  0.53659  0.52927  0.53415
+    115.0  0.51509  0.51174  0.54040  0.51951  0.53948  0.53217  0.52576  0.53156
+    120.0  0.49848  0.54131  0.53110  0.51266  0.53583  0.52958  0.52348  0.52942
+    125.0  0.48537  0.55381  0.52500  0.50747  0.53201  0.52698  0.52180  0.52836
+    130.0  0.47424  0.48491  0.52073  0.50610  0.52805  0.52516  0.51860  0.52317
+    135.0  0.46266  0.51616  0.51555  0.50183  0.52942  0.50534  0.51570  0.52256
+    140.0  0.45595  0.57058  0.51067  0.49802  0.52668  0.52043  0.51448  0.51921
+    145.0  0.44680  0.51967  0.50808  0.49513  0.52455  0.51830  0.51266  0.51830
+    150.0  0.44147  0.51113  0.50336  0.49238  0.52287  0.51708  0.49330  0.51738
+    155.0  0.43598  0.46296  0.49970  0.49025  0.52211  0.51525  0.50945  0.51525
+    160.0  0.43476  0.48247  0.49985  0.48872  0.52089  0.51494  0.50595  0.51555
+    165.0  0.43933  0.50534  0.49894  0.48766  0.52028  0.51387  0.50793  0.51509
+    170.0  0.44314  0.44330  0.49817  0.48735  0.51891  0.51372  0.50519  0.51525
+    180.0  0.45656  0.51509  0.49985  0.48781  0.51769  0.51311  0.50702  0.51418
+    190.0  0.47836  0.49101  0.50671  0.49101  0.51814  0.51311  0.50732  0.51387
+    200.0  0.51311  0.60625  0.51387  0.49650  0.51951  0.51357  0.50763  0.51433
     
     
 
@@ -350,53 +335,53 @@ print(f"calibration testing dataset:\n{calibration_test_data.describe()}")
 
     
     Monday, 2024-10-07
-    theta    0.092277
-    kappa    0.702582
-    eta      1.222380
-    rho     -0.779353
-    v0       0.042068
+    theta    0.354435
+    kappa    5.625730
+    eta      1.895844
+    rho     -0.296811
+    v0       0.196002
     dtype: float64
-    average absolute error: 2.569
+    average absolute error: 0.48
     calibration testing dataset:
-           strike_price  market_price   volatility  days_to_maturity  \
-    count   4946.000000   4946.000000  4946.000000       4946.000000   
-    mean     516.437525     41.852331     0.249732        163.988273   
-    min      120.000000      0.000000     0.012760         31.000000   
-    25%      454.000000      0.000000     0.164875         73.000000   
-    50%      528.000000      6.140000     0.211365        143.000000   
-    75%      585.000000     55.582500     0.292690        265.000000   
-    max      830.000000    451.670000     1.349070        357.000000   
-    std      125.840010     71.700001     0.145537        108.548043   
+           strike_price  market_price   volatility  days_to_maturity  spot_price  \
+    count   3710.000000   3710.000000  3710.000000       3710.000000     3710.00   
+    mean     112.509434     23.585275     0.703703        139.626415      127.72   
+    min        0.500000      0.000000     0.042260         35.000000      127.72   
+    25%       57.500000      0.000000     0.515740         70.000000      127.72   
+    50%      106.000000      5.540000     0.559000         98.000000      127.72   
+    75%      164.000000     39.152500     0.724042        217.000000      127.72   
+    max      280.000000    139.550000     6.601530        343.000000      127.72   
+    std       67.778216     32.884901     0.483879         92.253096        0.00   
     
-             spot_price  risk_free_rate  dividend_rate         theta  \
-    count  4.946000e+03         4946.00         4946.0  4.946000e+03   
-    mean   5.678000e+02            0.04            0.0  9.227674e-02   
-    min    5.678000e+02            0.04            0.0  9.227674e-02   
-    25%    5.678000e+02            0.04            0.0  9.227674e-02   
-    50%    5.678000e+02            0.04            0.0  9.227674e-02   
-    75%    5.678000e+02            0.04            0.0  9.227674e-02   
-    max    5.678000e+02            0.04            0.0  9.227674e-02   
-    std    1.136983e-13            0.00            0.0  1.387919e-17   
+           risk_free_rate  dividend_rate         theta         kappa  \
+    count    3.710000e+03         3710.0  3.710000e+03  3.710000e+03   
+    mean     4.000000e-02            0.0  3.544347e-01  5.625730e+00   
+    min      4.000000e-02            0.0  3.544347e-01  5.625730e+00   
+    25%      4.000000e-02            0.0  3.544347e-01  5.625730e+00   
+    50%      4.000000e-02            0.0  3.544347e-01  5.625730e+00   
+    75%      4.000000e-02            0.0  3.544347e-01  5.625730e+00   
+    max      4.000000e-02            0.0  3.544347e-01  5.625730e+00   
+    std      6.939829e-18            0.0  5.551863e-17  1.776596e-15   
     
-                  kappa           eta           rho            v0     moneyness  \
-    count  4.946000e+03  4.946000e+03  4.946000e+03  4.946000e+03  4.946000e+03   
-    mean   7.025824e-01  1.222380e+00 -7.793528e-01  4.206786e-02  5.215181e-02   
-    min    7.025824e-01  1.222380e+00 -7.793528e-01  4.206786e-02 -7.886580e-01   
-    25%    7.025824e-01  1.222380e+00 -7.793528e-01  4.206786e-02 -1.246918e-01   
-    50%    7.025824e-01  1.222380e+00 -7.793528e-01  4.206786e-02  6.201350e-08   
-    75%    7.025824e-01  1.222380e+00 -7.793528e-01  4.206786e-02  1.424547e-01   
-    max    7.025824e-01  1.222380e+00 -7.793528e-01  4.206786e-02  3.731667e+00   
-    std    1.110335e-16  2.220671e-16  1.110335e-16  6.939595e-18  3.755533e-01   
+                    eta          rho            v0    moneyness  \
+    count  3.710000e+03  3710.000000  3.710000e+03  3710.000000   
+    mean   1.895844e+00    -0.296811  1.960019e-01     1.464735   
+    min    1.895844e+00    -0.296811  1.960019e-01    -0.996085   
+    25%    1.895844e+00    -0.296811  1.960019e-01    -0.365800   
+    50%    1.895844e+00    -0.296811  1.960019e-01     0.000002   
+    75%    1.895844e+00    -0.296811  1.960019e-01     0.576790   
+    max    1.895844e+00    -0.296811  1.960019e-01   254.440000   
+    std    8.882981e-16     0.000000  5.551863e-17    11.699363   
     
               calculation_date  black_scholes  heston_price        error  
-    count                 4946    4946.000000   4946.000000  4946.000000  
-    mean   2024-10-08 00:00:00      59.586814     58.999693    -0.587121  
-    min    2024-10-08 00:00:00       0.006047      0.000017   -34.346707  
-    25%    2024-10-08 00:00:00       4.687598      5.475387    -0.369348  
-    50%    2024-10-08 00:00:00      22.455073     21.419815     0.332929  
-    75%    2024-10-08 00:00:00      83.866605     84.095200     1.204941  
-    max    2024-10-08 00:00:00     448.984729    448.756187     8.284504  
-    std                    NaN      81.096391     80.270793     5.381363  
+    count                 3710    3710.000000   3710.000000  3710.000000  
+    mean   2024-10-11 00:00:00      33.138019     32.799657    -0.338363  
+    min    2024-10-11 00:00:00       0.001913      0.000000    -7.382476  
+    25%    2024-10-11 00:00:00       1.332189      1.153085    -0.482404  
+    50%    2024-10-11 00:00:00      15.471997     15.430097    -0.183782  
+    75%    2024-10-11 00:00:00      58.262060     57.859708    -0.012211  
+    max    2024-10-11 00:00:00     152.219289    151.208117     2.111488  
+    std                    NaN      37.990831     37.693878     0.757278  
     
 
 # train data generation
@@ -415,13 +400,13 @@ print(f"\n{symbol} spot price:\n     {spot}\nstrikes:\n     {K}\n\nbarriers:\n  
 ```
 
     
-    SPY spot price:
-         567.8
+    NVDA spot price:
+         127.72
     strikes:
-         [454, 492, 529, 567, 605, 643, 681]
+         [102, 110, 119, 127, 136, 144, 153]
     
     barriers:
-         [283, 353, 423, 492, 562]
+         [63, 79, 95, 110, 126]
     
     maturities:
          [30, 60, 90, 180, 360, 540, 720]
@@ -684,7 +669,8 @@ barrier_trainer = convsklearn.convsklearn(
 
 
 ```python
-features['observed_price'] = ms.noisyfier(features.loc[:,'barrier_price']) # apply slight peturbation in the form of a random normal with standard deviation 0.15
+features['observed_price'] = ms.noisyfier(features.loc[:,'barrier_price']) 
+    # apply slight peturbation in the form of a random normal with standard deviation 0.15
 train_data = features[features['days_to_maturity']!=720]
 test_data = features[features['days_to_maturity']==720]
 print(f"train data count: {train_data.shape[0]}")
@@ -696,26 +682,33 @@ test_X = arrs['test_X']
 test_y = arrs['train_y']
 preprocessor = barrier_trainer.preprocess()
 dnn_barriers, runtime, specs = barrier_trainer.run_dnn(preprocessor, train_X, train_y)
-insample, outsample, errors = barrier_trainer.test_prediction_accuracy(dnn_barriers, test_data, train_data)
-print(dnn_barriers)
-
-outsample = outsample.rename(
+in_sample, out_of_sample, errors = barrier_trainer.test_prediction_accuracy(dnn_barriers, test_data, train_data)
+outsample = out_of_sample.rename(
     columns = {
         'strike_price':'k',
         'days_to_maturity':'t',
         'barrier_type_name':'type',
         'barrier_price':'price',
         'vanilla_price':'vanilla',
-        'spot_price':'spot'
+        'spot_price':'spot',
+        'outofsample_target':'target', 
+        'outofsample_prediction':'dnn', 
+        'outofsample_error' : 'error',
+        'barrier':'b'
         }
 )
 outsample = outsample[[
-    'spot', 'k', 't', 'barrier','type', 'w', 'price', 'vanilla', 
-    'outofsample_target', 'outofsample_prediction', 'outofsample_error'
+    'spot', 'k', 'b','price', 'vanilla', 'type', 'w','t', 
+    'target', 'dnn', 'error'
 ]]
 pd.set_option("display.float_format", "{:.2f}".format)
 pd.set_option("display.max_rows",None)
-print(outsample.describe())
+print(f"\n{outsample.describe()}")
+outsample_preview = outsample.copy().sort_values(by=['w','type','k','b'],ascending=False).reset_index(drop=True)
+print(f"\n{symbol} down barrier options for {notebook_printdate}")
+print(f"\n{outsample_preview}")
+pd.reset_option("display.max_rows")
+pd.reset_option("display.float_format") 
 ```
 
     train data count: 840
@@ -731,2068 +724,164 @@ print(outsample.describe())
     alpha: 0.0001
     
     in sample:
-         RSME: 7.316641235311868
-         MAE: 4.886395520077746
+         RSME: 2.6018013039764103
+         MAE: 1.8664083933152358
     
     out of sample:
-         RSME: 11.012887813516222
-         MAE: 6.802961189071137
-    TransformedTargetRegressor(regressor=Pipeline(steps=[('preprocessor',
-                                                          ColumnTransformer(transformers=[('StandardScaler',
-                                                                                           StandardScaler(),
-                                                                                           ['spot_price',
-                                                                                            'strike_price',
-                                                                                            'days_to_maturity',
-                                                                                            'risk_free_rate',
-                                                                                            'dividend_rate',
-                                                                                            'kappa',
-                                                                                            'theta',
-                                                                                            'rho',
-                                                                                            'eta',
-                                                                                            'v0',
-                                                                                            'barrier']),
-                                                                                          ('OneHotEncoder',
-                                                                                           OneHotEncoder(sparse_output=False),
-                                                                                           ['barrier_type_name',
-                                                                                            'w'])])),
-                                                         ('regressor',
-                                                          MLPRegressor(hidden_layer_sizes=(13,
-                                                                                           13,
-                                                                                           13),
-                                                                       learning_rate='adaptive',
-                                                                       max_iter=1000,
-                                                                       solver='sgd'))]),
-                               transformer=Pipeline(steps=[('StandardScaler',
-                                                            StandardScaler())]))
-            spot      k      t  barrier  price  vanilla  outofsample_target  \
-    count 140.00 140.00 140.00   140.00 140.00   140.00              140.00   
-    mean  567.80 567.29 720.00   422.60  31.93    63.85               31.94   
-    std     0.00  75.91   0.00    98.92  38.05    44.46               38.04   
-    min   567.80 454.00 720.00   283.00   0.00    17.88                0.00   
-    25%   567.80 492.00 720.00   353.00   3.26    29.36                3.51   
-    50%   567.80 567.00 720.00   423.00  18.90    50.80               19.05   
-    75%   567.80 643.00 720.00   492.00  42.15    80.56               42.12   
-    max   567.80 681.00 720.00   562.00 165.32   167.20              165.55   
+         RSME: 7.1738518060054215
+         MAE: 5.534212539080165
     
-           outofsample_prediction  outofsample_error  
-    count                  140.00             140.00  
-    mean                    32.32               0.39  
-    std                     35.75              11.05  
-    min                     -6.56             -69.71  
-    25%                      5.99              -3.35  
-    50%                     22.61               0.96  
-    75%                     46.71               5.25  
-    max                    169.86              38.19  
+            spot      k      b  price  vanilla      t  target    dnn  error
+    count 140.00 140.00 140.00 140.00   140.00 140.00  140.00 140.00 140.00
+    mean  127.72 127.29  94.60  19.20    38.38 720.00   19.20  22.58   3.38
+    std     0.00  17.06  22.28  16.27     9.49   0.00   16.27  15.00   6.35
+    min   127.72 102.00  63.00   0.00    20.17 720.00    0.00  -0.69 -18.43
+    25%   127.72 110.00  79.00   1.99    32.66 720.00    1.95   7.34   0.28
+    50%   127.72 127.00  95.00  19.59    38.75 720.00   19.50  23.76   3.22
+    75%   127.72 144.00 110.00  32.69    46.15 720.00   32.84  35.50   6.51
+    max   127.72 153.00 126.00  51.45    53.63 720.00   51.65  48.48  15.31
     
-
-
-```python
-outsample
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>spot</th>
-      <th>k</th>
-      <th>t</th>
-      <th>barrier</th>
-      <th>type</th>
-      <th>w</th>
-      <th>price</th>
-      <th>vanilla</th>
-      <th>outofsample_target</th>
-      <th>outofsample_prediction</th>
-      <th>outofsample_error</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>120</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>1.53</td>
-      <td>18.95</td>
-      <td>1.76</td>
-      <td>10.18</td>
-      <td>8.41</td>
-    </tr>
-    <tr>
-      <th>121</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>17.38</td>
-      <td>18.95</td>
-      <td>17.09</td>
-      <td>8.71</td>
-      <td>-8.38</td>
-    </tr>
-    <tr>
-      <th>122</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>165.32</td>
-      <td>167.20</td>
-      <td>165.55</td>
-      <td>169.86</td>
-      <td>4.30</td>
-    </tr>
-    <tr>
-      <th>123</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>1.98</td>
-      <td>167.20</td>
-      <td>1.92</td>
-      <td>18.74</td>
-      <td>16.83</td>
-    </tr>
-    <tr>
-      <th>124</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.36</td>
-      <td>18.95</td>
-      <td>0.42</td>
-      <td>7.32</td>
-      <td>6.90</td>
-    </tr>
-    <tr>
-      <th>125</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>18.56</td>
-      <td>18.95</td>
-      <td>18.49</td>
-      <td>16.83</td>
-      <td>-1.66</td>
-    </tr>
-    <tr>
-      <th>126</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>161.27</td>
-      <td>167.20</td>
-      <td>161.50</td>
-      <td>160.38</td>
-      <td>-1.12</td>
-    </tr>
-    <tr>
-      <th>127</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>6.03</td>
-      <td>167.20</td>
-      <td>6.06</td>
-      <td>22.45</td>
-      <td>16.39</td>
-    </tr>
-    <tr>
-      <th>128</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.03</td>
-      <td>18.95</td>
-      <td>0.00</td>
-      <td>5.72</td>
-      <td>5.72</td>
-    </tr>
-    <tr>
-      <th>129</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>18.88</td>
-      <td>18.95</td>
-      <td>19.08</td>
-      <td>19.63</td>
-      <td>0.56</td>
-    </tr>
-    <tr>
-      <th>130</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>150.52</td>
-      <td>167.20</td>
-      <td>150.48</td>
-      <td>135.68</td>
-      <td>-14.81</td>
-    </tr>
-    <tr>
-      <th>131</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>16.78</td>
-      <td>167.20</td>
-      <td>16.88</td>
-      <td>30.20</td>
-      <td>13.31</td>
-    </tr>
-    <tr>
-      <th>132</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.00</td>
-      <td>18.95</td>
-      <td>0.00</td>
-      <td>2.37</td>
-      <td>2.37</td>
-    </tr>
-    <tr>
-      <th>133</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>18.91</td>
-      <td>18.95</td>
-      <td>19.03</td>
-      <td>22.47</td>
-      <td>3.44</td>
-    </tr>
-    <tr>
-      <th>134</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>122.62</td>
-      <td>167.20</td>
-      <td>122.46</td>
-      <td>101.98</td>
-      <td>-20.47</td>
-    </tr>
-    <tr>
-      <th>135</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>44.68</td>
-      <td>167.20</td>
-      <td>44.61</td>
-      <td>56.68</td>
-      <td>12.07</td>
-    </tr>
-    <tr>
-      <th>136</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.00</td>
-      <td>18.95</td>
-      <td>0.09</td>
-      <td>-3.61</td>
-      <td>-3.70</td>
-    </tr>
-    <tr>
-      <th>137</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>18.91</td>
-      <td>18.95</td>
-      <td>19.08</td>
-      <td>24.23</td>
-      <td>5.16</td>
-    </tr>
-    <tr>
-      <th>138</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>21.58</td>
-      <td>167.20</td>
-      <td>21.49</td>
-      <td>59.68</td>
-      <td>38.19</td>
-    </tr>
-    <tr>
-      <th>139</th>
-      <td>567.80</td>
-      <td>454</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>145.72</td>
-      <td>167.20</td>
-      <td>145.66</td>
-      <td>75.95</td>
-      <td>-69.71</td>
-    </tr>
-    <tr>
-      <th>260</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>3.04</td>
-      <td>23.67</td>
-      <td>3.21</td>
-      <td>2.98</td>
-      <td>-0.23</td>
-    </tr>
-    <tr>
-      <th>261</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>20.58</td>
-      <td>23.67</td>
-      <td>20.69</td>
-      <td>15.15</td>
-      <td>-5.54</td>
-    </tr>
-    <tr>
-      <th>262</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>135.42</td>
-      <td>136.80</td>
-      <td>135.19</td>
-      <td>145.25</td>
-      <td>10.06</td>
-    </tr>
-    <tr>
-      <th>263</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>1.45</td>
-      <td>136.80</td>
-      <td>1.40</td>
-      <td>3.03</td>
-      <td>1.63</td>
-    </tr>
-    <tr>
-      <th>264</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.99</td>
-      <td>23.67</td>
-      <td>0.79</td>
-      <td>3.36</td>
-      <td>2.58</td>
-    </tr>
-    <tr>
-      <th>265</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>22.63</td>
-      <td>23.67</td>
-      <td>22.58</td>
-      <td>19.51</td>
-      <td>-3.07</td>
-    </tr>
-    <tr>
-      <th>266</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>132.45</td>
-      <td>136.80</td>
-      <td>132.39</td>
-      <td>144.07</td>
-      <td>11.67</td>
-    </tr>
-    <tr>
-      <th>267</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>4.41</td>
-      <td>136.80</td>
-      <td>4.44</td>
-      <td>10.92</td>
-      <td>6.47</td>
-    </tr>
-    <tr>
-      <th>268</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.15</td>
-      <td>23.67</td>
-      <td>0.11</td>
-      <td>3.64</td>
-      <td>3.53</td>
-    </tr>
-    <tr>
-      <th>269</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>23.47</td>
-      <td>23.67</td>
-      <td>23.73</td>
-      <td>23.07</td>
-      <td>-0.66</td>
-    </tr>
-    <tr>
-      <th>270</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>124.36</td>
-      <td>136.80</td>
-      <td>124.35</td>
-      <td>124.57</td>
-      <td>0.22</td>
-    </tr>
-    <tr>
-      <th>271</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>12.51</td>
-      <td>136.80</td>
-      <td>12.46</td>
-      <td>19.92</td>
-      <td>7.46</td>
-    </tr>
-    <tr>
-      <th>272</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.00</td>
-      <td>23.67</td>
-      <td>0.00</td>
-      <td>1.82</td>
-      <td>1.82</td>
-    </tr>
-    <tr>
-      <th>273</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>23.62</td>
-      <td>23.67</td>
-      <td>23.80</td>
-      <td>28.83</td>
-      <td>5.03</td>
-    </tr>
-    <tr>
-      <th>274</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>102.17</td>
-      <td>136.80</td>
-      <td>102.25</td>
-      <td>90.12</td>
-      <td>-12.13</td>
-    </tr>
-    <tr>
-      <th>275</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>34.69</td>
-      <td>136.80</td>
-      <td>34.66</td>
-      <td>46.14</td>
-      <td>11.49</td>
-    </tr>
-    <tr>
-      <th>276</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.00</td>
-      <td>23.67</td>
-      <td>0.00</td>
-      <td>-3.46</td>
-      <td>-3.46</td>
-    </tr>
-    <tr>
-      <th>277</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>23.62</td>
-      <td>23.67</td>
-      <td>23.73</td>
-      <td>30.59</td>
-      <td>6.85</td>
-    </tr>
-    <tr>
-      <th>278</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>18.18</td>
-      <td>136.80</td>
-      <td>18.04</td>
-      <td>47.92</td>
-      <td>29.88</td>
-    </tr>
-    <tr>
-      <th>279</th>
-      <td>567.80</td>
-      <td>492</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>118.68</td>
-      <td>136.80</td>
-      <td>118.44</td>
-      <td>75.25</td>
-      <td>-43.20</td>
-    </tr>
-    <tr>
-      <th>400</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>5.44</td>
-      <td>29.36</td>
-      <td>5.48</td>
-      <td>6.19</td>
-      <td>0.70</td>
-    </tr>
-    <tr>
-      <th>401</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>23.83</td>
-      <td>29.36</td>
-      <td>23.59</td>
-      <td>21.42</td>
-      <td>-2.17</td>
-    </tr>
-    <tr>
-      <th>402</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>107.23</td>
-      <td>108.29</td>
-      <td>107.23</td>
-      <td>115.09</td>
-      <td>7.86</td>
-    </tr>
-    <tr>
-      <th>403</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>1.07</td>
-      <td>108.29</td>
-      <td>1.06</td>
-      <td>-0.27</td>
-      <td>-1.33</td>
-    </tr>
-    <tr>
-      <th>404</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>2.29</td>
-      <td>29.36</td>
-      <td>2.24</td>
-      <td>4.63</td>
-      <td>2.39</td>
-    </tr>
-    <tr>
-      <th>405</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>26.98</td>
-      <td>29.36</td>
-      <td>27.00</td>
-      <td>22.84</td>
-      <td>-4.15</td>
-    </tr>
-    <tr>
-      <th>406</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>105.07</td>
-      <td>108.29</td>
-      <td>105.26</td>
-      <td>114.37</td>
-      <td>9.12</td>
-    </tr>
-    <tr>
-      <th>407</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>3.23</td>
-      <td>108.29</td>
-      <td>3.54</td>
-      <td>7.09</td>
-      <td>3.55</td>
-    </tr>
-    <tr>
-      <th>408</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.55</td>
-      <td>29.36</td>
-      <td>0.43</td>
-      <td>3.19</td>
-      <td>2.76</td>
-    </tr>
-    <tr>
-      <th>409</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>28.72</td>
-      <td>29.36</td>
-      <td>28.88</td>
-      <td>26.42</td>
-      <td>-2.46</td>
-    </tr>
-    <tr>
-      <th>410</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>99.15</td>
-      <td>108.29</td>
-      <td>99.01</td>
-      <td>105.24</td>
-      <td>6.23</td>
-    </tr>
-    <tr>
-      <th>411</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>9.15</td>
-      <td>108.29</td>
-      <td>9.46</td>
-      <td>13.95</td>
-      <td>4.49</td>
-    </tr>
-    <tr>
-      <th>412</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.05</td>
-      <td>29.36</td>
-      <td>0.15</td>
-      <td>1.68</td>
-      <td>1.54</td>
-    </tr>
-    <tr>
-      <th>413</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>29.23</td>
-      <td>29.36</td>
-      <td>29.14</td>
-      <td>35.02</td>
-      <td>5.88</td>
-    </tr>
-    <tr>
-      <th>414</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>82.31</td>
-      <td>108.29</td>
-      <td>82.50</td>
-      <td>72.09</td>
-      <td>-10.41</td>
-    </tr>
-    <tr>
-      <th>415</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>25.99</td>
-      <td>108.29</td>
-      <td>26.18</td>
-      <td>33.75</td>
-      <td>7.56</td>
-    </tr>
-    <tr>
-      <th>416</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.00</td>
-      <td>29.36</td>
-      <td>0.00</td>
-      <td>-3.32</td>
-      <td>-3.32</td>
-    </tr>
-    <tr>
-      <th>417</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>29.27</td>
-      <td>29.36</td>
-      <td>29.19</td>
-      <td>36.78</td>
-      <td>7.59</td>
-    </tr>
-    <tr>
-      <th>418</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>14.87</td>
-      <td>108.29</td>
-      <td>15.04</td>
-      <td>40.43</td>
-      <td>25.40</td>
-    </tr>
-    <tr>
-      <th>419</th>
-      <td>567.80</td>
-      <td>529</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>93.43</td>
-      <td>108.29</td>
-      <td>93.19</td>
-      <td>71.79</td>
-      <td>-21.40</td>
-    </tr>
-    <tr>
-      <th>540</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>9.33</td>
-      <td>36.74</td>
-      <td>9.35</td>
-      <td>15.60</td>
-      <td>6.25</td>
-    </tr>
-    <tr>
-      <th>541</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>27.28</td>
-      <td>36.74</td>
-      <td>27.13</td>
-      <td>28.57</td>
-      <td>1.44</td>
-    </tr>
-    <tr>
-      <th>542</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>79.70</td>
-      <td>80.56</td>
-      <td>79.66</td>
-      <td>81.99</td>
-      <td>2.33</td>
-    </tr>
-    <tr>
-      <th>543</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>0.80</td>
-      <td>80.56</td>
-      <td>0.97</td>
-      <td>-3.42</td>
-      <td>-4.38</td>
-    </tr>
-    <tr>
-      <th>544</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>4.82</td>
-      <td>36.74</td>
-      <td>5.04</td>
-      <td>5.32</td>
-      <td>0.28</td>
-    </tr>
-    <tr>
-      <th>545</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>31.78</td>
-      <td>36.74</td>
-      <td>31.82</td>
-      <td>29.28</td>
-      <td>-2.54</td>
-    </tr>
-    <tr>
-      <th>546</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>78.15</td>
-      <td>80.56</td>
-      <td>78.15</td>
-      <td>80.40</td>
-      <td>2.25</td>
-    </tr>
-    <tr>
-      <th>547</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>2.34</td>
-      <td>80.56</td>
-      <td>2.38</td>
-      <td>3.16</td>
-      <td>0.78</td>
-    </tr>
-    <tr>
-      <th>548</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>1.68</td>
-      <td>36.74</td>
-      <td>1.59</td>
-      <td>2.73</td>
-      <td>1.14</td>
-    </tr>
-    <tr>
-      <th>549</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>34.93</td>
-      <td>36.74</td>
-      <td>34.78</td>
-      <td>31.03</td>
-      <td>-3.74</td>
-    </tr>
-    <tr>
-      <th>550</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>73.98</td>
-      <td>80.56</td>
-      <td>74.10</td>
-      <td>78.72</td>
-      <td>4.62</td>
-    </tr>
-    <tr>
-      <th>551</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>6.51</td>
-      <td>80.56</td>
-      <td>6.38</td>
-      <td>8.23</td>
-      <td>1.85</td>
-    </tr>
-    <tr>
-      <th>552</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.25</td>
-      <td>36.74</td>
-      <td>0.07</td>
-      <td>1.21</td>
-      <td>1.14</td>
-    </tr>
-    <tr>
-      <th>553</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>36.35</td>
-      <td>36.74</td>
-      <td>36.33</td>
-      <td>38.80</td>
-      <td>2.47</td>
-    </tr>
-    <tr>
-      <th>554</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>62.07</td>
-      <td>80.56</td>
-      <td>62.19</td>
-      <td>51.79</td>
-      <td>-10.39</td>
-    </tr>
-    <tr>
-      <th>555</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>18.42</td>
-      <td>80.56</td>
-      <td>18.59</td>
-      <td>23.54</td>
-      <td>4.94</td>
-    </tr>
-    <tr>
-      <th>556</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.00</td>
-      <td>36.74</td>
-      <td>0.00</td>
-      <td>-3.17</td>
-      <td>-3.17</td>
-    </tr>
-    <tr>
-      <th>557</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>36.60</td>
-      <td>36.74</td>
-      <td>36.51</td>
-      <td>43.13</td>
-      <td>6.62</td>
-    </tr>
-    <tr>
-      <th>558</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>11.46</td>
-      <td>80.56</td>
-      <td>11.45</td>
-      <td>33.28</td>
-      <td>21.83</td>
-    </tr>
-    <tr>
-      <th>559</th>
-      <td>567.80</td>
-      <td>567</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>69.03</td>
-      <td>80.56</td>
-      <td>68.98</td>
-      <td>67.80</td>
-      <td>-1.18</td>
-    </tr>
-    <tr>
-      <th>680</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>15.33</td>
-      <td>46.45</td>
-      <td>15.16</td>
-      <td>24.10</td>
-      <td>8.94</td>
-    </tr>
-    <tr>
-      <th>681</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>30.81</td>
-      <td>46.45</td>
-      <td>30.75</td>
-      <td>34.25</td>
-      <td>3.50</td>
-    </tr>
-    <tr>
-      <th>682</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>54.28</td>
-      <td>55.15</td>
-      <td>54.36</td>
-      <td>51.91</td>
-      <td>-2.45</td>
-    </tr>
-    <tr>
-      <th>683</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>0.61</td>
-      <td>55.15</td>
-      <td>0.83</td>
-      <td>-6.56</td>
-      <td>-7.40</td>
-    </tr>
-    <tr>
-      <th>684</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>9.33</td>
-      <td>46.45</td>
-      <td>9.28</td>
-      <td>6.03</td>
-      <td>-3.25</td>
-    </tr>
-    <tr>
-      <th>685</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>36.81</td>
-      <td>46.45</td>
-      <td>36.81</td>
-      <td>35.72</td>
-      <td>-1.09</td>
-    </tr>
-    <tr>
-      <th>686</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>53.19</td>
-      <td>55.15</td>
-      <td>53.42</td>
-      <td>48.43</td>
-      <td>-4.98</td>
-    </tr>
-    <tr>
-      <th>687</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>1.69</td>
-      <td>55.15</td>
-      <td>1.68</td>
-      <td>0.10</td>
-      <td>-1.59</td>
-    </tr>
-    <tr>
-      <th>688</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>4.32</td>
-      <td>46.45</td>
-      <td>4.12</td>
-      <td>2.53</td>
-      <td>-1.59</td>
-    </tr>
-    <tr>
-      <th>689</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>41.82</td>
-      <td>46.45</td>
-      <td>41.66</td>
-      <td>37.50</td>
-      <td>-4.16</td>
-    </tr>
-    <tr>
-      <th>690</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>50.33</td>
-      <td>55.15</td>
-      <td>50.29</td>
-      <td>47.43</td>
-      <td>-2.85</td>
-    </tr>
-    <tr>
-      <th>691</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>4.55</td>
-      <td>55.15</td>
-      <td>4.75</td>
-      <td>5.02</td>
-      <td>0.26</td>
-    </tr>
-    <tr>
-      <th>692</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>1.05</td>
-      <td>46.45</td>
-      <td>1.06</td>
-      <td>0.73</td>
-      <td>-0.33</td>
-    </tr>
-    <tr>
-      <th>693</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>45.09</td>
-      <td>46.45</td>
-      <td>44.99</td>
-      <td>42.44</td>
-      <td>-2.55</td>
-    </tr>
-    <tr>
-      <th>694</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>42.42</td>
-      <td>55.15</td>
-      <td>42.53</td>
-      <td>32.73</td>
-      <td>-9.80</td>
-    </tr>
-    <tr>
-      <th>695</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>12.46</td>
-      <td>55.15</td>
-      <td>12.55</td>
-      <td>15.08</td>
-      <td>2.53</td>
-    </tr>
-    <tr>
-      <th>696</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.01</td>
-      <td>46.45</td>
-      <td>0.00</td>
-      <td>-3.01</td>
-      <td>-3.01</td>
-    </tr>
-    <tr>
-      <th>697</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>46.13</td>
-      <td>46.45</td>
-      <td>46.19</td>
-      <td>49.53</td>
-      <td>3.34</td>
-    </tr>
-    <tr>
-      <th>698</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>8.07</td>
-      <td>55.15</td>
-      <td>7.84</td>
-      <td>24.29</td>
-      <td>16.44</td>
-    </tr>
-    <tr>
-      <th>699</th>
-      <td>567.80</td>
-      <td>605</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>46.81</td>
-      <td>55.15</td>
-      <td>46.78</td>
-      <td>51.37</td>
-      <td>4.59</td>
-    </tr>
-    <tr>
-      <th>820</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>25.39</td>
-      <td>59.92</td>
-      <td>25.04</td>
-      <td>32.79</td>
-      <td>7.75</td>
-    </tr>
-    <tr>
-      <th>821</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>34.37</td>
-      <td>59.92</td>
-      <td>34.39</td>
-      <td>38.92</td>
-      <td>4.53</td>
-    </tr>
-    <tr>
-      <th>822</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>32.92</td>
-      <td>33.51</td>
-      <td>33.22</td>
-      <td>25.33</td>
-      <td>-7.89</td>
-    </tr>
-    <tr>
-      <th>823</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>0.44</td>
-      <td>33.51</td>
-      <td>0.38</td>
-      <td>-4.13</td>
-      <td>-4.51</td>
-    </tr>
-    <tr>
-      <th>824</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>17.69</td>
-      <td>59.92</td>
-      <td>17.62</td>
-      <td>16.10</td>
-      <td>-1.52</td>
-    </tr>
-    <tr>
-      <th>825</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>42.06</td>
-      <td>59.92</td>
-      <td>41.94</td>
-      <td>41.26</td>
-      <td>-0.68</td>
-    </tr>
-    <tr>
-      <th>826</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>32.10</td>
-      <td>33.51</td>
-      <td>32.32</td>
-      <td>22.75</td>
-      <td>-9.57</td>
-    </tr>
-    <tr>
-      <th>827</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>1.26</td>
-      <td>33.51</td>
-      <td>1.38</td>
-      <td>2.74</td>
-      <td>1.36</td>
-    </tr>
-    <tr>
-      <th>828</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>10.38</td>
-      <td>59.92</td>
-      <td>10.39</td>
-      <td>3.69</td>
-      <td>-6.70</td>
-    </tr>
-    <tr>
-      <th>829</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>49.37</td>
-      <td>59.92</td>
-      <td>49.20</td>
-      <td>49.73</td>
-      <td>0.54</td>
-    </tr>
-    <tr>
-      <th>830</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>30.10</td>
-      <td>33.51</td>
-      <td>29.98</td>
-      <td>21.10</td>
-      <td>-8.88</td>
-    </tr>
-    <tr>
-      <th>831</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>3.26</td>
-      <td>33.51</td>
-      <td>3.42</td>
-      <td>7.00</td>
-      <td>3.58</td>
-    </tr>
-    <tr>
-      <th>832</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>4.10</td>
-      <td>59.92</td>
-      <td>3.94</td>
-      <td>0.04</td>
-      <td>-3.90</td>
-    </tr>
-    <tr>
-      <th>833</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>55.66</td>
-      <td>59.92</td>
-      <td>55.69</td>
-      <td>46.47</td>
-      <td>-9.22</td>
-    </tr>
-    <tr>
-      <th>834</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>25.02</td>
-      <td>33.51</td>
-      <td>24.94</td>
-      <td>13.33</td>
-      <td>-11.61</td>
-    </tr>
-    <tr>
-      <th>835</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>8.34</td>
-      <td>33.51</td>
-      <td>8.49</td>
-      <td>14.24</td>
-      <td>5.75</td>
-    </tr>
-    <tr>
-      <th>836</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>0.15</td>
-      <td>59.92</td>
-      <td>0.36</td>
-      <td>-3.33</td>
-      <td>-3.69</td>
-    </tr>
-    <tr>
-      <th>837</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>59.60</td>
-      <td>59.92</td>
-      <td>59.70</td>
-      <td>50.64</td>
-      <td>-9.06</td>
-    </tr>
-    <tr>
-      <th>838</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>4.81</td>
-      <td>33.51</td>
-      <td>5.05</td>
-      <td>15.80</td>
-      <td>10.75</td>
-    </tr>
-    <tr>
-      <th>839</th>
-      <td>567.80</td>
-      <td>643</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>28.55</td>
-      <td>33.51</td>
-      <td>28.55</td>
-      <td>34.06</td>
-      <td>5.51</td>
-    </tr>
-    <tr>
-      <th>960</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>42.01</td>
-      <td>79.41</td>
-      <td>41.99</td>
-      <td>48.21</td>
-      <td>6.23</td>
-    </tr>
-    <tr>
-      <th>961</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>37.96</td>
-      <td>79.41</td>
-      <td>37.98</td>
-      <td>44.93</td>
-      <td>6.95</td>
-    </tr>
-    <tr>
-      <th>962</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>18.14</td>
-      <td>17.88</td>
-      <td>18.16</td>
-      <td>13.01</td>
-      <td>-5.15</td>
-    </tr>
-    <tr>
-      <th>963</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>283</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>0.31</td>
-      <td>17.88</td>
-      <td>0.12</td>
-      <td>-0.76</td>
-      <td>-0.89</td>
-    </tr>
-    <tr>
-      <th>964</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>32.52</td>
-      <td>79.41</td>
-      <td>32.35</td>
-      <td>32.95</td>
-      <td>0.60</td>
-    </tr>
-    <tr>
-      <th>965</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>47.46</td>
-      <td>79.41</td>
-      <td>47.50</td>
-      <td>50.41</td>
-      <td>2.92</td>
-    </tr>
-    <tr>
-      <th>966</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>17.47</td>
-      <td>17.88</td>
-      <td>17.56</td>
-      <td>13.32</td>
-      <td>-4.24</td>
-    </tr>
-    <tr>
-      <th>967</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>353</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>0.98</td>
-      <td>17.88</td>
-      <td>1.19</td>
-      <td>5.87</td>
-      <td>4.69</td>
-    </tr>
-    <tr>
-      <th>968</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>22.60</td>
-      <td>79.41</td>
-      <td>22.56</td>
-      <td>19.61</td>
-      <td>-2.95</td>
-    </tr>
-    <tr>
-      <th>969</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>57.37</td>
-      <td>79.41</td>
-      <td>57.46</td>
-      <td>61.28</td>
-      <td>3.82</td>
-    </tr>
-    <tr>
-      <th>970</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>16.02</td>
-      <td>17.88</td>
-      <td>16.02</td>
-      <td>14.11</td>
-      <td>-1.91</td>
-    </tr>
-    <tr>
-      <th>971</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>423</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>2.42</td>
-      <td>17.88</td>
-      <td>2.30</td>
-      <td>9.47</td>
-      <td>7.17</td>
-    </tr>
-    <tr>
-      <th>972</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>12.30</td>
-      <td>79.41</td>
-      <td>12.22</td>
-      <td>11.14</td>
-      <td>-1.08</td>
-    </tr>
-    <tr>
-      <th>973</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>67.68</td>
-      <td>79.41</td>
-      <td>67.79</td>
-      <td>57.85</td>
-      <td>-9.95</td>
-    </tr>
-    <tr>
-      <th>974</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>12.78</td>
-      <td>17.88</td>
-      <td>12.64</td>
-      <td>5.70</td>
-      <td>-6.95</td>
-    </tr>
-    <tr>
-      <th>975</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>492</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>5.67</td>
-      <td>17.88</td>
-      <td>5.83</td>
-      <td>12.77</td>
-      <td>6.94</td>
-    </tr>
-    <tr>
-      <th>976</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>put</td>
-      <td>1.06</td>
-      <td>79.41</td>
-      <td>0.98</td>
-      <td>-5.07</td>
-      <td>-6.05</td>
-    </tr>
-    <tr>
-      <th>977</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>put</td>
-      <td>78.92</td>
-      <td>79.41</td>
-      <td>79.07</td>
-      <td>50.18</td>
-      <td>-28.89</td>
-    </tr>
-    <tr>
-      <th>978</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownOut</td>
-      <td>call</td>
-      <td>2.32</td>
-      <td>17.88</td>
-      <td>2.39</td>
-      <td>7.43</td>
-      <td>5.04</td>
-    </tr>
-    <tr>
-      <th>979</th>
-      <td>567.80</td>
-      <td>681</td>
-      <td>720</td>
-      <td>562</td>
-      <td>DownIn</td>
-      <td>call</td>
-      <td>16.13</td>
-      <td>17.88</td>
-      <td>15.94</td>
-      <td>20.09</td>
-      <td>4.15</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
-pd.reset_option("display.max_rows")
-pd.reset_option("display.float_format") 
-```
+    NVDA down barrier options for Friday, October 11th, 2024
+    
+          spot    k    b  price  vanilla     type     w    t  target   dnn  error
+    0   127.72  153  126   0.00    48.01  DownOut   put  720    0.08  5.52   5.44
+    1   127.72  153  110   0.18    48.01  DownOut   put  720    0.28  6.78   6.51
+    2   127.72  153   95   0.91    48.01  DownOut   put  720    1.03  6.50   5.47
+    3   127.72  153   79   3.19    48.01  DownOut   put  720    3.01  7.39   4.38
+    4   127.72  153   63   8.28    48.01  DownOut   put  720    8.40 14.94   6.53
+    5   127.72  144  126   0.00    42.46  DownOut   put  720    0.06  3.94   3.88
+    6   127.72  144  110   0.10    42.46  DownOut   put  720    0.12  3.23   3.11
+    7   127.72  144   95   0.59    42.46  DownOut   put  720    0.33  2.74   2.42
+    8   127.72  144   79   2.31    42.46  DownOut   put  720    2.23  4.94   2.71
+    9   127.72  144   63   6.50    42.46  DownOut   put  720    6.54 11.66   5.11
+    10  127.72  136  126   0.00    37.73  DownOut   put  720    0.00  2.91   2.91
+    11  127.72  136  110   0.05    37.73  DownOut   put  720    0.00  1.84   1.84
+    12  127.72  136   95   0.37    37.73  DownOut   put  720    0.73  1.77   1.04
+    13  127.72  136   79   1.66    37.73  DownOut   put  720    1.63  2.71   1.08
+    14  127.72  136   63   5.09    37.73  DownOut   put  720    5.19  9.53   4.34
+    15  127.72  127  126   0.00    32.66  DownOut   put  720    0.21  2.36   2.15
+    16  127.72  127  110   0.02    32.66  DownOut   put  720    0.00  0.69   0.69
+    17  127.72  127   95   0.19    32.66  DownOut   put  720    0.01  0.72   0.71
+    18  127.72  127   79   1.07    32.66  DownOut   put  720    1.13  1.28   0.15
+    19  127.72  127   63   3.71    32.66  DownOut   put  720    3.69  7.20   3.51
+    20  127.72  119  126   0.00    28.40  DownOut   put  720    0.00  1.99   1.99
+    21  127.72  119  110   0.01    28.40  DownOut   put  720    0.00  0.45   0.45
+    22  127.72  119   95   0.09    28.40  DownOut   put  720    0.00 -0.22  -0.22
+    23  127.72  119   79   0.66    28.40  DownOut   put  720    0.74  0.59  -0.15
+    24  127.72  119   63   2.67    28.40  DownOut   put  720    2.80  5.46   2.66
+    25  127.72  110  126   0.00    23.89  DownOut   put  720    0.15  1.88   1.73
+    26  127.72  110  110   0.00    23.89  DownOut   put  720    0.25  0.38   0.13
+    27  127.72  110   95   0.03    23.89  DownOut   put  720    0.03 -0.69  -0.72
+    28  127.72  110   79   0.34    23.89  DownOut   put  720    0.09  0.36   0.26
+    29  127.72  110   63   1.72    23.89  DownOut   put  720    1.90  3.99   2.09
+    30  127.72  102  126   0.00    20.17  DownOut   put  720    0.00  1.86   1.86
+    31  127.72  102  110   0.00    20.17  DownOut   put  720    0.06  0.34   0.29
+    32  127.72  102   95   0.01    20.17  DownOut   put  720    0.04 -0.66  -0.70
+    33  127.72  102   79   0.16    20.17  DownOut   put  720    0.32  0.15  -0.17
+    34  127.72  102   63   1.06    20.17  DownOut   put  720    1.23  4.61   3.38
+    35  127.72  153  126  48.01    48.01   DownIn   put  720   47.75 46.85  -0.90
+    36  127.72  153  110  47.84    48.01   DownIn   put  720   47.60 47.96   0.36
+    37  127.72  153   95  47.10    48.01   DownIn   put  720   47.19 48.48   1.29
+    38  127.72  153   79  44.82    48.01   DownIn   put  720   45.11 47.13   2.02
+    39  127.72  153   63  39.73    48.01   DownIn   put  720   39.93 38.52  -1.41
+    40  127.72  144  126  42.45    42.46   DownIn   put  720   42.44 43.54   1.10
+    41  127.72  144  110  42.36    42.46   DownIn   put  720   42.27 44.74   2.47
+    42  127.72  144   95  41.87    42.46   DownIn   put  720   41.79 45.79   4.00
+    43  127.72  144   79  40.14    42.46   DownIn   put  720   40.06 43.89   3.83
+    44  127.72  144   63  35.96    42.46   DownIn   put  720   35.84 37.37   1.54
+    45  127.72  136  126  37.72    37.73   DownIn   put  720   37.75 40.60   2.85
+    46  127.72  136  110  37.68    37.73   DownIn   put  720   37.57 41.88   4.32
+    47  127.72  136   95  37.36    37.73   DownIn   put  720   37.50 42.76   5.26
+    48  127.72  136   79  36.06    37.73   DownIn   put  720   36.40 39.64   3.24
+    49  127.72  136   63  32.64    37.73   DownIn   put  720   32.95 36.32   3.37
+    50  127.72  127  126  32.66    32.66   DownIn   put  720   32.67 36.73   4.07
+    51  127.72  127  110  32.64    32.66   DownIn   put  720   32.81 37.54   4.72
+    52  127.72  127   95  32.46    32.66   DownIn   put  720   32.42 37.85   5.43
+    53  127.72  127   79  31.59    32.66   DownIn   put  720   31.57 35.06   3.50
+    54  127.72  127   63  28.95    32.66   DownIn   put  720   28.73 31.43   2.70
+    55  127.72  119  126  28.39    28.40   DownIn   put  720   28.40 32.67   4.27
+    56  127.72  119  110  28.39    28.40   DownIn   put  720   28.24 33.62   5.38
+    57  127.72  119   95  28.30    28.40   DownIn   put  720   28.33 33.73   5.39
+    58  127.72  119   79  27.73    28.40   DownIn   put  720   27.67 31.10   3.44
+    59  127.72  119   63  25.72    28.40   DownIn   put  720   25.67 27.23   1.56
+    60  127.72  110  126  23.89    23.89   DownIn   put  720   23.81 28.27   4.46
+    61  127.72  110  110  23.89    23.89   DownIn   put  720   23.83 29.16   5.33
+    62  127.72  110   95  23.86    23.89   DownIn   put  720   24.03 29.31   5.28
+    63  127.72  110   79  23.55    23.89   DownIn   put  720   23.56 26.75   3.20
+    64  127.72  110   63  22.17    23.89   DownIn   put  720   22.35 23.25   0.91
+    65  127.72  102  126  20.17    20.17   DownIn   put  720   20.06 24.36   4.29
+    66  127.72  102  110  20.17    20.17   DownIn   put  720   19.99 25.21   5.22
+    67  127.72  102   95  20.16    20.17   DownIn   put  720   19.90 25.31   5.42
+    68  127.72  102   79  20.01    20.17   DownIn   put  720   20.01 23.79   3.79
+    69  127.72  102   63  19.11    20.17   DownIn   put  720   19.10 20.14   1.04
+    70  127.72  153  126   1.75    34.34  DownOut  call  720    1.71 14.22  12.51
+    71  127.72  153  110  15.51    34.34  DownOut  call  720   15.41 23.73   8.32
+    72  127.72  153   95  24.50    34.34  DownOut  call  720   24.43 31.32   6.89
+    73  127.72  153   79  30.33    34.34  DownOut  call  720   30.49 30.00  -0.49
+    74  127.72  153   63  33.14    34.34  DownOut  call  720   33.12 29.81  -3.31
+    75  127.72  144  126   1.84    37.10  DownOut  call  720    1.73 11.54   9.81
+    76  127.72  144  110  16.40    37.10  DownOut  call  720   16.37 19.26   2.89
+    77  127.72  144   95  26.10    37.10  DownOut  call  720   26.21 28.10   1.90
+    78  127.72  144   79  32.53    37.10  DownOut  call  720   32.40 32.11  -0.29
+    79  127.72  144   63  35.71    37.10  DownOut  call  720   36.04 33.03  -3.01
+    80  127.72  136  126   1.92    39.77  DownOut  call  720    1.83  8.69   6.86
+    81  127.72  136  110  17.22    39.77  DownOut  call  720   17.17 15.20  -1.97
+    82  127.72  136   95  27.59    39.77  DownOut  call  720   27.43 26.16  -1.27
+    83  127.72  136   79  34.61    39.77  DownOut  call  720   34.68 34.38  -0.30
+    84  127.72  136   63  38.16    39.77  DownOut  call  720   38.11 36.84  -1.27
+    85  127.72  127  126   2.00    43.02  DownOut  call  720    1.85  6.57   4.72
+    86  127.72  127  110  18.16    43.02  DownOut  call  720   18.33 12.48  -5.85
+    87  127.72  127   95  29.33    43.02  DownOut  call  720   29.34 23.52  -5.81
+    88  127.72  127   79  37.09    43.02  DownOut  call  720   37.10 35.72  -1.38
+    89  127.72  127   63  41.13    43.02  DownOut  call  720   40.92 41.39   0.47
+    90  127.72  119  126   2.08    46.15  DownOut  call  720    2.06  5.66   3.60
+    91  127.72  119  110  19.01    46.15  DownOut  call  720   19.01 10.38  -8.63
+    92  127.72  119   95  30.94    46.15  DownOut  call  720   30.66 22.54  -8.12
+    93  127.72  119   79  39.41    46.15  DownOut  call  720   39.50 35.76  -3.74
+    94  127.72  119   63  43.95    46.15  DownOut  call  720   43.99 45.44   1.45
+    95  127.72  110  126   2.17    49.96  DownOut  call  720    2.33  5.40   3.06
+    96  127.72  110  110  19.97    49.96  DownOut  call  720   20.17 10.21  -9.96
+    97  127.72  110   95  32.80    49.96  DownOut  call  720   32.64 21.38 -11.25
+    98  127.72  110   79  42.16    49.96  DownOut  call  720   42.23 35.61  -6.62
+    99  127.72  110   63  47.34    49.96  DownOut  call  720   47.63 47.74   0.10
+    100 127.72  102  126   2.25    53.63  DownOut  call  720    2.28  6.72   4.44
+    101 127.72  102  110  20.83    53.63  DownOut  call  720   20.96 11.69  -9.27
+    102 127.72  102   95  34.48    53.63  DownOut  call  720   34.32 20.09 -14.23
+    103 127.72  102   79  44.71    53.63  DownOut  call  720   44.69 35.47  -9.23
+    104 127.72  102   63  50.55    53.63  DownOut  call  720   50.80 47.68  -3.12
+    105 127.72  153  126  32.62    34.34   DownIn  call  720   32.48 42.12   9.64
+    106 127.72  153  110  18.86    34.34   DownIn  call  720   18.80 33.33  14.53
+    107 127.72  153   95   9.87    34.34   DownIn  call  720    9.97 23.37  13.40
+    108 127.72  153   79   4.04    34.34   DownIn  call  720    3.95 16.89  12.94
+    109 127.72  153   63   1.23    34.34   DownIn  call  720    1.43 14.12  12.69
+    110 127.72  144  126  35.30    37.10   DownIn  call  720   35.25 42.31   7.06
+    111 127.72  144  110  20.74    37.10   DownIn  call  720   20.62 34.39  13.77
+    112 127.72  144   95  11.04    37.10   DownIn  call  720   10.96 24.10  13.13
+    113 127.72  144   79   4.61    37.10   DownIn  call  720    4.44 16.81  12.37
+    114 127.72  144   63   1.43    37.10   DownIn  call  720    1.28 14.33  13.05
+    115 127.72  136  126  37.89    39.77   DownIn  call  720   37.86 42.31   4.45
+    116 127.72  136  110  22.59    39.77   DownIn  call  720   22.51 35.03  12.52
+    117 127.72  136   95  12.22    39.77   DownIn  call  720   12.14 25.17  13.03
+    118 127.72  136   79   5.20    39.77   DownIn  call  720    5.23 16.89  11.66
+    119 127.72  136   63   1.64    39.77   DownIn  call  720    1.50 13.46  11.96
+    120 127.72  127  126  41.06    43.02   DownIn  call  720   41.07 41.50   0.43
+    121 127.72  127  110  24.90    43.02   DownIn  call  720   24.81 35.75  10.94
+    122 127.72  127   95  13.73    43.02   DownIn  call  720   13.75 27.43  13.68
+    123 127.72  127   79   5.97    43.02   DownIn  call  720    5.78 16.78  10.99
+    124 127.72  127   63   1.93    43.02   DownIn  call  720    1.97 12.60  10.63
+    125 127.72  119  126  44.12    46.15   DownIn  call  720   44.16 38.05  -6.11
+    126 127.72  119  110  27.19    46.15   DownIn  call  720   26.85 36.83   9.97
+    127 127.72  119   95  15.26    46.15   DownIn  call  720   15.32 29.66  14.34
+    128 127.72  119   79   6.78    46.15   DownIn  call  720    6.86 18.80  11.95
+    129 127.72  119   63   2.25    46.15   DownIn  call  720    2.43 12.39   9.96
+    130 127.72  110  126  47.85    49.96   DownIn  call  720   47.92 34.97 -12.95
+    131 127.72  110  110  30.05    49.96   DownIn  call  720   29.96 38.56   8.61
+    132 127.72  110   95  17.22    49.96   DownIn  call  720   16.98 32.03  15.04
+    133 127.72  110   79   7.86    49.96   DownIn  call  720    7.65 21.36  13.72
+    134 127.72  110   63   2.68    49.96   DownIn  call  720    2.67 13.51  10.84
+    135 127.72  102  126  51.45    53.63   DownIn  call  720   51.65 33.22 -18.43
+    136 127.72  102  110  32.87    53.63   DownIn  call  720   32.93 37.16   4.23
+    137 127.72  102   95  19.22    53.63   DownIn  call  720   18.94 34.24  15.31
+    138 127.72  102   79   8.99    53.63   DownIn  call  720    9.00 23.64  14.64
+    139 127.72  102   63   3.15    53.63   DownIn  call  720    3.00 14.50  11.50
+    
