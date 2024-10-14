@@ -3,8 +3,8 @@ import numpy as np
 import time
 from model_settings import ms
 from historical_av_key_collector import keys_df, symbol, h5_name
-keys_df = keys_df.copy().dropna(subset=['raw_data_key','spot_price','date']).fillna(0)
-keys_df = keys_df[keys_df['surface_key']==0]
+keys_df = keys_df.copy().dropna(subset=['spot_price','date'])
+keys_df = keys_df[keys_df['surface_key'].isna()]
 
 print(f"reconstructing {keys_df.shape[0]} surfaces")
 
