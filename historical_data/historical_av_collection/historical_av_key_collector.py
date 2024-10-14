@@ -57,3 +57,13 @@ print(keys_df.dtypes)
 pd.reset_option("display.max_columns")
 
 
+"""
+ENTRY DELETION
+# key_name_to_delete = 'parameter_key'
+# keys_df = keys_df.dropna(subset=[key_name_to_delete])
+# with pd.HDFStore(h5_name) as store:
+#     for i, row in keys_df.iterrows():
+#         del store[row[key_name_to_delete]]
+#         print(row[key_name_to_delete])
+# store.close()
+"""
