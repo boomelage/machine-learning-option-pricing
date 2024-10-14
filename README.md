@@ -72,6 +72,9 @@ Schönbucher, P. (1998) A Market Model for Stochastic Implied Volatility
 Derman, E. (2008). Lecture 9: Patterns of Volatility Change.
 <br> https://emanuelderman.com/wp-content/uploads/2013/09/smile-lecture9.pdf 
 
+Finite difference 
+<br> https://en.wikipedia.org/wiki/Finite_difference
+
 Frey, C., Scheuch, C., Voigt, S. and Weiss, P. (2022). Option Pricing via Machine Learning with Python. Tidy Finance. 
 <br> https://www.tidy-finance.org/python/option-pricing-via-machine-learning.html
 
@@ -80,3 +83,4 @@ Gavin, H. (2024) The Levenberg-Marquardt algorithm for nonlinear least squares c
 
 Heston, S. (1993). A Closed-Form Solution for Options with Stochastic Volatility with Applications to Bond and Currency Options.
 <br> https://www.ma.imperial.ac.uk/~ajacquie/IC_Num_Methods/IC_Num_Methods_Docs/Literature/Heston.pdf
+
