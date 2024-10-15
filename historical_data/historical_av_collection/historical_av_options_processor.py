@@ -14,7 +14,7 @@ for i,row in keys_df.iterrows():
 			with pd.HDFStore(h5_name) as store:
 				raw_data = store[row['raw_data_key']]
 				spot = store[row['spot_price']].iloc[0]
-				date = store[row['date']].iloc[0]
+				date = row['date']
 			break
 		except Exception as e:
 			print(e)
@@ -41,7 +41,11 @@ for i,row in keys_df.iterrows():
 	df['spot_price'] = spot
 	df['type'] = df['type'].str.lower()
 	df['moneyness'] = ms.vmoneyness(df['spot_price'],df['strike'],df['type'])
-	df = df[(df['moneyness']<0)&(df['moneyness']>-0.5)]
+	df = df[
+		(df['moneyness']<0)
+		# &
+		# (df['moneyness']>-0.5)
+	]
 	indexed = df.copy().set_index(['strike','days_to_maturity'])
 
 	T = np.sort(df['days_to_maturity'].unique()).tolist()
@@ -85,8 +89,11 @@ for i,row in keys_df.iterrows():
 				store.put(h5_key, vol_matrix, format='table', append=False)
 				print(f"volatility surface stored for {date}")
 			break
+
 		except Exception as e:
 			print(e)
 			time.sleep(2)
 		finally:
 			store.close()
+
+

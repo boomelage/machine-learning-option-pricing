@@ -14,6 +14,9 @@ parent_dir = str(Path().resolve().parent)
 os.chdir(current_dir)
 sys.path.append(parent_dir)
 
+def parse_date(s):
+    return s[s.find('_',0)+1:s.find('/',1)].replace('_','-')
+
 symbol = 'SPY'
 h5_name = f'alphaVantage {symbol}.h5'
 while True:
@@ -47,11 +50,14 @@ keys_df = pd.DataFrame(
      }
 )
 
-def parse_date(s):
-    return s[s.find('_',0)+1:s.find('/',1)].replace('_','-')
-dates = [parse_date(date) for date in raw_data_keys]
 
 keys_df = keys_df.dropna(subset='raw_data_key')
+
+
+dates = [parse_date(date) for date in keys_df['raw_data_key']]
+
+keys_df['date'] = dates
+
 pd.set_option("display.max_columns",None)
 print(keys_df)
 print(keys_df.dtypes)
@@ -59,12 +65,16 @@ pd.reset_option("display.max_columns")
 
 
 """
-ENTRY DELETION
-# key_name_to_delete = 'parameter_key'
-# keys_df = keys_df.dropna(subset=[key_name_to_delete])
+QUICK DIRECTORY DELETION
+
+# drop_keys = keys_df['parameter_key'].dropna()
 # with pd.HDFStore(h5_name) as store:
-#     for i, row in keys_df.iterrows():
-#         del store[row[key_name_to_delete]]
-#         print(row[key_name_to_delete])
+#     for key in drop_keys:
+#         try:
+#             del store[key]
+#             print(f"deleted {key}")
+#         except Exception:
+#             print(key)
 # store.close()
+
 """
