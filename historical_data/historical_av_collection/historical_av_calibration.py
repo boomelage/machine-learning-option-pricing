@@ -14,7 +14,7 @@ for i,row in keys_df.iterrows():
 	raw_data_key = row['raw_data_key']
 	surface_key = row['surface_key']
 	spot_price_key = row['spot_price']
-	date = raw_data_key[raw_data_key.find('_',0)+1:raw_data_key.find('/',1)].replace('_','-')
+	date = row['date']
 	while True:
 		try:
 			with pd.HDFStore(h5_name) as store:
