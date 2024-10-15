@@ -25,7 +25,6 @@ while True:
             spot_price_keys = pd.Series([key for key in keys if key.find('spot_price')!=-1])
             calibration_keys = pd.Series([key for key in keys if key.find('heston_calibration/calibration_results')!=-1])
             parameter_keys = pd.Series([key for key in keys if key.find('heston_calibration/heston_parameters')!=-1])
-            date_keys = pd.Series([key for key in keys if key.find('date_string')!=-1])
         break
     except Exception as e:
         print(e)
@@ -40,7 +39,6 @@ while True:
 
 keys_df = pd.DataFrame(
     {
-    'date':date_keys,
     'spot_price':spot_price_keys,
     'raw_data_key':raw_data_keys,
     'surface_key':surface_keys,
