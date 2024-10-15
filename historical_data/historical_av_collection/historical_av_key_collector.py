@@ -47,6 +47,9 @@ keys_df = pd.DataFrame(
      }
 )
 
+def parse_date(s):
+    return s[s.find('_',0)+1:s.find('/',1)].replace('_','-')
+dates = [parse_date(date) for date in raw_data_keys]
 
 keys_df = keys_df.dropna(subset='raw_data_key')
 pd.set_option("display.max_columns",None)
