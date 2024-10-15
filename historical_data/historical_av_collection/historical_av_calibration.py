@@ -7,22 +7,20 @@ from datetime import timedelta
 from model_settings import ms
 from historical_av_key_collector import keys_df, symbol, h5_name
 
-keys_df = keys_df.copy().dropna(subset=['surface_key','raw_data_key','spot_price','date'])
+keys_df = keys_df.copy().dropna(subset=['surface_key','raw_data_key','spot_price'])
 keys_df = keys_df[keys_df['calibration_key'].isna()]
-keys_df = keys_df[keys_df['date']!='2020-06-19']
 print(keys_df)
 for i,row in keys_df.iterrows():
 	raw_data_key = row['raw_data_key']
 	surface_key = row['surface_key']
 	spot_price_key = row['spot_price']
-	date_key = row['date']
+	date = raw_data_key[raw_data_key.find('_',0)+1:raw_data_key.find('/',1)].replace('_','-')
 	while True:
 		try:
 			with pd.HDFStore(h5_name) as store:
 				raw_data = store[raw_data_key]
 				vol_matrix = store[surface_key]
 				s = store[spot_price_key].iloc[0]
-				date = store[date_key].iloc[0]
 			break
 		except Exception as e:
 			print(e)
@@ -140,6 +138,6 @@ for i,row in keys_df.iterrows():
 				
 				store.close()
 	except Exception as e:
-		print(e)
+		print(f"calibration aborted: {e}")
 		print(date)
 		pass
