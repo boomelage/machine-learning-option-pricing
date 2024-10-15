@@ -41,11 +41,7 @@ for i,row in keys_df.iterrows():
 	df['spot_price'] = spot
 	df['type'] = df['type'].str.lower()
 	df['moneyness'] = ms.vmoneyness(df['spot_price'],df['strike'],df['type'])
-	df = df[
-		(df['moneyness']<0)
-		# &
-		# (df['moneyness']>-0.5)
-	]
+	df = df[(df['moneyness']<0)]
 	indexed = df.copy().set_index(['strike','days_to_maturity'])
 
 	T = np.sort(df['days_to_maturity'].unique()).tolist()
