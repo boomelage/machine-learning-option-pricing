@@ -54,8 +54,6 @@ keys_df = pd.DataFrame(
 )
 
 
-keys_df = keys_df.dropna(subset='raw_data_key')
-
 
 dates = [parse_date(date) for date in keys_df['raw_data_key']]
 

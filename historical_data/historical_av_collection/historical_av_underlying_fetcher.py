@@ -14,8 +14,11 @@ url = str(
 r = requests.get(url)
 spots = pd.Series(pd.DataFrame(r.json()['Time Series (Daily)']).transpose()['4. close'].squeeze())
 spots = pd.to_numeric(spots,errors='coerce').reset_index().rename(columns={'index':'date','4. close':'spot_price'})
+
+spots = spots.loc[:spots[spots['date']=='2008-01-02'].index.values[0]]
+
 spots = spots.set_index('date')
-historical_spots = spots.copy()
+
 try:
 	spots = spots[~spots.index.isin(dates)]
 except Exception as e:

@@ -12,6 +12,7 @@ import pandas as pd
 from model_settings import ms
 import requests
 from datetime import datetime
+import QuantLib as ql
 import time
 from historical_av_underlying_fetcher import spots, symbol
 
@@ -32,11 +33,14 @@ def collect_av_link(date,spot,symbol):
 for i in range(len(spots)):
     date = spots.iloc[i].name
     spot = spots.iloc[i]
-    printdate = datetime.strptime(date, '%Y-%m-%d').strftime('%A, %Y-%m-%d')
+    datetimedate = datetime.strptime(date, '%Y-%m-%d')
+    ql_date = ql.Date(datetimedate.day,datetimedate.month,datetimedate.year)
+    printdate = str(datetimedate.strftime('%A, ') + str(ql_date))
     while True:
         try:
             raw_data = collect_av_link(date,spot,symbol)
             with pd.HDFStore(f'alphaVantage {symbol}.h5') as store:
+
                 store.put(
                     f"date_{date.replace('-','_')}/raw_data",
                     raw_data,
@@ -49,17 +53,11 @@ for i in range(len(spots)):
                     format='fixed',
                     append=False
                 )
-                store.put(
-                    f"date_{date.replace('-','_')}/date",
-                    pd.Series(str(date)),
-                    format='fixed',
-                    append=False
-                )
-            print(f'collecting: {printdate}')
+            print(f'collecting: {date}')
             break
         except Exception as e:
             print(e)
             time.sleep(2)
         finally:
             store.close()
-            print('collected')
+            print(f'collected {printdate}')
