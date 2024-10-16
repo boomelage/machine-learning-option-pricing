@@ -36,6 +36,9 @@ h5_file_path = os.path.join(barriers_dir,'SPX barriers.h5')
 # sys.path.append(vaillas_dir)
 # h5_file_path = os.path.join(vaillas_dir,'SPX vanillas.h5')
 
+# vaillas_dir = os.path.join(parent_dir,'historical_av_collection')
+# sys.path.append(vaillas_dir)
+# h5_file_path = os.path.join(vaillas_dir,'alphaVantage vanillas.h5')
 
 """"""
 collection_start_time = time.time()
@@ -46,16 +49,15 @@ with pd.HDFStore(h5_file_path, 'r') as hdf_store:
 """
 date filter
 """
-start_date = datetime.strptime("2007-01-01", "%Y-%m-%d")
-end_date = datetime.strptime("2007-01-05", "%Y-%m-%d")
-keys = pd.Series(keys)
-date_pattern = r"(\d{4}_\d{2}_\d{2})"
-extracted_dates = keys.str.extract(date_pattern, expand=False)
-keys_dates = pd.to_datetime(
-    extracted_dates, format="%Y_%m_%d", errors='coerce')
-filtered_keys = keys[(keys_dates >= start_date) & (keys_dates <= end_date)]
-filtered_keys.tolist()
-
+# start_date = datetime.strptime("2007-01-01", "%Y-%m-%d")
+# end_date = datetime.strptime("2007-01-05", "%Y-%m-%d")
+# keys = pd.Series(keys)
+# date_pattern = r"(\d{4}_\d{2}_\d{2})"
+# extracted_dates = keys.str.extract(date_pattern, expand=False)
+# keys_dates = pd.to_datetime(
+#     extracted_dates, format="%Y_%m_%d", errors='coerce')
+# filtered_keys = keys[(keys_dates >= start_date) & (keys_dates <= end_date)]
+# filtered_keys.tolist()
 
 
 """
@@ -74,6 +76,11 @@ contracts = pd.concat(contracts_list, ignore_index=True)
 bar.close()
 contracts.dtypes
 
+contracts.loc[:,'moneyness'] = ms.vmoneyness(
+    contracts['strike_price'],
+    contracts['days_to_maturity'],
+    contracts['w']
+    )
 
 print('\npreparing data...\n')
 if 'barrier_price' in contracts.columns:
@@ -94,7 +101,6 @@ print(f"\n{contracts.dtypes}\n")
 collection_end_time = time.time()
 collection_runtime = collection_end_time - collection_start_time
 print(f"\nruntime: {round(collection_runtime,4)} seconds\n")
-
 
 
 histogram_tolerance = 1
@@ -122,3 +128,6 @@ plt.ylabel(f'frequency ({round(percent_exclusion,2)}% of data excluded)')
 plt.yticks(rotation = 45)
 plt.show()
 plt.clf()
+
+
+
