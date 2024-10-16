@@ -4,13 +4,11 @@ Spyder Editor
 
 This is a temporary script file.
 """
-
+import QuantLib as ql
 import os
 current_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(current_dir)
-from settings import model_settings
-ms = model_settings()
-
+from model_settings import ms
 from datetime import datetime
 s = 100
 k = 110
@@ -27,7 +25,7 @@ nu = 0.05  # Mean jump size
 delta = 0.02  # Jump size standard deviation
 
 
-calculation_date = ms.todatime
+calculation_date = datetime.today()
 t = 1
 
 w = 'put'
