@@ -11,11 +11,7 @@ import matplotlib.pyplot as plt
 
 def plot_heston_trajectories(r,g,heston_parameters,length,timesteps,num_paths):
     
-    today = ql.Date().todaysDate()
-    riskFreeTS = ql.YieldTermStructureHandle(
-        ql.FlatForward(today, r, ql.Actual365Fixed()))
-    dividendTS = ql.YieldTermStructureHandle(
-        ql.FlatForward(today, g, ql.Actual365Fixed()))
+    
     
     v0 = heston_parameters['v0']
     kappa = heston_parameters['kappa']
@@ -23,6 +19,13 @@ def plot_heston_trajectories(r,g,heston_parameters,length,timesteps,num_paths):
     rho = heston_parameters['rho']
     eta = heston_parameters['eta']
     s = heston_parameters['spot_price']
+
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(
+        ql.FlatForward(today, r, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(
+        ql.FlatForward(today, g, ql.Actual365Fixed()))
 
     initialValue = ql.QuoteHandle(ql.SimpleQuote(s))
     hestonProcess = ql.HestonProcess(

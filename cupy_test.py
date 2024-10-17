@@ -98,162 +98,86 @@ def numpy_geometric_asian_call(s, k, t, r, volatility):
     
     return call_price
 
-"""
-
-airthmetic asian option
 
 
-"""
-
+s = 100
+k = 120
+t = 1
 r = 0.04
-g = 0.0
-s = 365.41
-k = 200
-w = 'call'
-t = 90
-mon = s-k
-kappa = 0.412367
-theta = 0.17771
-rho = -0.582856
-eta = 0.785592
-v0 = 0.08079 
+volatility = 0.4
+
+S = np.linspace(90,110,10000)
+K = np.linspace(80,120,1000)
+T = [t]
+R = [r]
+vols = [volatility]
+
+S_cp = cp.asarray(S)
+K_cp = cp.asarray(K)
+T_cp = cp.asarray(T)
+R_cp = cp.asarray(R)
+vols_cp = cp.asarray(vols)
 
 
-n = 1
-m = 30000
+"""
+numpy
+"""
 
-dt = t / n
-size = (m,n)
+start = time.time()
+features = numpy_cartesian_product(S, K, T, R, vols)
+features = features.transpose()
+S, K, T, R, vols = features[0], features[1], features[2], features[3], features[4]
 
+black_scholes = numpy_black_scholes(S,K,T,R,vols)
+geometric_asian_options = numpy_geometric_asian_call(S,K,T,R,vols)
 
-today = ql.Date().todaysDate()
-riskFreeTS = ql.YieldTermStructureHandle(
-    ql.FlatForward(today, r, ql.Actual365Fixed()))
-dividendTS = ql.YieldTermStructureHandle(
-    ql.FlatForward(today, g, ql.Actual365Fixed()))
+end = time.time()
+df = pd.DataFrame(
+	{
+	"spot_price":S,
+	"strike_price":K,
+	"days_to_maturity":T,
+	"risk_free_rate":R,
+	"volatility":vols,
+	"black_scholes":black_scholes,
+	"geometric_asian":geometric_asian_options
+	}
+)
 
-initialValue = ql.QuoteHandle(ql.SimpleQuote(s))
-hestonProcess = ql.HestonProcess(
-    riskFreeTS, dividendTS, initialValue, v0, kappa, theta, eta, rho)
-
-
-dimension = hestonProcess.factors()
-times = ql.TimeGrid(t, n)
-
-rng = ql.UniformRandomSequenceGenerator(
-    dimension * n, ql.UniformRandomGenerator())
-sequenceGenerator = ql.GaussianRandomSequenceGenerator(rng)
-pathGenerator = ql.GaussianMultiPathGenerator(
-    hestonProcess, list(times), sequenceGenerator, False)
-
-paths = [[] for i in range(dimension)]
-for i in range(m):
-    samplePath = pathGenerator.next()
-    values = samplePath.value()
-    
-    for j in range(dimension):
-        paths[j].append([x for x in values[j]])
-
-price_paths = cp.asarray(paths)[0][:,1:]
-S_t = cp.asarray(price_paths)[:,-1]
-S_avg = cp.mean(price_paths,axis=1)
-S_geo = cp.prod(price_paths,axis=1)**(1/n)
-
-
-vanilla = cp.exp(-r*t)*cp.mean(cp.maximum(S_t-k,0))
-# arithmetic_asian = cp.exp(-r*t)*cp.mean(cp.maximum(S_avg-k,0))
-# geometric_asian = cp.exp(-r*t)*cp.mean(cp.maximum(S_geo-k,0))
-
-# print(geometric_asian)
-# print(arithmetic_asian)
-print(vanilla)
-print(mon)
+print(df)
+print('numpy time:')
+print(end-start)
 
 
 
-# s = 100
-# k = 120
-# t = 1
-# r = 0.04
-# volatility = 0.4
+"""
+cupy
+"""
+start = time.time()
+features_cp = cupy_cartesian_product(S_cp, K_cp, T_cp, R_cp, vols_cp)
+features_cp = features_cp.transpose()
+S_cp, K_cp, T_cp, R_cp, vols_cp = features_cp[0], features_cp[1], features_cp[2], features_cp[3], features_cp[4]
 
-# S = np.linspace(90,110,10)
-# K = np.linspace(80,120,10)
-# T = [t]
-# R = [r]
-# vols = [volatility]
+black_scholes = cupy_black_scholes(S_cp,K_cp,T_cp,R_cp,vols_cp)
+geometric_asian_options = cupy_geometric_asian_call(S_cp,K_cp,T_cp,R_cp,vols_cp)
+end = time.time()
 
-# S_cp = cp.asarray(S)
-# K_cp = cp.asarray(K)
-# T_cp = cp.asarray(T)
-# R_cp = cp.asarray(R)
-# vols_cp = cp.asarray(vols)
-
-
-# """
-# numpy
-# """
-
-# start = time.time()
-# features = numpy_cartesian_product(S, K, T, R, vols)
-# features = features.transpose()
-# S, K, T, R, vols = features[0], features[1], features[2], features[3], features[4]
-
-# black_scholes = numpy_black_scholes(S,K,T,R,vols)
-# geometric_asian_options = numpy_geometric_asian_call(S,K,T,R,vols)
-
-# end = time.time()
-# df = pd.DataFrame(
-# 	{
-# 	"spot_price":S,
-# 	"strike_price":K,
-# 	"days_to_maturity":T,
-# 	"risk_free_rate":R,
-# 	"volatility":vols,
-# 	"black_scholes":black_scholes,
-# 	"geometric_asian":geometric_asian_options
-# 	}
-# )
-
-# print(df)
-# print('numpy time:')
-# print(end-start)
+df = pd.DataFrame(
+	{
+	"spot_price":S_cp.get(),
+	"strike_price":K_cp.get(),
+	"days_to_maturity":T_cp.get(),
+	"risk_free_rate":R_cp.get(),
+	"volatility":vols_cp.get(),
+	"black_scholes":black_scholes.get(),
+	"geometric_asian_price":geometric_asian_options.get(),
+	}
+)
 
 
-
-
-
-
-
-
-# """
-# cupy
-# """
-# start = time.time()
-# features_cp = cupy_cartesian_product(S_cp, K_cp, T_cp, R_cp, vols_cp)
-# features_cp = features_cp.transpose()
-# S_cp, K_cp, T_cp, R_cp, vols_cp = features_cp[0], features_cp[1], features_cp[2], features_cp[3], features_cp[4]
-
-# black_scholes = cupy_black_scholes(S_cp,K_cp,T_cp,R_cp,vols_cp)
-# geometric_asian_options = cupy_geometric_asian_call(S_cp,K_cp,T_cp,R_cp,vols_cp)
-# end = time.time()
-
-# df = pd.DataFrame(
-# 	{
-# 	"spot_price":S_cp.get(),
-# 	"strike_price":K_cp.get(),
-# 	"days_to_maturity":T_cp.get(),
-# 	"risk_free_rate":R_cp.get(),
-# 	"volatility":vols_cp.get(),
-# 	"black_scholes":black_scholes.get(),
-# 	"geometric_asian_price":geometric_asian_options.get(),
-# 	}
-# )
-
-
-# print(df)
-# print('cupy time:')
-# print(end-start)
+print(df)
+print('cupy time:')
+print(end-start)
 
 
 
