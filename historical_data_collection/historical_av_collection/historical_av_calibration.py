@@ -42,7 +42,7 @@ for key in keys:
 		vol_matrix = vol_matrix.sort_index().drop_duplicates()
 		raw_data['date'] = pd.to_datetime(raw_data['date'])
 		raw_data['expiration'] = pd.to_datetime(raw_data['expiration'])
-		raw_data['implied_volatility'] = pd.to_numeric(raw_data['implied_volatility']).astype(float)
+		raw_data['implied_volatility'] = pd.to_numeric(raw_data['implied_volatility'],errors='coerce').astype(float)
 		raw_data['strike'] = pd.to_numeric(raw_data['strike'])
 		raw_data['last'] = pd.to_numeric(raw_data['last'])
 		contract_maturities = np.array((raw_data['expiration'] - raw_data['date']) / timedelta(days=1)).astype(int)
@@ -103,6 +103,7 @@ for key in keys:
 		calibration_test_data['spot_price'] = s
 		calibration_test_data['risk_free_rate'] = r
 		calibration_test_data['dividend_rate'] = g
+		calibration_test_data['w'] = calibration_test_data['w'].str.lower()
 		calibration_test_data = calibration_test_data[calibration_test_data['strike_price']>0.5*s]
 		calibration_test_data = calibration_test_data[calibration_test_data['days_to_maturity'].isin(T)]
 		calibration_test_data[heston_parameters.index.tolist()] = np.tile(heston_parameters,(calibration_test_data.shape[0],1))
