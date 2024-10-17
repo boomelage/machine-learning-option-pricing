@@ -21,4 +21,4 @@ try:
 	spots = spots[~spots.index.isin(dates)]
 except Exception as e:
 	pass
-print(f"\ndata to collect for {symbol}:\n{spots}")
+# print(f"\ndata to collect for {symbol}:\n{spots}")
