@@ -55,7 +55,6 @@ for key in keys:
 	        except Exception:
 	            pass
 	        
-	        
 	hottest_contracts = pd.DataFrame(
 	    volume_heatmap.unstack().sort_values(
 	        ascending=False)).head(50).reset_index()
