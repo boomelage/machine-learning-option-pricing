@@ -23,7 +23,7 @@ def collect_av_link(date,spot,symbol):
         f"symbol={symbol}"
         f"&date={date}"
         f"&apikey={ms.av_key}"
-              )
+        )
     r = requests.get(options_url)
     data = r.json()
     raw_data = pd.DataFrame(data['data'])
@@ -38,6 +38,7 @@ for i in range(len(spots)):
     printdate = str(datetimedate.strftime('%A, ') + str(ql_date))
     while True:
         try:
+            print(f'collecting: {date}')
             raw_data = collect_av_link(date,spot,symbol)
             with pd.HDFStore(f'alphaVantage {symbol}.h5') as store:
 
@@ -53,7 +54,7 @@ for i in range(len(spots)):
                     format='fixed',
                     append=False
                 )
-            print(f'collecting: {date}')
+            
             break
         except Exception as e:
             print(e)
