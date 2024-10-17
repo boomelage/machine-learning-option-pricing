@@ -15,7 +15,6 @@ r = requests.get(url)
 spots = pd.Series(pd.DataFrame(r.json()['Time Series (Daily)']).transpose()['4. close'].squeeze())
 spots = pd.to_numeric(spots,errors='coerce').reset_index().rename(columns={'index':'date','4. close':'spot_price'})
 
-
 spots = spots.set_index('date')
 
 try:
