@@ -5,20 +5,23 @@ import QuantLib as ql
 from datetime import datetime
 from datetime import timedelta
 from model_settings import ms
-from historical_av_key_collector import keys_df, symbol, h5_name
+from historical_av_database_indexing import h5_name, keys_df
 
-keys_df = keys_df.copy().dropna(subset=['surface_key','raw_data_key','spot_price'])
-keys_df = keys_df[keys_df['calibration_key'].isna()]
-print(keys_df)
-for i,row in keys_df.iterrows():
-	raw_data_key = row['raw_data_key']
-	surface_key = row['surface_key']
-	spot_price_key = row['spot_price']
-	date = row['date']
+keys = keys_df[
+	(keys_df['calibration_results'].isna())
+	&
+	(~keys_df['surface'].isna())
+]['raw_data'].tolist()
+
+for key in keys:
+	locator = key[:key.find('/',1)+1]
+	surface_key = str(locator+'surface')
+	spot_price_key = str(locator+'spot_price')
+	date = key[key.find('_',0)+1:key.find('/',1)].replace('_','-')
 	while True:
 		try:
 			with pd.HDFStore(h5_name) as store:
-				raw_data = store[raw_data_key]
+				raw_data = store[key]
 				vol_matrix = store[surface_key]
 				s = store[spot_price_key].iloc[0]
 			break
@@ -100,6 +103,7 @@ for i,row in keys_df.iterrows():
 		calibration_test_data['spot_price'] = s
 		calibration_test_data['risk_free_rate'] = r
 		calibration_test_data['dividend_rate'] = g
+		calibration_test_data = calibration_test_data[calibration_test_data['strike_price']>0.5*s]
 		calibration_test_data = calibration_test_data[calibration_test_data['days_to_maturity'].isin(T)]
 		calibration_test_data[heston_parameters.index.tolist()] = np.tile(heston_parameters,(calibration_test_data.shape[0],1))
 		calibration_test_data.loc[:,'moneyness'] = ms.vmoneyness(
@@ -110,9 +114,9 @@ for i,row in keys_df.iterrows():
 		calibration_test_data['black_scholes'] = ms.vector_black_scholes(calibration_test_data)
 		calibration_test_data['heston_price'] = ms.vector_heston_price(calibration_test_data)
 
-		calibration_test_data.loc[:,'error'] = calibration_test_data['heston_price'].values - calibration_test_data['black_scholes'].values
+		calibration_test_data.loc[:,'error'] = calibration_test_data['heston_price'].values/calibration_test_data['black_scholes'].values - 1
 		avg = np.mean(np.abs(calibration_test_data['error']))
-		print(f"\n{printdate}\n{heston_parameters}\naverage absolute error: {round(avg,3)}")
+		print(f"\n{printdate}\n{heston_parameters}\naverage absolute relative error: {round(avg*100,4)}%")
 		date_key_component = 'date_' + date.replace('-','_') + '/'
 		while True:
 			try:
@@ -138,6 +142,5 @@ for i,row in keys_df.iterrows():
 				
 				store.close()
 	except Exception as e:
-		print(f"calibration aborted: {e}")
-		print(date)
-		pass
+		print(f"calibration aborted:")
+		raise(e)

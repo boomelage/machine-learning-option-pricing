@@ -1,29 +1,29 @@
+
 import pandas as pd
 import numpy as np
 import time
 from model_settings import ms
-from historical_av_key_collector import keys_df, symbol, h5_name
-keys_df = keys_df.copy().dropna(subset=['spot_price','date'])
-keys_df = keys_df[keys_df['surface_key'].isna()]
+from historical_av_database_indexing import keys_df,h5_name
 
-print(f"reconstructing {keys_df.shape[0]} surfaces")
-
-for i,row in keys_df.iterrows():
+keys = keys_df[keys_df['surface'].isna()]['raw_data'].tolist()
+print(f"reconstructing {len(keys)} surfaces")
+for key in keys:
 	while True:
 		try:
 			with pd.HDFStore(h5_name) as store:
-				raw_data = store[row['raw_data_key']]
-				spot = store[row['spot_price']].iloc[0]
-				date = row['date']
+				locator = key[:key.find('/',1)+1]
+				raw_data = store[key]
+				spot = store[str(locator)+'spot_price'].iloc[0]
 			break
 		except Exception as e:
 			print(e)
 			time.sleep(2)
 		finally:
 			store.close()
-
+	date = key[key.find('_',0)+1:key.find('/',1)]
 
 	df = raw_data.copy()
+
 	columns_to_convert = ['strike', 'last', 'mark',
 	       'bid', 'bid_size', 'ask', 'ask_size', 'volume', 'open_interest',
 	       'implied_volatility', 'delta', 'gamma', 'theta', 'vega', 'rho']
