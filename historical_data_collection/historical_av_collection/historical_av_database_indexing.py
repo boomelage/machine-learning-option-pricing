@@ -28,32 +28,6 @@ for i,row in keys_df.iterrows():
 			keys_df.at[i,cat] = np.nan
 
 pd.set_option("display.max_columns",None)
-keys_df = keys_df[['date','raw_data', 'spot_price', 'surface', 'calibration_results',
-       'heston_parameters']]
-print(f"{keys_df[['date','raw_data']]}\n")
-
-# deletion_keys = keys_df[
-# 	(
-# 		(keys_df['date'].str.contains('2008'))|
-# 		(keys_df['date'].str.contains('2009'))|
-# 		(keys_df['date'].str.contains('2010'))|
-# 		(keys_df['date'].str.contains('2011'))|
-# 		(keys_df['date'].str.contains('2012'))
-# 	)
-# ]
-
-with pd.HDFStore(h5_name) as store:
-	for i,row in keys_df.iterrows():
-		for col in keys_df.columns[1:]:
-			try:
-				calibration = store[row['calibration_results']]
-				if np.mean(np.abs(calibration['error']))<0.5:
-					del store[row[col]]
-					print(f"deleted {row[col]}")
-				else:
-					pass
-			except Exception as e:
-				print(e)
-				pass
-store.close()
-
+# keys_df = keys_df[['date','raw_data', 'spot_price','calibration_restult','heston_parameters']]
+# print(f"{keys_df[['date','raw_data']]}\n")
+print(keys_df.columns)

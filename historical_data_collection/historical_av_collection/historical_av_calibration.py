@@ -7,11 +7,7 @@ from datetime import timedelta
 from model_settings import ms
 from historical_av_database_indexing import h5_name, keys_df
 
-keys = keys_df[
-	(keys_df['calibration_results'].isna())
-	&
-	(~keys_df['surface'].isna())
-]['raw_data'].tolist()
+keys = keys_df['raw_data'].tolist()
 
 for key in keys:
 	locator = key[:key.find('/',1)+1]
