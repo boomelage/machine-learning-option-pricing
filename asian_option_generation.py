@@ -1,9 +1,11 @@
+import os
 import numpy as np
 import pandas as pd
 from itertools import product
 import matplotlib.pyplot as plt 
 from model_settings import vanilla_pricer, asian_option_pricer, barrier_option_pricer, ms
 from datetime import datetime
+from pathlib import Path
 vp = vanilla_pricer.vanilla_pricer()
 bop = barrier_option_pricer.barrier_option_pricer()
 aop = asian_option_pricer.asian_option_pricer()
@@ -23,9 +25,9 @@ aop = asian_option_pricer.asian_option_pricer()
 
 
 
-def generate_asian_options(s,r,g,fixing_frequencies,n_fixings,spread,calculation_datetime,kappa,theta,rho,eta,v0):
+def generate_asian_options(s,r,g,fixing_frequencies,n_fixings,n_strikes,spread,calculation_datetime,kappa,theta,rho,eta,v0):
 
-    K = np.unique(np.linspace(s*(1-spread),s*(1+spread),5).astype(int))
+    K = np.unique(np.linspace(s*(1-spread),s*(1+spread),n_strikes).astype(int))
 
     W = [
         'call',
@@ -87,38 +89,6 @@ def generate_asian_options(s,r,g,fixing_frequencies,n_fixings,spread,calculation
 
 
 
-def row_generate_asian_options(row,fixing_frequencies,n_fixings,spread):
-    return generate_asian_options(
-        row['spot_price'],
-        row['risk_free_rate'],
-        row['dividend_rate'],
-        fixing_frequencies,
-        n_fixings,spread,
-        row['calculation_date'],
-        row['kappa'],
-        row['theta'],
-        row['rho'],
-        row['eta'],
-        row['v0']
-    )
-
-
-
-v0 = 0.005
-kappa = 0.8
-theta = 0.008
-rho = 0.2
-eta = 0.1
-
-s = 100
-k = 50
-t = 360
-w = 'put'
-r = 0.04
-g = 0.0
-volatility = v0**0.5
-
-calculation_datetime = datetime.today()
 
 fixing_frequencies = [
     1,
@@ -136,4 +106,26 @@ n_fixings = [
 spread = 0.5
 
 
-generate_asian_options(s,r,g,fixing_frequencies,n_fixings,spread,calculation_datetime,kappa,theta,rho,eta,v0)
+calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('calibrated')!=-1][0]).iloc[:,1:]
+
+calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
+calibrations['risk_free_rate'] = 0.04
+n_strikes = 5
+from tqdm import tqdm
+bar = tqdm(total=calibrations.shape[0])
+for i,row in calibrations.iterrows():
+    generate_asian_options(
+        row['spot_price'],
+        row['risk_free_rate'],
+        row['dividend_rate'],
+        fixing_frequencies,n_fixings,
+        n_strikes,spread,
+        row['date'],
+        row['kappa'],
+        row['theta'],
+        row['rho'],
+        row['eta'],
+        row['v0']
+    )
+    bar.update(1)
+bar.close()
