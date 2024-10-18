@@ -5,7 +5,7 @@ import time
 from model_settings import ms
 from historical_av_database_indexing import keys_df,h5_name
 
-keys = keys_df[keys_df['surface'].isna()]['raw_data'].tolist()
+keys = keys_df['raw_data'].tolist()
 print(f"reconstructing {len(keys)} surfaces")
 for key in keys:
 	while True:
