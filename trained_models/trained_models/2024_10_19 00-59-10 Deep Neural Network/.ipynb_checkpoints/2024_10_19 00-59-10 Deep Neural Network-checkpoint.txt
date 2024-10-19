@@ -13,12 +13,16 @@ types:
 
 averaging_type:
 ['arithmetic' 'geometric']
+
 fixing_frequency:
 [  1   7  30 180 360]
+
 past_fixings:
 [0]
+
 n_fixings:
 [ 1  5 10]
+
 number of calls, puts:
 654840,654840
 
