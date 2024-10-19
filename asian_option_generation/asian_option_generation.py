@@ -183,11 +183,7 @@ def row_generate_asian_options(row):
 
 
 def df_generate_asian_options(df):
-    max_jobs = os.cpu_count() // 4
-
-    max_jobs = max(1, max_jobs)
-
-    Parallel(n_jobs=max_jobs)(delayed(row_generate_asian_options)(row) for _, row in df.iterrows())
+    Parallel()(delayed(row_generate_asian_options)(row) for _, row in df.iterrows())
 
 spread = 0.5
 kstep = 5
