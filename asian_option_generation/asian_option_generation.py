@@ -122,13 +122,13 @@ def generate_asian_options(s,r,g,n_strikes,kstep,calculation_datetime,kappa,thet
     ]
 
     fixing_frequencies = [
-        1,
-        7,
+        # 1,
+        # 7,
         30,
-        90,
+        # 90,
     ]
 
-    n_fixings = [1,2,3,5,10]
+    n_fixings = [1,3,6,12]
 
     past_fixings = [0]
 
