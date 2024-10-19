@@ -38,8 +38,10 @@ class asian_option_pricer():
         calculation_date = ql.Date(calculation_datetime.day,calculation_datetime.month,calculation_datetime.year)
         
         periods = np.arange(fixing_frequency,t+1,fixing_frequency).astype(int)
-        fixing_dates = [calculation_date + ql.Period(int(p),ql.Days) for p in periods]
-        expiration_date = calculation_date + ql.Period(int(t),ql.Days)
+        fixing_periods = [ql.Period(int(p),ql.Days) for p in periods]
+        fixing_dates = [calculation_date + p for p in fixing_periods]
+
+        expiration_date = calculation_date + fixing_periods[-1]
 
         riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(calculation_date,float(r),ql.Actual365Fixed()))
         dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(calculation_date,float(g),ql.Actual365Fixed()))
@@ -122,10 +124,15 @@ def generate_asian_options(s,r,g,n_strikes,spread,calculation_datetime,kappa,the
         # 1,
         # 7,
         30,
+        # 90,
         # 180
     ]
 
-    n_fixings = [1,5,10]
+    n_fixings = [
+        1,
+        5,
+        10
+    ]
 
     past_fixings = [0]
 
@@ -162,7 +169,6 @@ def generate_asian_options(s,r,g,n_strikes,spread,calculation_datetime,kappa,the
     filename = f"{datetag} asian options {filetag}.csv"
     filepath = os.path.join(str(Path().resolve()),'historical_asian_options',filename)
     features.to_csv(filepath)
-    print(f"file saved to {filepath}")
 
 def row_generate_asian_options(row):
     generate_asian_options(
@@ -181,14 +187,14 @@ def row_generate_asian_options(row):
 
 
 def df_generate_asian_options(df):
-    max_jobs = os.cpu_count() // 1
+    max_jobs = os.cpu_count() // 4
 
     max_jobs = max(1, max_jobs)
 
     Parallel(n_jobs=max_jobs)(delayed(row_generate_asian_options)(row) for _, row in df.iterrows())
 
 spread = 0.5
-n_strikes = 3
+n_strikes = 5
 
 calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPY calibrated')!=-1][0]).iloc[:,1:]
 calibrations = calibrations.rename(columns = {'calculation_date':'date'})
