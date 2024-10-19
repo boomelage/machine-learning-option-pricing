@@ -1,0 +1,11 @@
+*.csv
+*.xls
+*.xlsx
+*.pkl
+*.h5
+*.zip
+*.vs
+*.pyc
+*.ipynb_checkpoints
+*.virtual_documents
+replace-text.txt
