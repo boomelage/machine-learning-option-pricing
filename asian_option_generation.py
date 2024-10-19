@@ -1,4 +1,5 @@
 import os
+import time
 import numpy as np
 import pandas as pd
 from itertools import product
@@ -7,11 +8,103 @@ from joblib import Parallel, delayed
 from datetime import datetime
 from pathlib import Path
 from model_settings import vanilla_pricer, asian_option_pricer
-vp = vanilla_pricer.vanilla_pricer()
-aop = asian_option_pricer.asian_option_pricer()
 
 
-def generate_asian_options(s,r,g,fixing_frequencies,n_fixings,n_strikes,spread,calculation_datetime,kappa,theta,rho,eta,v0):
+import QuantLib as ql
+
+class asian_option_pricer():
+    def __init__(self,seed=123):
+        if seed == None:
+            self.seed = 0
+        else:
+            self.seed = seed
+        self.rng = "pseudorandom" # could use "lowdiscrepancy"
+        self.numPaths = 100000
+        print('Asian option pricer initialized')
+
+    def asian_option_price(self,s,k,r,g,w,averaging_type,n_fixings,fixing_frequency,past_fixings,kappa,theta,rho,eta,v0,calculation_datetime):
+        s = float(s)
+        k = float(k)
+        r = float(r)
+        g = float(g)
+
+        
+        if w == 'call':
+            option_type = ql.Option.Call 
+        elif w == 'put':
+            option_type = ql.Option.Put
+        t = n_fixings*fixing_frequency
+        
+        calculation_date = ql.Date(calculation_datetime.day,calculation_datetime.month,calculation_datetime.year)
+        
+        periods = np.arange(fixing_frequency,t+1,fixing_frequency).astype(int)
+        fixing_dates = [calculation_date + ql.Period(int(p),ql.Days) for p in periods]
+        expiration_date = calculation_date + ql.Period(int(t),ql.Days)
+
+        riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(calculation_date,float(r),ql.Actual365Fixed()))
+        dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(calculation_date,float(g),ql.Actual365Fixed()))
+
+        hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, ql.QuoteHandle(ql.SimpleQuote(s)), v0, kappa, theta, eta, rho)
+        hestonModel = ql.HestonModel(hestonProcess)
+        vanillaPayoff = ql.PlainVanillaPayoff(option_type, float(k))
+        europeanExercise = ql.EuropeanExercise(expiration_date)
+        
+        if averaging_type == 'geometric':
+            geometric_engine = ql.MCDiscreteGeometricAPHestonEngine(hestonProcess, self.rng, requiredSamples=self.numPaths,seed=self.seed)
+            geometricAverage = ql.Average().Geometric
+            geometricRunningAccumulator = 1.0
+            discreteGeometricAsianOption = ql.DiscreteAveragingAsianOption(
+                geometricAverage, geometricRunningAccumulator, past_fixings,
+                fixing_dates, vanillaPayoff, europeanExercise)
+            discreteGeometricAsianOption.setPricingEngine(geometric_engine)
+            geometric_price = float(discreteGeometricAsianOption.NPV())
+            return geometric_price
+            
+        elif averaging_type == 'arithmetic':
+            arithmetic_engine = ql.MCDiscreteArithmeticAPHestonEngine(hestonProcess, self.rng, requiredSamples=self.numPaths)
+            arithmeticAverage = ql.Average().Arithmetic
+            arithmeticRunningAccumulator = 0.0
+            discreteArithmeticAsianOption = ql.DiscreteAveragingAsianOption(
+                arithmeticAverage, arithmeticRunningAccumulator, past_fixings, 
+                fixing_dates, vanillaPayoff, europeanExercise)
+            discreteArithmeticAsianOption.setPricingEngine(arithmetic_engine)
+            arithmetic_price = float(discreteArithmeticAsianOption.NPV())
+            return arithmetic_price
+        else:
+            print("invalid Asian option averaging type out of 'arithmetic' and geometric'")
+            pass
+
+    def row_asian_option_price(self,row):
+        return  self.asian_option_price(
+            row['spot_price'],
+            row['strike_price'],
+            row['risk_free_rate'],
+            row['dividend_rate'],
+            row['w'],
+            row['averaging_type'],
+            row['fixing_frequency'],
+            row['n_fixings'],
+            row['past_fixings'],
+            row['kappa'],
+            row['theta'],
+            row['rho'],
+            row['eta'],
+            row['v0'],
+            row['calculation_date']
+        )
+
+    def df_asian_option_price(self, df):
+        max_jobs = os.cpu_count() // 3
+
+        max_jobs = max(1, max_jobs)
+
+        return Parallel(n_jobs=max_jobs)(delayed(self.row_asian_option_price)(row) for _, row in df.iterrows())
+
+
+
+aop = asian_option_pricer()
+
+def generate_asian_options(s,r,g,n_strikes,spread,calculation_datetime,kappa,theta,rho,eta,v0):
 
     K = np.unique(np.linspace(s*(1-spread),s*(1+spread),n_strikes).astype(int))
 
@@ -25,11 +118,12 @@ def generate_asian_options(s,r,g,fixing_frequencies,n_fixings,n_strikes,spread,c
         'geometric'
     ]
 
+    fixing_frequencies = [1,7,30,180,360]
+
+    n_fixings = [1,5,10]
+
     past_fixings = [0]
 
-    fixing_frequencies = [int(x) for x in fixing_frequencies.split(',')]
-
-    n_fixings = [int(x) for x in n_fixings.split(',')]
 
     features = pd.DataFrame(
         product(
@@ -56,56 +150,17 @@ def generate_asian_options(s,r,g,fixing_frequencies,n_fixings,n_strikes,spread,c
         ]
     )
     features['days_to_maturity'] = features['n_fixings']*features['fixing_frequency']
-    features['vanilla'] = vp.df_heston_price(features)
+    # features['vanilla'] = vp.df_heston_price(features)
     features['asian_price'] = aop.df_asian_option_price(features)
 
-    # features['difference'] = features['vanilla']-features['asian_price']
-
-    features = features[
-        [
-            # 'difference',
-            'vanilla', 'asian_price','spot_price', 'strike_price', 'risk_free_rate', 'dividend_rate', 'w',
-            'averaging_type', 'fixing_frequency', 'n_fixings', 'past_fixings',
-            'kappa', 'theta', 'rho', 'eta', 'v0', 'calculation_date',
-            'days_to_maturity'
-        ]
-    ]
-
-    # features['moneyness'] = ms.vmoneyness(features['spot_price'],features['strike_price'],features['w'])
-    # features = features.sort_values(by='moneyness',ascending=True).reset_index(drop=True)
-    key = calculation_datetime.strftime('date_%Y_%m_%d/')
-    with pd.HDFStore(r'asians.h5') as store:
-        store.put(key,features,format='table',append=False)
-    store.close()
-
-
-
-
-fixing_frequencies = '1,7,30,180,360'
-
-n_fixings = '1,5,10'
-
-spread = 0.5
-
-n_strikes = 7
-
-calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('calibrated')!=-1][0]).iloc[:,1:]
-
-calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
-calibrations['risk_free_rate'] = 0.04
-calibrations['fixing_frequencies'] = fixing_frequencies
-calibrations['n_fixings'] = n_fixings
-calibrations['spread'] = spread
-calibrations['n_strikes'] = n_strikes
+    return features
 
 
 def row_generate_asian_options(row):
-    generate_asian_options(
+    return generate_asian_options(
         row['spot_price'],
         row['risk_free_rate'],
         row['dividend_rate'],
-        row['fixing_frequencies'],
-        row['n_fixings'],
         row['n_strikes'],
         row['spread'],
         row['date'],
@@ -117,9 +172,29 @@ def row_generate_asian_options(row):
     )
 
 
-from tqdm import tqdm
-bar = tqdm(total=calibrations.shape[0])
-for i,row in calibrations.iterrows():
-    row_generate_asian_options(row)
-    bar.update(1)
-bar.close()
+def df_generate_asian_options(df):
+    dfs = []
+    max_jobs = os.cpu_count() // 1
+
+    max_jobs = max(1, max_jobs)
+
+    dfs.append(Parallel(n_jobs=max_jobs)(delayed(row_generate_asian_options)(row) for _, row in df.iterrows()))
+    return dfs[0]
+
+
+spread = 0.5
+n_strikes = 17
+
+calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('calibrated')!=-1][0]).iloc[:,1:]
+
+calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
+calibrations['risk_free_rate'] = 0.04
+calibrations['spread'] = spread
+calibrations['n_strikes'] = n_strikes
+
+
+dfs = df_generate_asian_options(calibrations)
+
+df = pd.concat(dfs,ignore_index=True)
+df.to_csv('asian options.csv')
+
