@@ -106,9 +106,10 @@ class asian_option_pricer():
 
 aop = asian_option_pricer()
 
-def generate_asian_options(s,r,g,n_strikes,spread,calculation_datetime,kappa,theta,rho,eta,v0):
-
-    K = np.unique(np.linspace(s*(1-spread),s*(1+spread),n_strikes).astype(int))
+def generate_asian_options(s,r,g,n_strikes,kstep,calculation_datetime,kappa,theta,rho,eta,v0):
+    kupper = int(s*(1+spread))
+    klower = int(s*(1-spread))
+    K = np.arange(klower,kupper,kstep)
 
     W = [
         'call',
@@ -124,11 +125,10 @@ def generate_asian_options(s,r,g,n_strikes,spread,calculation_datetime,kappa,the
         1,
         7,
         30,
-        # 90,
-        # 180
+        90,
     ]
 
-    n_fixings = np.arange(1,11,1).tolist()
+    n_fixings = [1,2,3,5,10]
 
     past_fixings = [0]
 
@@ -171,7 +171,7 @@ def row_generate_asian_options(row):
         row['spot_price'],
         row['risk_free_rate'],
         row['dividend_rate'],
-        row['n_strikes'],
+        row['kstep'],
         row['spread'],
         row['date'],
         row['kappa'],
@@ -190,14 +190,14 @@ def df_generate_asian_options(df):
     Parallel(n_jobs=max_jobs)(delayed(row_generate_asian_options)(row) for _, row in df.iterrows())
 
 spread = 0.5
-n_strikes = 9
+kstep = 5
 
-calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPY calibrated')!=-1][0]).iloc[:,1:]
+calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPY calibrated')!=-1][0]).iloc[:5,1:]
 calibrations = calibrations.rename(columns = {'calculation_date':'date'})
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 calibrations['risk_free_rate'] = 0.04
 calibrations['spread'] = spread
-calibrations['n_strikes'] = n_strikes
+calibrations['kstep'] = kstep
 
 dates = pd.Series(calibrations['date'].copy().drop_duplicates().tolist())
 print(dates)
