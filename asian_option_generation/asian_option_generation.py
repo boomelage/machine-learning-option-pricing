@@ -118,7 +118,12 @@ def generate_asian_options(s,r,g,n_strikes,spread,calculation_datetime,kappa,the
         'geometric'
     ]
 
-    fixing_frequencies = [1,7,30,180,360]
+    fixing_frequencies = [
+        # 1,
+        # 7,
+        30,
+        # 180
+    ]
 
     n_fixings = [1,5,10]
 
@@ -150,14 +155,17 @@ def generate_asian_options(s,r,g,n_strikes,spread,calculation_datetime,kappa,the
         ]
     )
     features['days_to_maturity'] = features['n_fixings']*features['fixing_frequency']
-    # features['vanilla'] = vp.df_heston_price(features)
     features['asian_price'] = aop.df_asian_option_price(features)
 
-    return features
-
+    datetag = calculation_datetime.strftime('%Y_%m_%d')
+    filetag = datetime.today().strftime('%Y-%m-%d %H%M%S')
+    filename = f"{datetag} asian options {filetag}.csv"
+    filepath = os.path.join(str(Path().resolve()),'historical_asian_options',filename)
+    features.to_csv(filepath)
+    print(f"file saved to {filepath}")
 
 def row_generate_asian_options(row):
-    return generate_asian_options(
+    generate_asian_options(
         row['spot_price'],
         row['risk_free_rate'],
         row['dividend_rate'],
@@ -173,28 +181,23 @@ def row_generate_asian_options(row):
 
 
 def df_generate_asian_options(df):
-    dfs = []
     max_jobs = os.cpu_count() // 1
 
     max_jobs = max(1, max_jobs)
 
-    dfs.append(Parallel(n_jobs=max_jobs)(delayed(row_generate_asian_options)(row) for _, row in df.iterrows()))
-    return dfs[0]
-
+    Parallel(n_jobs=max_jobs)(delayed(row_generate_asian_options)(row) for _, row in df.iterrows())
 
 spread = 0.5
-n_strikes = 17
+n_strikes = 3
 
-calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('calibrated')!=-1][0]).iloc[:,1:]
-
+calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPY calibrated')!=-1][0]).iloc[:,1:]
+calibrations = calibrations.rename(columns = {'calculation_date':'date'})
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 calibrations['risk_free_rate'] = 0.04
 calibrations['spread'] = spread
 calibrations['n_strikes'] = n_strikes
 
+dates = pd.Series(calibrations['date'].copy().drop_duplicates().tolist())
+print(dates)
 
-dfs = df_generate_asian_options(calibrations)
-
-df = pd.concat(dfs,ignore_index=True)
-df.to_csv('asian options.csv')
-
+df_generate_asian_options(calibrations)
