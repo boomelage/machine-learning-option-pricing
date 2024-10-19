@@ -121,18 +121,14 @@ def generate_asian_options(s,r,g,n_strikes,spread,calculation_datetime,kappa,the
     ]
 
     fixing_frequencies = [
-        # 1,
-        # 7,
+        1,
+        7,
         30,
         # 90,
         # 180
     ]
 
-    n_fixings = [
-        1,
-        5,
-        10
-    ]
+    n_fixings = np.arange(1,11,1).tolist()
 
     past_fixings = [0]
 
@@ -194,7 +190,7 @@ def df_generate_asian_options(df):
     Parallel(n_jobs=max_jobs)(delayed(row_generate_asian_options)(row) for _, row in df.iterrows())
 
 spread = 0.5
-n_strikes = 5
+n_strikes = 9
 
 calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPY calibrated')!=-1][0]).iloc[:,1:]
 calibrations = calibrations.rename(columns = {'calculation_date':'date'})
