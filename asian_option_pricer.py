@@ -1,11 +1,8 @@
-import numpy as np
-import time
 import matplotlib.pyplot as plt
 import QuantLib as ql
 from scipy.stats import norm
-from model_settings import ms
 from datetime import datetime
-import pandas as pd
+import numpy as np
 
 
 def numpy_cartesian_product(*arrays):
@@ -27,7 +24,7 @@ calculation_date = ql.Date(calculation_datetime.day,calculation_datetime.month,c
 r = 0.04
 g = 0.0
 s = 365.41
-k = 400
+k = 365
 w = 'call'
 
 kappa = 0.412367
@@ -35,11 +32,11 @@ theta = 0.17771
 rho = -0.582856
 eta = 0.785592
 v0 = 0.08079 
-p = ql.Period("12M")
-t = 1
-n = 250
-m = 10000
 
+t = 1
+n = 10
+m = 10000
+# averaging_step = 
 
 
 dt = t/n
@@ -77,25 +74,29 @@ for i in range(m):
     for j in range(dimension):
         paths[j].append([x for x in values[j]])
 
-price_paths = np.asarray(paths)[0][:,1:]
-S_geo = np.exp(np.mean(np.log(price_paths),axis=1))
-S_avg = np.mean(price_paths,axis=1)
+
+
+
+price_paths = np.asarray(paths)[0][:,:]
+
+
+step = 2
+
+
+fixing_T = np.unique(np.array(np.arange(0,price_paths.shape[1],step).tolist()+[price_paths.shape[1]-1])).tolist()
+
+fixing_S = price_paths[:,fixing_T]
+
+
+S_monitor = np.mean(fixing_S,axis=0)
+n_fixings = len(S_monitor)
+fixing_frequency = int(t*360/n_fixings)
+
+S_geo = np.exp(np.mean(np.log(S_monitor)))
+S_avg = np.mean(S_monitor)
 
 discount = np.exp(-r*t)
 
 arithmetic_price = discount * np.mean(np.maximum(S_avg-k,0))
 geometric_price = discount * np.mean(np.maximum(S_geo-k,0))
 mc_vanilla = discount * np.mean(np.maximum(price_paths[:,-1]-k,0))
-
-t = calculation_date + p - calculation_date 
-my_vanilla = ms.ql_heston_price(s,k,t,r,g,w,kappa,theta,rho,eta,v0,calculation_datetime)
-print(f"geo: {geometric_price}")
-print(f"arith: {arithmetic_price}")
-print(f"monte carlo heston vanilla: {mc_vanilla}")
-print(f"analytical heston vanilla: {my_vanilla}")
-plt.figure()
-for path in np.asarray(paths)[0]:
-    plt.plot(pd.Series(path))
-
-plt.show()
-plt.clf()
