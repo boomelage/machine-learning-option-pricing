@@ -80,12 +80,6 @@ class asian_option_feature_generation():
         return Parallel()(delayed(self.row_generate_asian_option_features)(row) for _, row in df.iterrows())
 
 
-
-
-
-
-
-
 from pathlib import Path
 calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPY calibrated')!=-1][0]).iloc[:,1:]
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
