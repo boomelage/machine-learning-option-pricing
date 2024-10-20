@@ -99,7 +99,8 @@ class asian_option_pricer():
 
         return Parallel(n_jobs=max_jobs)(delayed(self.row_asian_option_price)(row) for _, row in df.iterrows())
 
-def generate_asian_options(s,r,g,calculation_datetime,kappa,theta,rho,eta,v0):
+
+def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,eta,v0):
     kupper = int(s*(1+0.5))
     klower = int(s*(1-0.5))
     K = np.arange(klower,kupper,7)
@@ -110,61 +111,53 @@ def generate_asian_options(s,r,g,calculation_datetime,kappa,theta,rho,eta,v0):
     ]
 
     types = [
-        # 'arithmetic',
+        'arithmetic',
         'geometric'
     ]
 
-    fixing_frequencies = [
-        # 1,
-        # 7,
-        30,
-        # 90,
-    ]
-
-    n_fixings = [
-        1,
-        # 3,
-        # 6,12
-    ]
 
     past_fixings = [0]
 
+    fixing_frequencies = [30,60,90,180,360]
+    max_maturity = fixing_frequencies[-1]
+    option_features = []
+    for f in fixing_frequencies:
+        max_periods = np.arange(f,max_maturity+1,f)
+        n_fixings = len(max_periods)
+        for i, tenor in enumerate(max_periods):
+            n_fixings = i+1
+            periods = max_periods[:i+1]
 
-    features = pd.DataFrame(
-        product(
-            [s],
-            K,
-            [r],
-            [g],
-            W,
-            types,
-            fixing_frequencies,
-            n_fixings,
-            past_fixings,
-            [kappa],
-            [theta],
-            [rho],
-            [eta],
-            [v0],
-            [calculation_datetime]
-        ),
-        columns = [
-            'spot_price','strike_price','risk_free_rate','dividend_rate','w',
-            'averaging_type','fixing_frequency','n_fixings','past_fixings',
-            'kappa','theta','rho','eta','v0','calculation_date'
-        ]
-    )
-    features['days_to_maturity'] = features['n_fixings']*features['fixing_frequency']
-    features['asian_price'] = aop.df_asian_option_price(features)
+            features = pd.DataFrame(
+                product(
+                    [s],
+                    K,
+                    [r],
+                    [g],
+                    W,
+                    types,
+                    [f],
+                    [n_fixings],
+                    past_fixings,
+                    [kappa],
+                    [theta],
+                    [rho],
+                    [eta],
+                    [v0],
+                    [calculation_datetime],
+                    [tenor]
+                ),
+                columns = [
+                    'spot_price','strike_price','risk_free_rate','dividend_rate','w',
+                    'averaging_type','fixing_frequency','n_fixings','past_fixings',
+                    'kappa','theta','rho','eta','v0','calculation_date','days_to_maturity'
+                ]
+            )
+            option_features.append(features)
+    return pd.concat(option_features,ignore_index=True)
 
-    datetag = calculation_datetime.strftime('%Y_%m_%d')
-    filetag = datetime.today().strftime('%Y-%m-%d %H%M%S')
-    filename = f"{datetag} asian options {filetag}.csv"
-    filepath = os.path.join(str(Path().resolve()),'historical_asian_options',filename)
-    features.to_csv(filepath)
-
-def row_generate_asian_options(row):
-    generate_asian_options(
+def row_generate_asian_option_features(row):
+    return generate_asian_option_features(
         row['spot_price'],
         row['risk_free_rate'],
         row['dividend_rate'],
@@ -177,8 +170,8 @@ def row_generate_asian_options(row):
     )
 
 
-def df_generate_asian_options(df):
-    Parallel()(delayed(row_generate_asian_options)(row) for _, row in df.iterrows())
+def df_generate_asian_option_features(df):
+    return Parallel()(delayed(row_generate_asian_option_features)(row) for _, row in df.iterrows())
 
 
 
@@ -195,10 +188,13 @@ aop = asian_option_pricer()
 
 
 
-calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPY calibrated')!=-1][0]).iloc[:1,1:]
+calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPY calibrated')!=-1][0]).iloc[:,1:]
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 
-df_generate_asian_options(calibrations)
+option_features = df_generate_asian_option_features(calibrations)
+
+
+
 
 
 # print(calibrations.dtypes)
