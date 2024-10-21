@@ -42,6 +42,9 @@ class asian_option_feature_generation():
                         [t],
                         n_fixings,
                         [f],
+                        [0],
+                        ['geometric','arithmetic'],
+                        ['call','put'],
                         [r],
                         [g],
                         [calculation_datetime],
@@ -52,8 +55,9 @@ class asian_option_feature_generation():
                         [v0]
                     ),
                     columns = [
-                        'spot_price','strike_price','days_to_maturity','n_fixings','fixing_frequency',
-                        'risk_free_rate','dividend_rate','calculation_datetime',
+                        'spot_price','strike_price','days_to_maturity',
+                        'n_fixings','fixing_frequency','past_fixings','averaging_type','w',
+                        'risk_free_rate','dividend_rate','calculation_date',
                         'kappa','theta','rho','eta','v0'
                     ]
                 )
@@ -68,6 +72,9 @@ class asian_option_feature_generation():
                         [f],
                         [1],
                         [f],
+                        [0],
+                        ['geometric','arithmetic'],
+                        ['call','put'],
                         [r],
                         [g],
                         [calculation_datetime],
@@ -78,8 +85,9 @@ class asian_option_feature_generation():
                         [v0]
                     ),
                     columns = [
-                        'spot_price','strike_price','days_to_maturity','n_fixings','fixing_frequency',
-                        'risk_free_rate','dividend_rate','calculation_datetime',
+                        'spot_price','strike_price','days_to_maturity',
+                        'n_fixings','fixing_frequency','past_fixings','averaging_type','w',
+                        'risk_free_rate','dividend_rate','calculation_date',
                         'kappa','theta','rho','eta','v0'
                     ]
                 )
@@ -109,7 +117,7 @@ calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) i
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 
 gen = asian_option_feature_generation()
-option_features = gen.df_generate_asian_option_features(calibrations)
-option_features = pd.concat(option_features,ignore_index=True)
+features = gen.df_generate_asian_option_features(calibrations)
+features = pd.concat(features,ignore_index=True)
 
-print(option_features)
+print(features['dividend_rate'].unique())
