@@ -9,7 +9,7 @@ class asian_option_feature_generation():
     def generate_asian_option_features(self,s,r,g,calculation_datetime,kappa,theta,rho,eta,v0):
         kupper = int(s*(1+0.5))
         klower = int(s*(1-0.5))
-        K = np.arange(klower,kupper,7)
+        K = np.arange(klower,kupper,5)
 
         W = [
             'call',
@@ -24,43 +24,67 @@ class asian_option_feature_generation():
 
         past_fixings = [0]
 
-        fixing_frequencies = [30,60,90,180,360]
-        max_maturity = fixing_frequencies[-1]
-        option_features = []
-        for f in fixing_frequencies:
-            max_periods = np.arange(f,max_maturity+1,f)
-            n_fixings = len(max_periods)
-            for i, tenor in enumerate(max_periods):
-                n_fixings = i+1
-                periods = max_periods[:i+1]
+        fixing_frequencies = [
+            1,7,28,84,168,336,672
+        ]
 
-                features = pd.DataFrame(
+        maturities = [
+            7,28,84,168,336,672
+        ]
+        features = []
+        for i,t in enumerate(maturities):
+            for f in fixing_frequencies[:i+1]:
+                n_fixings = [t/f]
+                df = pd.DataFrame(
                     product(
                         [s],
                         K,
+                        [t],
+                        n_fixings,
+                        [f],
                         [r],
                         [g],
-                        W,
-                        types,
-                        [f],
-                        [n_fixings],
-                        past_fixings,
+                        [calculation_datetime],
                         [kappa],
                         [theta],
                         [rho],
                         [eta],
-                        [v0],
-                        [calculation_datetime],
-                        [tenor]
+                        [v0]
                     ),
                     columns = [
-                        'spot_price','strike_price','risk_free_rate','dividend_rate','w',
-                        'averaging_type','fixing_frequency','n_fixings','past_fixings',
-                        'kappa','theta','rho','eta','v0','calculation_date','days_to_maturity'
+                        'spot_price','strike_price','days_to_maturity','n_fixings','fixing_frequency',
+                        'risk_free_rate','dividend_rate','calculation_datetime',
+                        'kappa','theta','rho','eta','v0'
                     ]
                 )
-                option_features.append(features)
-        return pd.concat(option_features,ignore_index=True)
+                features.append(df)
+
+        for f in fixing_frequencies:
+            features.append(
+                pd.DataFrame(
+                    product(
+                        [s],
+                        K,
+                        [f],
+                        [1],
+                        [f],
+                        [r],
+                        [g],
+                        [calculation_datetime],
+                        [kappa],
+                        [theta],
+                        [rho],
+                        [eta],
+                        [v0]
+                    ),
+                    columns = [
+                        'spot_price','strike_price','days_to_maturity','n_fixings','fixing_frequency',
+                        'risk_free_rate','dividend_rate','calculation_datetime',
+                        'kappa','theta','rho','eta','v0'
+                    ]
+                )
+            )
+        return pd.concat(features,ignore_index=True)
 
     def row_generate_asian_option_features(self,row):
         return self.generate_asian_option_features(
@@ -87,3 +111,5 @@ calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 gen = asian_option_feature_generation()
 option_features = gen.df_generate_asian_option_features(calibrations)
 option_features = pd.concat(option_features,ignore_index=True)
+
+print(option_features)
