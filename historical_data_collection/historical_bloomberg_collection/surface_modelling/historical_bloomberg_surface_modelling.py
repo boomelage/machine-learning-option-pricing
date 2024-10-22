@@ -23,3 +23,4 @@ derman_coefs = derman(coefficient_surface,s,atm_vols)
 
 
 
+print(derman_coefs)
