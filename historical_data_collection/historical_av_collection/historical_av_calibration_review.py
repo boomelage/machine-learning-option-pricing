@@ -2,6 +2,7 @@ import time
 import numpy as np
 import pandas as pd
 import QuantLib as ql
+from Derman import derman
 from datetime import datetime, timedelta
 from model_settings import ms, vanilla_pricer
 vanp = vanilla_pricer()
@@ -21,6 +22,7 @@ for date in dates:
     store_keys[date] = date_dict
 
 c = 0
+calibrations = []
 for date in dates:
     try:
         keys = store_keys[date]
@@ -46,7 +48,10 @@ for date in dates:
         raw_data[float_columns] = raw_data[float_columns].astype(float)
         raw_data = raw_data[raw_data['days_to_maturity']>0].reset_index(drop=True)
         raw_data['moneyness'] = ms.vmoneyness(raw_data['spot_price'],raw_data['strike'],raw_data['type'])
-        raw_data = raw_data[(raw_data['moneyness']<0)*(raw_data['moneyness']>=-0.5)]
+        raw_data = raw_data[
+            (raw_data['moneyness']<0)
+            &(raw_data['moneyness']>=-0.8)
+        ]
         
         T = np.sort(raw_data['days_to_maturity'].unique())
         K = np.sort(raw_data['strike'].unique())
@@ -75,7 +80,8 @@ for date in dates:
         
         K = raw_surf.index[indices]
         surface = raw_surf[raw_surf.index.isin(K)].copy()
-        print(surface)
+
+        # surface = derman(surface,s)
 
         r = 0.04
         g = 0.0
@@ -130,6 +136,7 @@ for date in dates:
         calibration_test_data['risk_free_rate'] = r
         calibration_test_data['dividend_rate'] = g
         calibration_test_data = calibration_test_data[calibration_test_data['days_to_maturity'].isin(T)]
+        calibration_test_data = calibration_test_data[calibration_test_data['strike_price'].isin(K)]
         calibration_test_data[heston_parameters.index.tolist()] = np.tile(heston_parameters,(calibration_test_data.shape[0],1))
         calibration_test_data.loc[:,'moneyness'] = ms.vmoneyness(
             calibration_test_data['spot_price'].values,
@@ -141,7 +148,8 @@ for date in dates:
         calibration_test_data.loc[:,'error'] = calibration_test_data['heston_price'].values/calibration_test_data['black_scholes'].values-1
         avg = np.mean(np.abs(calibration_test_data['error']))
         print(f"\n{heston_parameters}\naverage absolute relative error: {round(avg*100,3)}")
-        print(f"calibration testing dataset:\n{calibration_test_data.describe()}")
+        if avg < 1:
+            calibrations.append(calibration_test_data)
 
 
     except Exception as e:
@@ -150,3 +158,7 @@ for date in dates:
         time.sleep(5)
         pass
 print(c)
+
+calibrations = pd.concat(calibrations,ignore_index=True)
+print(calibrations)
+calibrations.to_csv(r'alpha_vantage_new_calibration.csv')
