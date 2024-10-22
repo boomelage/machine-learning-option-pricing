@@ -15,7 +15,6 @@ sys.path.append(parent_dir)
 os.chdir(current_dir)
 csvs = [file for file in os.listdir() if file.endswith('.csv')]
 
-print(csvs)
 """
 data collection and cleaning
 """
