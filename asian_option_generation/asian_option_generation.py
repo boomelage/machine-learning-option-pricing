@@ -113,7 +113,7 @@ class asian_option_feature_generation():
 
 
 from pathlib import Path
-calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('av_recalibrated')!=-1][0]).iloc[:,1:]
+calibrations = pd.read_csv([file for file in os.listdir(str(Path().resolve())) if file.find('SPX')!=-1][0]).iloc[:5,1:]
 calibrations = calibrations.rename(columns={'calculation_date':'date'})
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 calibrations['risk_free_rate'] = 0.04
@@ -122,4 +122,3 @@ gen = asian_option_feature_generation()
 
 features = gen.df_generate_asian_option_features(calibrations)
 features = pd.concat(features,ignore_index=True)
-print(features)
