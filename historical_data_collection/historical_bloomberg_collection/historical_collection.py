@@ -73,4 +73,10 @@ historical_data[
         ['30D', '60D', '3M', '6M', '12M', '18M', '24M', 'dividend_rate']
         ]/100
 
-print(f"\nhistorical data:\n{historical_data.head(10)}")
+print(f"\nhistorical data:\n{historical_data}")
+
+
+
+
+
+
