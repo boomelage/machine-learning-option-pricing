@@ -8,7 +8,6 @@ import os
 import pandas as pd
 import numpy as np
 from joblib import Parallel, delayed
-
 from pathlib import Path
 from tqdm import tqdm
 from itertools import product
@@ -42,7 +41,8 @@ if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 
 
-df = pd.read_csv(filepath).iloc[293:,1:]
+df = pd.read_csv(filepath).iloc[322:,1:]
+
 bar = tqdm(total=df.shape[0])
 
 def row_generate_barrier_features(row):
@@ -101,15 +101,11 @@ def row_generate_barrier_features(row):
     features['rebate'] = rebate
     features['dividend_rate'] = row['dividend_rate']
     features['risk_free_rate'] = r
-    features.loc[:,'theta'] = np.tile(row['theta'],features.shape[0])
-    features.loc[:,'kappa'] = np.tile(row['kappa'],features.shape[0])
-    features.loc[:,'rho'] = np.tile(row['rho'],features.shape[0])
-    features.loc[:,'eta'] = np.tile(row['eta'],features.shape[0])
-    features.loc[:,'v0'] = np.tile(row['v0'],features.shape[0])
+    heston_parameters = pd.Series(row[['theta', 'kappa', 'rho', 'eta', 'v0']]).astype(float)
+    features[heston_parameters.index] = np.tile(heston_parameters,(features.shape[0],1))
     features['calculation_date'] = calculation_datetime
     features['barrier_price'] = barp.df_barrier_price(features)
     features['calculation_date'] = date
-
     features.to_csv(os.path.join(output_dir,f'{date} bloomberg SPX barrier options.csv'))
     bar.update(1)
 
