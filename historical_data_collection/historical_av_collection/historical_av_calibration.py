@@ -10,8 +10,12 @@ from heston_model_calibration import calibrate_heston
 from historical_av_options_collector import collect_av_link
 vanp = vanilla_pricer()
 
-symbol = 'SPY'
+symbol = 'NVDA'
 h5_name = f"alphaVantage {symbol}.h5"
+
+relative_dump_directory = f"{symbol}_av_calibrations"
+if not os.path.exists(relative_dump_directory):
+    os.mkdir(relative_dump_directory)
 
 url = str(
     'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+
@@ -127,7 +131,7 @@ for date,s in spots.items():
         test_data['relative_error'] = test_data['heston']/test_data['black_scholes']-1
         calibration_error = np.mean(np.abs(test_data['relative_error']))
         print(test_data.iloc[:,-3:], calibration_error)
-        test_data.to_csv(os.path.join('av_calibrations',f'{symbol} calbirated {calculation_datetime.strftime('%Y-%m-%d')}.csv'))
+        test_data.to_csv(os.path.join(relative_dump_directory,f'{symbol} calbirated {calculation_datetime.strftime('%Y-%m-%d')}.csv'))
 
     except Exception as e:
         print(e)
