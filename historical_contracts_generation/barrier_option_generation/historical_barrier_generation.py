@@ -13,7 +13,7 @@ from pathlib import Path
 from tqdm import tqdm
 from itertools import product
 from datetime import datetime
-from model_settings import barrier_option_pricer
+from model_settings import barrier_option_pricer,ms
 barp = barrier_option_pricer()
 
 def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
@@ -31,16 +31,18 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     return barrier_features
 
 script_dir = Path(__file__).resolve().parent.absolute()
-datadir =  os.path.join(script_dir.parent.parent.parent.parent,'OneDrive - rsbrc','DATA','calibrated','bloomberg','SPX')
+root_dir = script_dir.parent.parent.parent.parent
+datadir =  os.path.join(root_dir,ms.bloomberg_spx_calibrated)
+
 file = [f for f in os.listdir(datadir) if f.endswith('.csv')][0]
 filepath = os.path.join(datadir,file)
 
-output_dir = os.path.join(Path(datadir).parent.parent.parent,'generated','bloomberg','barrier_options')
+output_dir = os.path.join(root_dir,ms.bloomberg_spx_barrier_dump)
 if not os.path.exists(output_dir):
-    os.mkdir(os.path.join(output_dir))
+    os.mkdir(output_dir)
 
 
-df = pd.read_csv(filepath).iloc[163:,1:]
+df = pd.read_csv(filepath).iloc[293:,1:]
 bar = tqdm(total=df.shape[0])
 
 def row_generate_barrier_features(row):
@@ -111,7 +113,7 @@ def row_generate_barrier_features(row):
     features.to_csv(os.path.join(output_dir,f'{date} bloomberg SPX barrier options.csv'))
     bar.update(1)
 
-print(df)
+print('\n',df)
 
 Parallel()(delayed(row_generate_barrier_features)(row) for _, row in df.iterrows())
 
