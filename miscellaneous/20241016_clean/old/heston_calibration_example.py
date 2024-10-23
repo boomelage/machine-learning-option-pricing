@@ -3,7 +3,9 @@
 """
 Created on Thu Sep  5 11:54:40 2024
 
-@author: doomd
+© Aaron De la Rosa
+https://medium.com/@aaron_delarosa/heston-model-calibration-using-quantlib-in-python-0089516430ef
+
 """
 
 import QuantLib as ql
