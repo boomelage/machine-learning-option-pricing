@@ -2,14 +2,17 @@
 An empirical approach based on market data
 
 # Table of Contents
-1. [Introduction](#introduction)
-2. [Pricing Model Specification](#pricing-model-specification)
-   - 2.1 [Pricing Model](#pricing-model)
-   - 2.2 [Volatility Estimation](#volatility-estimation)
-   - 2.3 [Assumptions](#Assumptions)
-3. [Machine Learning Model Specification](#machine-leanring-model-specification)
-   - 3.1 [Scope](#scope)
-5. [References](#references)
+# Table of Contents
+1. [Introduction](#1-introduction)
+2. [Pricing Model Specification](#2-pricing-model-specification)
+   - 2.1 [Pricing Model](#21-pricing-model)
+   - 2.2 [Volatility Estimation](#22-volatility-estimation)
+   - 2.3 [Assumptions](#23-assumptions)
+3. [Neural Network Specification](#3-neural-network-specification)
+   - 3.1 [Scope](#31-scope)
+   - 3.2 [Data Generation Method](#32-data-generation-method)
+4. [References](#4-references)
+
 
 
 # 1. Introduction
