@@ -41,7 +41,7 @@ if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 
 
-df = pd.read_csv(filepath).iloc[322:,1:]
+df = pd.read_csv(filepath).iloc[442:,1:]
 
 bar = tqdm(total=df.shape[0])
 
