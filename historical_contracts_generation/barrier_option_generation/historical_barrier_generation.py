@@ -5,13 +5,24 @@ Created on Sat Sep 21 13:54:06 2024
 @author: boomelage
 """
 import os
-import sys
-import time
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from tqdm import tqdm
 from itertools import product
 from datetime import datetime
+from model_settings import barrier_option_pricer
+barp = barrier_option_pricer()
+
+script_dir = Path(__file__).resolve().parent.absolute()
+datadir =  os.path.join(script_dir.parent.parent.parent.parent,'OneDrive - rsbrc','DATA','calibrated','bloomberg','SPX')
+file = [f for f in os.listdir(datadir) if f.endswith('.csv')][0]
+filepath = os.path.join(datadir,file)
+
+output_dir = os.path.join(Path(datadir).parent.parent.parent,'generated','bloomberg','barrier_options')
+if not os.path.exists(output_dir):
+    os.mkdir(os.path.join(output_dir))
+
 
 def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     barrier_features = pd.DataFrame(
@@ -27,44 +38,14 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     
     return barrier_features
 
+df = pd.read_csv(filepath).iloc[:,1:]
+bar = tqdm(total=df.shape[0])
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-grandparent_dir = os.path.dirname(parent_dir)
-grandgrandparent_dir = os.path.dirname(grandparent_dir)
-sys.path.append(parent_dir)
-sys.path.append(grandparent_dir)
-sys.path.append(grandgrandparent_dir)
-from model_settings import ms
-from data_query import dirdatacsv
-os.chdir(current_dir)
-
-
-"""
-###########
-# routine #
-###########
-"""
-
-historical_calibrated = pd.read_csv(dirdatacsv()[0])
-historical_calibrated = historical_calibrated.iloc[:,1:].copy(
-    ).reset_index(drop=True)
-historical_calibrated['date'] = pd.to_datetime(historical_calibrated['date'])
-from HDF_collection import contracts
-latest = contracts.describe().loc['max','calculation_date']
-historical_calibrated = historical_calibrated[
-    historical_calibrated['date']>latest
-]
-print(latest)
-bar = tqdm(
-    total = historical_calibrated.shape[0],
-    desc = 'generating',
-    leave = True
-    )
-for rowi, row in historical_calibrated.iterrows():
+def row_generate_barrier_features(row):
     s = row['spot_price']
     
-    calculation_datetime = row['date']
+    date = row['date']
+    calculation_datetime = datetime.strptime(date,'%Y-%m-%d')
     date_print = datetime(
         calculation_datetime.year,
         calculation_datetime.month,
@@ -79,7 +60,7 @@ for rowi, row in historical_calibrated.iterrows():
     K = np.linspace(
         s*0.9,
         s*1.1,
-        50
+        9
         )
     T = [
         60,
@@ -116,40 +97,19 @@ for rowi, row in historical_calibrated.iterrows():
     features['rebate'] = rebate
     features['dividend_rate'] = row['dividend_rate']
     features['risk_free_rate'] = r
-    features.loc[:,'theta'] = historical_calibrated.loc[rowi,'theta']
-    features.loc[:,'kappa'] = historical_calibrated.loc[rowi,'kappa']
-    features.loc[:,'rho'] = historical_calibrated.loc[rowi,'rho']
-    features.loc[:,'eta'] = historical_calibrated.loc[rowi,'eta']
-    features.loc[:,'v0'] = historical_calibrated.loc[rowi,'v0']
+    features.loc[:,'theta'] = np.tile(row['theta'],features.shape[0])
+    features.loc[:,'kappa'] = np.tile(row['kappa'],features.shape[0])
+    features.loc[:,'rho'] = np.tile(row['rho'],features.shape[0])
+    features.loc[:,'eta'] = np.tile(row['eta'],features.shape[0])
+    features.loc[:,'v0'] = np.tile(row['v0'],features.shape[0])
     features['calculation_date'] = calculation_datetime
-    
-    # print(features)
-    try:
-       features['barrier_price'] = ms.vector_barrier_price(features)
+    features['barrier_price'] = barp.df_barrier_price(features)
+    features['calculation_date'] = date
 
-       features['expiration_date'] =  calculation_datetime + pd.to_timedelta(
-                features['days_to_maturity'], unit='D')
-        
-       h5_key = str('date_'+ calculation_datetime.strftime("%Y_%m_%d"))
-        
-       calls = features[features['w'] == 'call']
-       puts = features[features['w'] == 'put']
-       while True:
-           with pd.HDFStore('SPX barriers.h5') as store:
-               try:
-                   store.append(
-                       f'/call/{h5_key}', calls, format='table', append=True)
-                   store.append(
-                       f'/put/{h5_key}', puts, format='table', append=True)
-                   break
-               except Exception as e:
-                   raise KeyError(f"error in '{h5_key}': {e}"
-                                   f"\nretrying in 5 seconds...")
-                   time.sleep(5)
-    except Exception as e:
-        tqdm.write(
-            f"skipping: {date_print}\nerror: {e}"
-            )
-        pass
+    features.to_csv(os.path.join(output_dir,f'{date} bloomberg SPX barrier options.csv'))
     bar.update(1)
+
+
+df.apply(row_generate_barrier_features,axis=1)
+
 bar.close()
