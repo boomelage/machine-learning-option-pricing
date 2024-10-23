@@ -58,13 +58,16 @@ While the specification in $$(1)$$ and $$(1.1)$$ is flexible enough to permit st
 # 3. Neural Network Specification
 ## 3.1 Scope
 The scope of our proposed historical simulation method is to test whether machine learning estimations of pricing functions can reliably price large volumes of exotic options in as close of a realistic trading scenario as our methods permit. The main considerations will be around frequency of retraining and choice of model features. In all cases, the model will have the minimum of four features: underlying spot price, strike price, days to maturity, and a categorical 'put'/'call' flag classified via one-hot-encoding. Further, the model will include the additional features of barrier level and barrier type and potentially Heston pricing parameters. Later, the model will be extended to Asian arithmetic and geometric options with similar considerations.
- <br>
- <br>
-Another major consideration will be that of data management and training data selection. With vast amounts of data available by virtue of the generation method, it is possible that finding the correct selection criteria may depend on multiple factors, lowering the model's flexibility. For pricing performance, the Root Square Mean Error and Mean Absolute Error metrics will be used.
+
+## 3.2 Data Generation Method
+In order to achieve homogenous results, where each trading day is distributionally comparative to the others, we calibrate a set of global parameters across a number of strikes and set maturities for every trading day simulated  (i.e., one set of $$\kappa$$, $$\theta$$, $$\rho$$, $$\eta$$ and $$v_0$$ across a maximum of five strikes and six maturities, total of thirty options) This method will yield lower calibration accuracy but will allow us to create a dataset that represents the functional form between the option's features and its price across multiple trading scenarios. With calibrated parameters for every trading day, a dataset is generated to represent all pheasible contract feature combinations for a given option. This process is iterated over every historical trading day, resulting in a market-based distirbution of historical option prices with all repsective pricing inputs.
 
 # 4. References
 Blanda, V. (2023). FX Barrier Option Pricing. 
 <br> https://www.imperial.ac.uk/media/imperial-college/faculty-of-natural-sciences/department-of-mathematics/math-finance/212252650---VALENTIN-BLANDA---BLANDA_VALENTIN_02293988.pdf
+
+De La Rosa, A. (2024) HESTON MODEL CALIBRATION USING QUANTLIB IN PYTHON
+<br>https://medium.com/@aaron_delarosa/heston-model-calibration-using-quantlib-in-python-0089516430ef
 
 Derman, E. (2008). Lecture 9: Patterns of Volatility Change.
 <br> https://emanuelderman.com/wp-content/uploads/2013/09/smile-lecture9.pdf 
