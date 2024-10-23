@@ -7,22 +7,14 @@ Created on Sat Sep 21 13:54:06 2024
 import os
 import pandas as pd
 import numpy as np
+from joblib import Parallel, delayed
+
 from pathlib import Path
 from tqdm import tqdm
 from itertools import product
 from datetime import datetime
 from model_settings import barrier_option_pricer
 barp = barrier_option_pricer()
-
-script_dir = Path(__file__).resolve().parent.absolute()
-datadir =  os.path.join(script_dir.parent.parent.parent.parent,'OneDrive - rsbrc','DATA','calibrated','bloomberg','SPX')
-file = [f for f in os.listdir(datadir) if f.endswith('.csv')][0]
-filepath = os.path.join(datadir,file)
-
-output_dir = os.path.join(Path(datadir).parent.parent.parent,'generated','bloomberg','barrier_options')
-if not os.path.exists(output_dir):
-    os.mkdir(os.path.join(output_dir))
-
 
 def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     barrier_features = pd.DataFrame(
@@ -38,7 +30,17 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     
     return barrier_features
 
-df = pd.read_csv(filepath).iloc[:,1:]
+script_dir = Path(__file__).resolve().parent.absolute()
+datadir =  os.path.join(script_dir.parent.parent.parent.parent,'OneDrive - rsbrc','DATA','calibrated','bloomberg','SPX')
+file = [f for f in os.listdir(datadir) if f.endswith('.csv')][0]
+filepath = os.path.join(datadir,file)
+
+output_dir = os.path.join(Path(datadir).parent.parent.parent,'generated','bloomberg','barrier_options')
+if not os.path.exists(output_dir):
+    os.mkdir(os.path.join(output_dir))
+
+
+df = pd.read_csv(filepath).iloc[163:,1:]
 bar = tqdm(total=df.shape[0])
 
 def row_generate_barrier_features(row):
@@ -109,7 +111,8 @@ def row_generate_barrier_features(row):
     features.to_csv(os.path.join(output_dir,f'{date} bloomberg SPX barrier options.csv'))
     bar.update(1)
 
+print(df)
 
-df.apply(row_generate_barrier_features,axis=1)
+Parallel()(delayed(row_generate_barrier_features)(row) for _, row in df.iterrows())
 
 bar.close()
