@@ -11,7 +11,7 @@ aop = asian_option_pricer()
 root = Path(__file__).resolve().parent.parent.parent.parent.parent
 
 
-underlying_product = ms.bloomberg_spx_asians
+underlying_product = ms.bloomberg_spx_short_term_asians
 
 tag = underlying_product['calibrations_filetag']
 calibrations_dir = underlying_product['calibrations_dir']
@@ -52,12 +52,14 @@ def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,et
     past_fixings = [0]
 
     fixing_frequencies = [
-        1,7,28,84,168,336,#672
+        7,28,84
     ]
 
     maturities = [
-        7,28,84,168,336,#672
+        7,28,84
     ]
+
+
     feature_list = []
     for i,t in enumerate(maturities):
         for f in fixing_frequencies[:i+1]:
@@ -121,7 +123,7 @@ def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,et
         )
     features = pd.concat(feature_list,ignore_index=True)
     features['asian'] = aop.df_asian_option_price(features)
-    features.to_csv(os.path.join(output_dir,f"{calculation_datetime.strftime('%Y-%m-%d')} {tag} asian options.csv"))
+    features.to_csv(os.path.join(output_dir,f"{calculation_datetime.strftime('%Y-%m-%d')} {tag} short-term asian options.csv"))
     bar.update(1)
 
 def row_generate_asian_option_features(row):
