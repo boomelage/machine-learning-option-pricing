@@ -13,7 +13,7 @@ tag = 'cboe_spx'
 file = [f for f in os.listdir(calibrations_dir) if f.find(tag)!=-1][0]
 filepath = os.path.join(calibrations_dir,file)
 
-calibrations = pd.read_csv(filepath).iloc[397:,1:]
+calibrations = pd.read_csv(filepath).iloc[400:,1:]
 calibrations = calibrations.rename(columns={'calculation_date':'date'})
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 calibrations['risk_free_rate'] = 0.04
@@ -127,8 +127,13 @@ def row_generate_asian_option_features(row):
     )
 
 
-print(calibrations)
+import time
+
+start = time.time()
+print(f"\n{calibrations}")
 
 calibrations.apply(row_generate_asian_option_features,axis=1)
 
 bar.close()
+end = time.time()
+runtime = start-end
