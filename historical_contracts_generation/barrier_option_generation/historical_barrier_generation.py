@@ -31,18 +31,18 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
 
 script_dir = Path(__file__).resolve().parent.absolute()
 root_dir = script_dir.parent.parent.parent.parent
-datadir =  os.path.join(root_dir,ms.bloomberg_spx_calibrated)
+datadir =  os.path.join(root_dir,ms.calibrations_dir)
 
-file = [f for f in os.listdir(datadir) if f.endswith('.csv')][0]
+file = [f for f in os.listdir(datadir) if f.find('cboe_spx')!=-1][0]
 filepath = os.path.join(datadir,file)
 
-output_dir = os.path.join(root_dir,ms.bloomberg_spx_barrier_dump)
+output_dir = os.path.join(root_dir,ms.cboe_spx_barrier_dump)
 if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 
 
-df = pd.read_csv(filepath).iloc[442:,1:]
-
+df = pd.read_csv(filepath).iloc[:,1:]
+df = df.rename(columns={'calculation_date':'date'})
 bar = tqdm(total=df.shape[0])
 
 def row_generate_barrier_features(row):
@@ -106,11 +106,10 @@ def row_generate_barrier_features(row):
     features['calculation_date'] = calculation_datetime
     features['barrier_price'] = barp.df_barrier_price(features)
     features['calculation_date'] = date
-    features.to_csv(os.path.join(output_dir,f'{date} bloomberg SPX barrier options.csv'))
+    features.to_csv(os.path.join(output_dir,f'{date} cboe SPX barrier options.csv'))
     bar.update(1)
 
 print('\n',df)
 
 Parallel()(delayed(row_generate_barrier_features)(row) for _, row in df.iterrows())
-
 bar.close()
