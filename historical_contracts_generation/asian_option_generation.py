@@ -18,7 +18,7 @@ filepath = os.path.join(calibrations_dir,file)
 output_dir = os.path.join(root,ms.cboe_spx_asian_option_dump)
 
 
-calibrations = pd.read_csv(filepath).iloc[404:,1:]
+calibrations = pd.read_csv(filepath).iloc[527:,1:]
 calibrations = calibrations.rename(columns={'calculation_date':'date'})
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 calibrations['risk_free_rate'] = 0.04
