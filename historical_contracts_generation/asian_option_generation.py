@@ -9,20 +9,21 @@ from model_settings import ms, asian_option_pricer
 aop = asian_option_pricer()
 root = Path(__file__).resolve().parent.parent.parent.parent.parent
 calibrations_dir = os.path.join(root,ms.calibrations_dir)
-tag = 'cboe_spx'
+tag = 'bloomberg_spx'
 file = [f for f in os.listdir(calibrations_dir) if f.find(tag)!=-1][0]
 filepath = os.path.join(calibrations_dir,file)
 
 
 
-output_dir = os.path.join(root,ms.cboe_spx_asian_option_dump)
+output_dir = os.path.join(root,ms.bloomberg_spx_asian_option_dump)
 
 
-calibrations = pd.read_csv(filepath).iloc[527:,1:]
+calibrations = pd.read_csv(filepath).iloc[:,1:]
 calibrations = calibrations.rename(columns={'calculation_date':'date'})
 calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
 calibrations['risk_free_rate'] = 0.04
 
+print(f"/n{calibrations}")
 
 bar = tqdm(total = calibrations.shape[0])
 def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,eta,v0):
@@ -130,13 +131,10 @@ def row_generate_asian_option_features(row):
     )
 
 
+
 import time
-
 start = time.time()
-print(f"\n{calibrations}")
-
 calibrations.apply(row_generate_asian_option_features,axis=1)
-
 bar.close()
 end = time.time()
 runtime = start-end
