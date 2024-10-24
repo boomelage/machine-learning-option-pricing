@@ -8,22 +8,27 @@ from pathlib import Path
 from model_settings import ms, asian_option_pricer
 aop = asian_option_pricer()
 root = Path(__file__).resolve().parent.parent.parent.parent.parent
-calibrations_dir = os.path.join(root,ms.calibrations_dir)
-tag = 'bloomberg_spx'
+
+
+underlying_product = ms.cboe_spx_asians
+
+
+tag = underlying_product['calibrations_filetag']
+calibrations_dir = underlying_product['calibrations_dir']
+output_dump = underlying_product['dump']
+
+calibrations_dir = os.path.join(root,calibrations_dir)
 file = [f for f in os.listdir(calibrations_dir) if f.find(tag)!=-1][0]
 filepath = os.path.join(calibrations_dir,file)
 
+output_dir = os.path.join(root,output_dump)
+computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
 
-
-output_dir = os.path.join(root,ms.bloomberg_spx_asian_option_dump)
-
-
-calibrations = pd.read_csv(filepath).iloc[:,1:]
-calibrations = calibrations.rename(columns={'calculation_date':'date'})
-calibrations['date'] = pd.to_datetime(calibrations['date'],format='%Y-%m-%d')
+calibrations = pd.read_csv(filepath).iloc[computed_outputs:,1:]
+calibrations['calculation_date'] = pd.to_datetime(calibrations['calculation_date'],format='%Y-%m-%d')
 calibrations['risk_free_rate'] = 0.04
 
-print(f"/n{calibrations}")
+print(f"\n{calibrations}")
 
 bar = tqdm(total = calibrations.shape[0])
 def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,eta,v0):
@@ -122,7 +127,7 @@ def row_generate_asian_option_features(row):
         row['spot_price'],
         row['risk_free_rate'],
         row['dividend_rate'],
-        row['date'],
+        row['calculation_date'],
         row['kappa'],
         row['theta'],
         row['rho'],
