@@ -41,7 +41,7 @@ if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 
 
-df = pd.read_csv(filepath).iloc[:,1:]
+df = pd.read_csv(filepath).iloc[522:,1:]
 df = df.rename(columns={'calculation_date':'date'})
 bar = tqdm(total=df.shape[0])
 
@@ -109,7 +109,13 @@ def row_generate_barrier_features(row):
     features.to_csv(os.path.join(output_dir,f'{date} cboe SPX barrier options.csv'))
     bar.update(1)
 
+import time
+
+start = time.time()
 print('\n',df)
 
 Parallel()(delayed(row_generate_barrier_features)(row) for _, row in df.iterrows())
 bar.close()
+
+end = time.time()
+runtime = end-start
