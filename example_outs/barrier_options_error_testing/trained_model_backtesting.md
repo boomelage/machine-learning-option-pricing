@@ -240,7 +240,7 @@ Ryhat = Rfit.predict(X)
 RRSS = sum((Ryhat-y)**2)
 print(f"features:\n{X.dtypes}\n\ntarget: {target_name}\n")
 for i,c in enumerate(Rfit.coef_):
-    print(f"b{i}:   {c}")
+    print(f"b{i+1}:   {c}")
 print(f"intercept: {Rfit.intercept_}")
 print(f"R Squared: {Rfit.score(X,y)}")
 print(f"\nRRSS: {RRSS}")
@@ -252,7 +252,7 @@ print(f"\nRRSS: {RRSS}")
     
     target: MAE
     
-    b0:   1.362728240770949
+    b1:   1.362728240770949
     intercept: -16.8213501215009
     R Squared: 0.8156051093879991
     
