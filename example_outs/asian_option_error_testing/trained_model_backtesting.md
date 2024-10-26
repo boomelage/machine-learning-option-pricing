@@ -23,17 +23,17 @@ for i,m in enumerate(models):
 
 
 ```python
-model = models[1]
+model = models[2]
 model_dir = os.path.join(models_dir,model)
 model_files = [f for f in os.listdir(model_dir) if f.find('ipynb')==-1]
 for i,m in enumerate(model_files):
     print(f"{i}     {m}")
 ```
 
-    0     2024_10_25 15-28-03 Deep Neural Network barrier_price insample.csv
-    1     2024_10_25 15-28-03 Deep Neural Network barrier_price outsample.csv
-    2     2024_10_25 15-28-03 Deep Neural Network barrier_price.pkl
-    3     2024_10_25 15-28-03 Deep Neural Network barrier_price.txt
+    0     2024_10_26 16-52-04 Deep Neural Network asian insample.csv
+    1     2024_10_26 16-52-04 Deep Neural Network asian outsample.csv
+    2     2024_10_26 16-52-04 Deep Neural Network asian.pkl
+    3     2024_10_26 16-52-04 Deep Neural Network asian.txt
     
 
 
@@ -49,7 +49,7 @@ print('maturities:',test_data['days_to_maturity'].unique())
 print(model_fit)
 ```
 
-    maturities: [ 60  90 180 360 540 720]
+    maturities: [  7  28  84 168 336   1]
     TransformedTargetRegressor(regressor=Pipeline(steps=[('preprocessor',
                                                           ColumnTransformer(transformers=[('StandardScaler',
                                                                                            StandardScaler(),
@@ -63,18 +63,20 @@ print(model_fit)
                                                                                             'rho',
                                                                                             'eta',
                                                                                             'v0',
-                                                                                            'barrier']),
+                                                                                            'fixing_frequency',
+                                                                                            'n_fixings',
+                                                                                            'past_fixings']),
                                                                                           ('OneHotEncoder',
                                                                                            OneHotEncoder(sparse_output=False),
-                                                                                           ['barrier_type_name',
+                                                                                           ['averaging_type',
                                                                                             'w'])])),
                                                          ('regressor',
-                                                          MLPRegressor(hidden_layer_sizes=(13,
-                                                                                           13,
-                                                                                           13),
+                                                          MLPRegressor(hidden_layer_sizes=(15,
+                                                                                           15,
+                                                                                           15),
                                                                        learning_rate='adaptive',
                                                                        max_iter=1000,
-                                                                       solver='sgd'))]),
+                                                                       solver='lbfgs'))]),
                                transformer=Pipeline(steps=[('StandardScaler',
                                                             StandardScaler())]))
     
@@ -102,7 +104,7 @@ print(test_data.shape[0])
     
 
 
-    2362680
+    395640
     
 
 
@@ -164,7 +166,7 @@ regression_data.dtypes
 X = regression_data[
     [
         'spot_price',
-        # 'theta', 
+        'theta', 
         'v0',
     ]
 ].copy()
@@ -177,7 +179,7 @@ train_spots, X.iloc[:,0] = np.log(train_data['spot_price'].drop_duplicates()),np
 target_name = 'MAE'
 y = regression_data[target_name].loc[X.index]
 
-fit_intercept = True
+fit_intercept = False
 
 
 fig, ax1 = plt.subplots()
@@ -216,17 +218,19 @@ print(f"\nURSS: {URSS}")
 
     features:
     spot_price    float64
+    theta         float64
     v0            float64
     dtype: object
     
     target: MAE
     
-    b0:   5.866959993806629
-    b1:   1.3997175514390938
-    intercept: -58.384682970496044
-    R Squared: 0.8164291928630547
+    b0:   0.19560044695752038
+    b1:   -0.5261604514504784
+    b2:   0.8076135239141494
+    intercept: 0.0
+    R Squared: 0.6857548259720132
     
-    URSS: 41625.235497855305
+    URSS: 20600.204233168934
     
 
 ### restricted regression
@@ -247,16 +251,18 @@ print(f"\nRRSS: {RRSS}")
 ```
 
     features:
-    v0    float64
+    theta    float64
+    v0       float64
     dtype: object
     
     target: MAE
     
-    b0:   1.362728240770949
-    intercept: -16.8213501215009
-    R Squared: 0.8156051093879991
+    b0:   -0.4678168271572264
+    b1:   0.7948482556543921
+    intercept: 0.0
+    R Squared: 0.6852279100340946
     
-    RRSS: 41812.098917230534
+    RRSS: 20634.74597583343
     
 
 ### F-Test
@@ -276,5 +282,5 @@ critF = stats.f.ppf(1 - alpha, dfn=dfn, dfd=dfd)
 print(f"F: {F}, Critical F: {critF}")
 ```
 
-    F: 1.9527958570327613, Critical F: 3.862924632233349
+    F: 0.8115552283068035, Critical F: 3.860743364946344
     
