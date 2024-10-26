@@ -18,23 +18,21 @@ for i,m in enumerate(models):
 
     0     2024_10_25 12-23-03 Deep Neural Network asian
     1     2024_10_25 15-28-03 Deep Neural Network barrier_price
-    2     2024_10_25 16-04-54 Deep Neural Network asian
-    3     2024_10_26 15-23-10 Deep Neural Network asian
     
 
 
 ```python
-model = models[1]
+model = models[0]
 model_dir = os.path.join(models_dir,model)
 model_files = [f for f in os.listdir(model_dir) if f.find('ipynb')==-1]
 for i,m in enumerate(model_files):
     print(f"{i}     {m}")
 ```
 
-    0     2024_10_25 15-28-03 Deep Neural Network barrier_price insample.csv
-    1     2024_10_25 15-28-03 Deep Neural Network barrier_price outsample.csv
-    2     2024_10_25 15-28-03 Deep Neural Network barrier_price.pkl
-    3     2024_10_25 15-28-03 Deep Neural Network barrier_price.txt
+    0     2024_10_25 12-23-03 Deep Neural Network asian insample.csv
+    1     2024_10_25 12-23-03 Deep Neural Network asian outsample.csv
+    2     2024_10_25 12-23-03 Deep Neural Network asian.pkl
+    3     2024_10_25 12-23-03 Deep Neural Network asian.txt
     
 
 
@@ -62,18 +60,21 @@ print(model_fit)
                                                                                             'rho',
                                                                                             'eta',
                                                                                             'v0',
-                                                                                            'barrier']),
+                                                                                            'fixing_frequency',
+                                                                                            'n_fixings',
+                                                                                            'past_fixings']),
                                                                                           ('OneHotEncoder',
                                                                                            OneHotEncoder(sparse_output=False),
-                                                                                           ['barrier_type_name',
+                                                                                           ['averaging_type',
                                                                                             'w'])])),
                                                          ('regressor',
-                                                          MLPRegressor(hidden_layer_sizes=(13,
-                                                                                           13,
-                                                                                           13),
+                                                          MLPRegressor(activation='tanh',
+                                                                       hidden_layer_sizes=(15,
+                                                                                           15,
+                                                                                           15),
                                                                        learning_rate='adaptive',
                                                                        max_iter=1000,
-                                                                       solver='sgd'))]),
+                                                                       solver='lbfgs'))]),
                                transformer=Pipeline(steps=[('StandardScaler',
                                                             StandardScaler())]))
     
@@ -99,9 +100,6 @@ plt.show()
 ![png](output_4_0.png)
     
 
-
-
-```python
 original_calibrations = os.path.join(root,ms.calibrations_dir)
 file = [f for f in os.listdir(original_calibrations) if f.find('bloomberg_spx')!=-1][0]
 ogc = pd.read_csv(os.path.join(original_calibrations,file)).iloc[:,1:]
@@ -111,43 +109,6 @@ ivol_keys = ogc.columns[0:7].tolist()
 ivols = ogc[ivol_keys].copy()
 test_data = test_data.combine_first(ivols).dropna()
 test_data.dtypes
-```
-
-
-
-
-    12M                       float64
-    18M                       float64
-    24M                       float64
-    30D                       float64
-    3M                        float64
-    60D                       float64
-    6M                        float64
-    barrier                   float64
-    barrier_price             float64
-    barrier_type_name          object
-    days_to_maturity          float64
-    dividend_rate             float64
-    eta                       float64
-    kappa                     float64
-    observed_price            float64
-    outin                      object
-    outofsample_error         float64
-    outofsample_prediction    float64
-    outofsample_target        float64
-    rebate                    float64
-    rho                       float64
-    risk_free_rate            float64
-    spot_price                float64
-    strike_price              float64
-    theta                     float64
-    updown                     object
-    v0                        float64
-    w                          object
-    dtype: object
-
-
-
 
 ```python
 diff = test_data['outofsample_error'].copy()
@@ -160,9 +121,9 @@ test_data['MAE'] = diff.resample('D').apply(compute_MAE).dropna()
 regression_data = test_data[
     [
         'spot_price',
-        'theta', 'kappa', 'rho', 'eta', 
+        'theta', 
+        'eta', 
         'v0',
-        '30D', '60D', '3M', '6M', '12M', '18M', '24M',
         'RMSE', 'MAE'
     ]
 ].copy().drop_duplicates()
@@ -188,17 +149,8 @@ regression_data.dtypes
 
     spot_price    float64
     theta         float64
-    kappa         float64
-    rho           float64
     eta           float64
     v0            float64
-    30D           float64
-    60D           float64
-    3M            float64
-    6M            float64
-    12M           float64
-    18M           float64
-    24M           float64
     RMSE          float64
     MAE           float64
     dtype: object
@@ -213,21 +165,41 @@ X = regression_data[
     [
         'spot_price',
         'theta', 
-        'kappa','rho', 'eta', 
         'v0',
-        '30D', '60D', '3M', '6M', '12M', '18M', '24M'
     ]
 ].copy()
 
-X.iloc[:,1:] = X.iloc[:,1:]*100
+X.iloc[:,1:] = np.sqrt(X.iloc[:,1:])*100
 
 target_name = 'MAE'
+
 y = regression_data[target_name]
-X['target'] = y
-y = X['target'].values
-X = X.iloc[:,:-1].copy()
+
 fit_intercept = False
+
+fig, ax1 = plt.subplots()
+plt.xticks(rotation=45)
+
+for column in X.columns[1:]:
+    ax1.plot(X.index, X[column], label=column)
+
+ax1.plot(X.index, y, label=target_name, color="black")
+
+ax1.legend(loc="upper left")
+
+ax2 = ax1.twinx()
+ax2.plot(X.index, X['spot_price'], label="spot_price", color="purple")
+ax2.set_ylabel("Spot Price")
+ax2.legend(loc="upper right")
+
+plt.show()
 ```
+
+
+    
+![png](output_12_0.png)
+    
+
 run the unrestricted regression with all of
 the above features
 
@@ -246,38 +218,18 @@ print(f"\nURSS: {URSS}")
     features:
     spot_price    float64
     theta         float64
-    kappa         float64
-    rho           float64
-    eta           float64
     v0            float64
-    30D           float64
-    60D           float64
-    3M            float64
-    6M            float64
-    12M           float64
-    18M           float64
-    24M           float64
     dtype: object
     
     target: MAE
     
-    b0:   0.0011346566110034197
-    b1:   0.5552169898927037
-    b2:   -0.0007076355997602812
-    b3:   0.0933922661520048
-    b4:   -0.07694276536575753
-    b5:   3.2202769022269155
-    b6:   -4.11264434334479
-    b7:   1.144294012978351
-    b8:   2.449771372578231
-    b9:   -0.9638967347414432
-    b10:   -0.5184672015721701
-    b11:   2.239073186932601
-    b12:   -0.5333858493255041
+    b0:   0.00018303264648774245
+    b1:   0.1492238703981863
+    b2:   0.5837364620509482
     intercept: 0.0
-    R Squared: 0.9194944685216202
+    R Squared: 0.5210427238839829
     
-    URSS: 23418.909909101538
+    URSS: 38999.69206750611
     
 
 ### restricted regression
@@ -299,37 +251,17 @@ print(f"\nRRSS: {RRSS}")
 
     features:
     theta    float64
-    kappa    float64
-    rho      float64
-    eta      float64
     v0       float64
-    30D      float64
-    60D      float64
-    3M       float64
-    6M       float64
-    12M      float64
-    18M      float64
-    24M      float64
     dtype: object
     
     target: MAE
     
-    b0:   0.5429207710209374
-    b1:   -0.0013140920551730287
-    b2:   0.08402864291188167
-    b3:   -0.06112859429545572
-    b4:   3.2243173193907086
-    b5:   -4.052607485823219
-    b6:   1.1050369881115556
-    b7:   2.401955498498377
-    b8:   -1.0868626840963
-    b9:   -0.4243479662372407
-    b10:   2.206597183319603
-    b11:   -0.43143503784867926
+    b0:   0.15836501409859768
+    b1:   0.5808759702523631
     intercept: 0.0
-    R Squared: 0.919406519401772
+    R Squared: 0.5210209684304874
     
-    RRSS: 23444.494145072516
+    RRSS: 39001.46353237244
     
 
 ### F-Test
@@ -349,5 +281,5 @@ critF = stats.f.ppf(1 - alpha, dfn=dfn, dfd=dfd)
 print(f"F: {F}, Critical F: {critF}")
 ```
 
-    F: 1.1973367988957917, Critical F: 3.8499573439353396
+    F: 0.029433802487357254, Critical F: 3.855849170898087
     
