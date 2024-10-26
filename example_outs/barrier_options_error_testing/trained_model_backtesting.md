@@ -100,15 +100,7 @@ plt.show()
 ![png](output_4_0.png)
     
 
-original_calibrations = os.path.join(root,ms.calibrations_dir)
-file = [f for f in os.listdir(original_calibrations) if f.find('bloomberg_spx')!=-1][0]
-ogc = pd.read_csv(os.path.join(original_calibrations,file)).iloc[:,1:]
-ogc['date'] = pd.to_datetime(ogc['date'],format='%Y-%m-%d')
-ogc = ogc.set_index('date')
-ivol_keys = ogc.columns[0:7].tolist()
-ivols = ogc[ivol_keys].copy()
-test_data = test_data.combine_first(ivols).dropna()
-test_data.dtypes
+
 
 ```python
 diff = test_data['outofsample_error'].copy()
@@ -197,7 +189,7 @@ plt.show()
 
 
     
-![png](output_12_0.png)
+![png](output_11_0.png)
     
 
 run the unrestricted regression with all of
