@@ -266,8 +266,8 @@ print(f"\nRRSS: {RRSS}")
 
 ### F-Test
 next we perform an F-Test to check whether the level 
-of the underlying asset's spot value explains the p-
-ricing error
+of the underlying asset's spot value explains the 
+pricing error
 
 ```python
 m = len(Ufit.coef_)-len(Rfit.coef_)
