@@ -12,7 +12,8 @@ from pathlib import Path
 from tqdm import tqdm
 from itertools import product
 from datetime import datetime
-from model_settings import barrier_option_pricer,ms
+from model_settings import ms
+from quantlib_pricers import barrier_option_pricer
 barp = barrier_option_pricer()
 
 def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
