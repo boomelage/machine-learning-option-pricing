@@ -31,12 +31,9 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     return barrier_features
 
 
+underlying_product = ms.cboe_spx_intraday_barriers
 
-
-underlying_product = ms.cboe_spx_barriers
-
-script_dir = Path(__file__).resolve().parent.absolute()
-root_dir = script_dir.parent.parent.parent.parent
+root_dir = Path(__file__).resolve().parent.parent.parent.parent.absolute()
 datadir =  os.path.join(root_dir,underlying_product['calibrations_dir'])
 file = [f for f in os.listdir(datadir) if f.find(underlying_product['calibrations_filetag'])!=-1][0]
 filepath = os.path.join(datadir,file)
@@ -45,16 +42,14 @@ if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
 print(computed_outputs)
-df = pd.read_csv(filepath).iloc[computed_outputs:,1:]
-df = df.rename(columns={'calculation_date':'date'})
+df = pd.read_csv(filepath).iloc[computed_outputs:]
 print(f"\n{df}")
 
 bar = tqdm(total=df.shape[0])
 def row_generate_barrier_features(row):
     s = row['spot_price']
-    
-    date = row['date']
-    calculation_datetime = datetime.strptime(date,'%Y-%m-%d')
+    date = row['calculation_date']
+    calculation_datetime = datetime.strptime(date,'%Y-%m-%d %H:%M:%S')
     date_print = datetime(
         calculation_datetime.year,
         calculation_datetime.month,
@@ -111,7 +106,7 @@ def row_generate_barrier_features(row):
     features['calculation_date'] = calculation_datetime
     features['barrier_price'] = barp.df_barrier_price(features)
     features['calculation_date'] = date
-    features.to_csv(os.path.join(output_dir,f'{date} cboe SPX barrier options.csv'))
+    features.to_csv(os.path.join(output_dir,f'{calculation_datetime.strftime('%Y-%m-%d_%H%M%S')} SPX barrier options.csv'))
     bar.update(1)
 
 import time
