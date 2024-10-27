@@ -11,7 +11,7 @@ aop = asian_option_pricer()
 root = Path(__file__).resolve().parent.parent.parent.parent.parent
 
 
-underlying_product = ms.bloomberg_spx_short_term_asians
+underlying_product = ms.cboe_spx_short_term_asians
 
 tag = underlying_product['calibrations_filetag']
 calibrations_dir = underlying_product['calibrations_dir']
@@ -146,4 +146,5 @@ start = time.time()
 calibrations.apply(row_generate_asian_option_features,axis=1)
 bar.close()
 end = time.time()
-runtime = start-end
+runtime = end-start
+print(f"\ncpu: {runtime}\n")
