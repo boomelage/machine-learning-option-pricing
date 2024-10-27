@@ -113,9 +113,10 @@ def row_generate_barrier_features(row):
     features.to_csv(os.path.join(output_dir,f'{date} cboe SPX barrier options.csv'))
     bar.update(1)
 
-# import time
-# start = time.time()
-# Parallel()(delayed(row_generate_barrier_features)(row) for _, row in df.iterrows())
-# bar.close()
-# end = time.time()
-# runtime = end-start
+import time
+start = time.time()
+Parallel()(delayed(row_generate_barrier_features)(row) for _, row in df.iterrows())
+bar.close()
+end = time.time()
+runtime = end-start
+print(f"\ncpu: {runtime}\n")
