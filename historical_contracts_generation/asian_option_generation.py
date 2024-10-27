@@ -11,7 +11,7 @@ aop = asian_option_pricer()
 root = Path(__file__).resolve().parent.parent.parent.parent.parent
 
 
-underlying_product = ms.bloomberg_spx_asians
+underlying_product = ms.cboe_spx_asians
 
 tag = underlying_product['calibrations_filetag']
 calibrations_dir = underlying_product['calibrations_dir']
@@ -23,6 +23,8 @@ filepath = os.path.join(calibrations_dir,file)
 
 output_dir = os.path.join(root,output_dump)
 computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
+# print(filepath)
+
 
 calibrations = pd.read_csv(filepath).iloc[computed_outputs:,1:]
 calibrations = calibrations.rename(columns = {'date':'calculation_date'})
@@ -144,4 +146,5 @@ start = time.time()
 calibrations.apply(row_generate_asian_option_features,axis=1)
 bar.close()
 end = time.time()
-runtime = start-end
+runtime = end-start
+print(f"\ncpu: {runtime}\n")
