@@ -11,6 +11,8 @@
 replace-text.txt
 general_data_inspection.ipynb
 
+!**/asian_option_general_exclusion_restriction.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
