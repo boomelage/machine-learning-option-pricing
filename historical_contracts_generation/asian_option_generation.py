@@ -28,8 +28,8 @@ computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')]
 
 calibrations = pd.read_csv(filepath).iloc[computed_outputs:,1:]
 calibrations = calibrations.rename(columns = {'date':'calculation_date'})
-calibrations['calculation_date'] = pd.to_datetime(calibrations['calculation_date'],format='%Y-%m-%d')
-calibrations['risk_free_rate'] = 0.04
+calibrations['calculation_date'] = pd.to_datetime(calibrations['calculation_date'],format='%Y-%m-%d %H:%M:%S.%f')
+calibrations = calibrations.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
 
 print(f"\n{calibrations}")
 

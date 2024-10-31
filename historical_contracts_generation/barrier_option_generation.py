@@ -31,7 +31,7 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     return barrier_features
 
 
-underlying_product = ms.cboe_spx_intraday_barriers
+underlying_product = ms.cboe_spx_barriers
 
 root_dir = Path(__file__).resolve().parent.parent.parent.parent.absolute()
 datadir =  os.path.join(root_dir,underlying_product['calibrations_dir'])
@@ -42,21 +42,21 @@ if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
 print(computed_outputs)
-df = pd.read_csv(filepath).iloc[computed_outputs:]
+df = pd.read_csv(filepath).iloc[computed_outputs:,1:]
+df['calculation_date'] = pd.to_datetime(df['calculation_date'],format='%Y-%m-%d %H:%M:%S.%f')
+df = df.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
 print(f"\n{df}")
 
 bar = tqdm(total=df.shape[0])
 def row_generate_barrier_features(row):
     s = row['spot_price']
-    date = row['calculation_date']
-    calculation_datetime = datetime.strptime(date,'%Y-%m-%d %H:%M:%S')
+    calculation_datetime = row['calculation_date']
     date_print = datetime(
         calculation_datetime.year,
         calculation_datetime.month,
         calculation_datetime.day
         ).strftime('%A, %Y-%m-%d')
 
-    r = 0.04 
     rebate = 0.
     step = 1
     atm_spread = 1
@@ -100,12 +100,12 @@ def row_generate_barrier_features(row):
         )
     features['rebate'] = rebate
     features['dividend_rate'] = row['dividend_rate']
-    features['risk_free_rate'] = r
+    features['risk_free_rate'] = row['risk_free_rate']
     heston_parameters = pd.Series(row[['theta', 'kappa', 'rho', 'eta', 'v0']]).astype(float)
     features[heston_parameters.index] = np.tile(heston_parameters,(features.shape[0],1))
     features['calculation_date'] = calculation_datetime
     features['barrier_price'] = barp.df_barrier_price(features)
-    features['calculation_date'] = date
+    features['calculation_date'] = calculation_datetime
     features.to_csv(os.path.join(output_dir,f'{calculation_datetime.strftime('%Y-%m-%d_%H%M%S')} SPX barrier options.csv'))
     bar.update(1)
 
