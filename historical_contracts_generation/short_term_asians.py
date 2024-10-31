@@ -124,7 +124,7 @@ def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,et
         )
     features = pd.concat(feature_list,ignore_index=True)
     features['asian'] = aop.df_asian_option_price(features)
-    features.to_csv(os.path.join(output_dir,f"{calculation_datetime.strftime('%Y-%m-%d')} {tag} short-term asian options.csv"))
+    features.to_csv(os.path.join(output_dir,f"{calculation_datetime.strftime('%Y-%m-%d_%H%M%S%.f')} {tag} short-term asian options.csv"))
     bar.update(1)
 
 def row_generate_asian_option_features(row):

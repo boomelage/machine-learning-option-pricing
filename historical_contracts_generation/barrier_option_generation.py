@@ -108,7 +108,7 @@ def row_generate_barrier_features(row):
     features['calculation_date'] = calculation_datetime
     features['barrier_price'] = barp.df_barrier_price(features)
     features['calculation_date'] = calculation_datetime
-    features.to_csv(os.path.join(output_dir,f'{calculation_datetime.strftime('%Y-%m-%d_%H%M%S')} SPX barrier options.csv'))
+    features.to_csv(os.path.join(output_dir,f'{calculation_datetime.strftime('%Y-%m-%d_%H%M%S%.f')} SPX barrier options.csv'))
     bar.update(1)
 
 import time
