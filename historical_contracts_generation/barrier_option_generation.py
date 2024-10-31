@@ -42,9 +42,11 @@ if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
 print(computed_outputs)
-df = pd.read_csv(filepath).iloc[computed_outputs:,1:]
+df = pd.read_csv(filepath)
 df['calculation_date'] = pd.to_datetime(df['calculation_date'],format='%Y-%m-%d %H:%M:%S.%f')
 df = df.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
+df = df.iloc[computed_outputs:,1:].copy()
+
 print(f"\n{df}")
 
 bar = tqdm(total=df.shape[0])
@@ -116,3 +118,5 @@ bar.close()
 end = time.time()
 runtime = end-start
 print(f"\ncpu: {runtime}\n")
+
+
