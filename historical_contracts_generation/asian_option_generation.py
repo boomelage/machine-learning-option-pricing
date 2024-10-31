@@ -26,11 +26,11 @@ computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')]
 # print(filepath)
 
 
-calibrations = pd.read_csv(filepath).iloc[computed_outputs:,1:]
+calibrations = pd.read_csv(filepath)
 calibrations = calibrations.rename(columns = {'date':'calculation_date'})
 calibrations['calculation_date'] = pd.to_datetime(calibrations['calculation_date'],format='%Y-%m-%d %H:%M:%S.%f')
-calibrations = calibrations.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
-
+calibrations = calibrations.sort_values(by='calculation_date',ascending=False).dropna().reset_index(drop=True)
+calibrations = calibrations.iloc[computed_outputs:,1:].copy()
 print(f"\n{calibrations}")
 
 bar = tqdm(total = calibrations.shape[0])
