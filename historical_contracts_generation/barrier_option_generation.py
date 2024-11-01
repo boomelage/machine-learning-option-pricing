@@ -52,11 +52,11 @@ print(f"\n{df}")
 bar = tqdm(total=df.shape[0])
 def row_generate_barrier_features(row):
     s = row['spot_price']
-    calculation_datetime = row['calculation_date']
+    calculation_date = row['calculation_date']
     date_print = datetime(
-        calculation_datetime.year,
-        calculation_datetime.month,
-        calculation_datetime.day
+        calculation_date.year,
+        calculation_date.month,
+        calculation_date.day
         ).strftime('%A, %Y-%m-%d')
 
     rebate = 0.
@@ -105,10 +105,10 @@ def row_generate_barrier_features(row):
     features['risk_free_rate'] = row['risk_free_rate']
     heston_parameters = pd.Series(row[['theta', 'kappa', 'rho', 'eta', 'v0']]).astype(float)
     features[heston_parameters.index] = np.tile(heston_parameters,(features.shape[0],1))
-    features['calculation_date'] = calculation_datetime
+    features['calculation_date'] = calculation_date
+    features['date'] = calculation_date.round('D')
     features['barrier_price'] = barp.df_barrier_price(features)
-    features['calculation_date'] = calculation_datetime
-    features.to_csv(os.path.join(output_dir,f'{calculation_datetime.strftime('%Y-%m-%d_%H%M%S%f')}_{(str(int(s*100))).replace('_','')} SPX barrier options.csv'))
+    features.to_csv(os.path.join(output_dir,f'{calculation_date.strftime('%Y-%m-%d_%H%M%S%f')}_{(str(int(s*100))).replace('_','')} SPX barrier options.csv'))
     bar.update(1)
 
 import time

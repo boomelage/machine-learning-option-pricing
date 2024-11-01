@@ -34,7 +34,7 @@ print(f"\n{calibrations}")
 
 bar = tqdm(total = calibrations.shape[0])
 
-def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,eta,v0):
+def generate_asian_option_features(s,r,g,calculation_date,kappa,theta,rho,eta,v0):
     kupper = int(s*(1+0.5))
     klower = int(s*(1-0.5))
     K = np.linspace(klower,kupper,5)
@@ -77,7 +77,7 @@ def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,et
                     ['call','put'],
                     [r],
                     [g],
-                    [calculation_datetime],
+                    [calculation_date],
                     [kappa],
                     [theta],
                     [rho],
@@ -107,7 +107,7 @@ def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,et
                     ['call','put'],
                     [r],
                     [g],
-                    [calculation_datetime],
+                    [calculation_date],
                     [kappa],
                     [theta],
                     [rho],
@@ -123,8 +123,9 @@ def generate_asian_option_features(s,r,g,calculation_datetime,kappa,theta,rho,et
             )
         )
     features = pd.concat(feature_list,ignore_index=True)
+    features['date'] = calculation_date.round('D')
     features['asian'] = aop.df_asian_option_price(features)
-    features.to_csv(os.path.join(output_dir,f"{calculation_datetime.strftime('%Y-%m-%d_%H%M%S%f')}_{(str(int(s*100))).replace('_','')}  {tag} short-term asian options.csv"))
+    features.to_csv(os.path.join(output_dir,f"{calculation_date.strftime('%Y-%m-%d_%H%M%S%f')}_{(str(int(s*100))).replace('_','')}  {tag} short-term asian options.csv"))
     bar.update(1)
 
 def row_generate_asian_option_features(row):
