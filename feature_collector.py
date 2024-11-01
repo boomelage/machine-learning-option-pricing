@@ -30,16 +30,13 @@ def preprocess_data(dataset,development_dates,test_dates,trainer):
     train_data = dataset[dataset['calculation_date'].isin(development_dates)]
     test_data = dataset[dataset['calculation_date'].isin(test_dates)]
     
-    train_plot = train_data[['calculation_date','spot_price']].copy().set_index('calculation_date').drop_duplicates()
-    test_plot = test_data[['calculation_date','spot_price']].copy().set_index('calculation_date').drop_duplicates()
-    
-    trainplotx = pd.date_range(start=min(train_plot.index),end=max(train_plot.index),periods=len(train_plot))
-    testplotx = pd.date_range(start=min(test_plot.index),end=max(test_plot.index),periods=len(test_plot))
+    trainplotx = pd.date_range(start=min(development_dates),end=max(development_dates),periods=train_data.shape[0])
+    testplotx = pd.date_range(start=min(test_dates),end=max(test_dates),periods=test_data.shape[0])
     
     plt.figure()
     plt.xticks(rotation=45)
-    plt.plot(testplotx,test_plot,color='purple',label='out-of-sample')
-    plt.plot(trainplotx,train_plot,color='green',label='in-sample')
+    plt.plot(testplotx,test_data['spot_price'].values,color='purple',label='out-of-sample')
+    plt.plot(trainplotx,train_data['spot_price'].values,color='green',label='in-sample')
     plt.legend()
     plt.show()
     arrs = trainer.get_train_test_arrays(
@@ -49,5 +46,4 @@ def preprocess_data(dataset,development_dates,test_dates,trainer):
     test_X = arrs['test_X']
     test_y = arrs['test_y']
     preprocessor = trainer.preprocess()
-    print(len(train_y),len(train_X))
-    return {'preprocessor':preprocessor,'train_test_arrays':arrs}
+    return {'preprocessor':preprocessor,'train_test_arrays':arrs,'train_data':train_data,'test_data':test_data}
