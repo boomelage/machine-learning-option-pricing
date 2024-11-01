@@ -21,5 +21,5 @@ def collect_features(datadir,price_name):
 	dataset['observed_price'] = np.maximum(dataset[price_name] + np.random.normal(scale=(0.15)**2,size=dataset.shape[0]),0)
 	dataset = dataset[dataset['observed_price']>=0.01]
 	dataset['calculation_date'] = pd.to_datetime(dataset['calculation_date'])
-	dataset = dataset.sort_values(by='calculation_date').reset_index(drop=True)
+	dataset = dataset.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
 	return dataset
