@@ -86,6 +86,9 @@ Heston, S. (1993). A Closed-Form Solution for Options with Stochastic Volatility
 Lewis, S., Kwon, Y. (2000). Pricing Barrier Option Using Finite Difference Method and MonteCarlo Simulation.
 <br> https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=d72456ecdcb08ae63f5738e41771ccd16dd2b53e
 
-Schönbucher, P. (1998) A Market Model for Stochastic Implied Volatility.
+Schönbucher, P., (1998) A Market Model for Stochastic Implied Volatility.
 <br> https://papers.ssrn.com/sol3/papers.cfm?abstract_id=182775
+
+Wieringen, W., (2023) Lecture notes on ridge regression.
+<br> https://arxiv.org/pdf/1509.09169
 <br>
