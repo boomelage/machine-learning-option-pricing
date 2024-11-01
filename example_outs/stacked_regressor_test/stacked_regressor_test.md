@@ -37,11 +37,11 @@ dataset = collect_features(data_dir,price_name)
     # training start #
     ##################
     
-    Thu Oct 31 23:19:41 2024
+    Fri Nov  1 10:20:20 2024
     
     
 
-    100%|███████████████████████████████████████████████████████████████████████████████| 583/583 [00:03<00:00, 156.46it/s]
+    100%|█████████████████████████████████████████████████████████████████████████████| 1754/1754 [00:15<00:00, 111.73it/s]
     
 
 
@@ -77,7 +77,7 @@ print(len(train_y),len(train_X))
     
 
 
-    906932 906932
+    2710786 2710786
     
 
 ## stacked regressor
@@ -117,7 +117,7 @@ trainer.dnn_params
 numerical_scaler = StandardScaler()
 linear_contributors = [
     'spot_price', 'strike_price', 'days_to_maturity', 
-    'risk_free_rate', 'dividend_rate', 
+    'risk_free_rate', 'dividend_rate', 'barrier',
     'v0'
 ]
 
@@ -127,7 +127,7 @@ ridge_preprocessor = ColumnTransformer(
     transformers=[('scaling', numerical_scaler,linear_contributors)]
 )
 
-ridge_pipeline = make_pipeline(ridge_preprocessor, Ridge())
+ridge_pipeline = make_pipeline(ridge_preprocessor, RidgeCV())
 
 test_ridge = TransformedTargetRegressor(
     regressor=ridge_pipeline,
@@ -165,18 +165,18 @@ test_ridge
     
     train spots:
     calculation_date
-    2024-09-04 15:59:53.639   5405.00000
-    2024-09-04 15:59:54.375   5405.75000
-    2024-09-04 15:59:54.441   5406.00000
-    2024-09-04 16:13:41.493   5406.25000
-    2024-09-04 16:32:15.877   5406.75000
+    2024-05-28 16:32:19.050   5177.00000
+    2024-05-28 16:32:37.732   5178.50000
+    2024-05-28 16:36:21.436   5178.75000
+    2024-05-28 16:48:12.149   5179.00000
+    2024-05-28 16:56:23.825   5189.00000
                                  ...    
-    2024-10-04 15:20:50.370   5754.50000
-    2024-10-04 15:27:16.761   5757.00000
-    2024-10-04 15:31:03.683   5757.25000
-    2024-10-04 15:31:21.700   5757.50000
-    2024-10-04 16:16:05.530   5759.25000
-    Name: spot_price, Length: 357, dtype: float64
+    2024-09-13 16:44:25.922   5661.50000
+    2024-09-13 16:45:13.749   5662.00000
+    2024-09-13 16:46:49.925   5662.25000
+    2024-09-13 16:50:39.689   5663.00000
+    2024-09-13 16:57:19.505   5664.50000
+    Name: spot_price, Length: 894, dtype: float64
     
 
 
@@ -594,8 +594,9 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                                                         &#x27;days_to_maturity&#x27;,
                                                                                         &#x27;risk_free_rate&#x27;,
                                                                                         &#x27;dividend_rate&#x27;,
+                                                                                        &#x27;barrier&#x27;,
                                                                                         &#x27;v0&#x27;])])),
-                                                     (&#x27;ridge&#x27;, Ridge())]),
+                                                     (&#x27;ridgecv&#x27;, RidgeCV())]),
                            transformer=StandardScaler())</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;TransformedTargetRegressor<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.TransformedTargetRegressor.html">?<span>Documentation for TransformedTargetRegressor</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>TransformedTargetRegressor(regressor=Pipeline(steps=[(&#x27;columntransformer&#x27;,
                                                       ColumnTransformer(transformers=[(&#x27;scaling&#x27;,
                                                                                        StandardScaler(),
@@ -604,18 +605,20 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                                                         &#x27;days_to_maturity&#x27;,
                                                                                         &#x27;risk_free_rate&#x27;,
                                                                                         &#x27;dividend_rate&#x27;,
+                                                                                        &#x27;barrier&#x27;,
                                                                                         &#x27;v0&#x27;])])),
-                                                     (&#x27;ridge&#x27;, Ridge())]),
+                                                     (&#x27;ridgecv&#x27;, RidgeCV())]),
                            transformer=StandardScaler())</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" ><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">regressor: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;columntransformer&#x27;,
                  ColumnTransformer(transformers=[(&#x27;scaling&#x27;, StandardScaler(),
                                                   [&#x27;spot_price&#x27;, &#x27;strike_price&#x27;,
                                                    &#x27;days_to_maturity&#x27;,
                                                    &#x27;risk_free_rate&#x27;,
-                                                   &#x27;dividend_rate&#x27;, &#x27;v0&#x27;])])),
-                (&#x27;ridge&#x27;, Ridge())])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;columntransformer: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for columntransformer: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#x27;scaling&#x27;, StandardScaler(),
+                                                   &#x27;dividend_rate&#x27;, &#x27;barrier&#x27;,
+                                                   &#x27;v0&#x27;])])),
+                (&#x27;ridgecv&#x27;, RidgeCV())])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;columntransformer: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for columntransformer: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#x27;scaling&#x27;, StandardScaler(),
                                  [&#x27;spot_price&#x27;, &#x27;strike_price&#x27;,
                                   &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;,
-                                  &#x27;dividend_rate&#x27;, &#x27;v0&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">scaling</label><div class="sk-toggleable__content fitted"><pre>[&#x27;spot_price&#x27;, &#x27;strike_price&#x27;, &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;, &#x27;dividend_rate&#x27;, &#x27;v0&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;StandardScaler<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content fitted"><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;Ridge<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.linear_model.Ridge.html">?<span>Documentation for Ridge</span></a></label><div class="sk-toggleable__content fitted"><pre>Ridge()</pre></div> </div></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">transformer: StandardScaler</label><div class="sk-toggleable__content fitted"><pre>StandardScaler()</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;StandardScaler<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content fitted"><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div></div></div>
+                                  &#x27;dividend_rate&#x27;, &#x27;barrier&#x27;, &#x27;v0&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">scaling</label><div class="sk-toggleable__content fitted"><pre>[&#x27;spot_price&#x27;, &#x27;strike_price&#x27;, &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;, &#x27;dividend_rate&#x27;, &#x27;barrier&#x27;, &#x27;v0&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;StandardScaler<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content fitted"><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;RidgeCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.linear_model.RidgeCV.html">?<span>Documentation for RidgeCV</span></a></label><div class="sk-toggleable__content fitted"><pre>RidgeCV()</pre></div> </div></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">transformer: StandardScaler</label><div class="sk-toggleable__content fitted"><pre>StandardScaler()</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;StandardScaler<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content fitted"><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div></div></div>
 
 
 
@@ -1071,9 +1074,10 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                                                                                        &#x27;days_to_maturity&#x27;,
                                                                                                                        &#x27;risk_free_rate&#x27;,
                                                                                                                        &#x27;dividend_rate&#x27;,
+                                                                                                                       &#x27;barrier&#x27;,
                                                                                                                        &#x27;v0&#x27;])])),
-                                                                                    (&#x27;ridge&#x27;,
-                                                                                     Ridge())]))],
+                                                                                    (&#x27;ridgecv&#x27;,
+                                                                                     RidgeCV())]))],
                                                        final_estimator=GradientBoostingRegressor()),
                            transformer=StandardScaler())</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox" ><label for="sk-estimator-id-9" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;&nbsp;TransformedTargetRegressor<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.TransformedTargetRegressor.html">?<span>Documentation for TransformedTargetRegressor</span></a><span class="sk-estimator-doc-link ">i<span>Not fitted</span></span></label><div class="sk-toggleable__content "><pre>TransformedTargetRegressor(regressor=StackingRegressor(estimators=[(&#x27;dnn&#x27;,
                                                                     Pipeline(steps=[(&#x27;columntransformer&#x27;,
@@ -1105,9 +1109,10 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                                                                                        &#x27;days_to_maturity&#x27;,
                                                                                                                        &#x27;risk_free_rate&#x27;,
                                                                                                                        &#x27;dividend_rate&#x27;,
+                                                                                                                       &#x27;barrier&#x27;,
                                                                                                                        &#x27;v0&#x27;])])),
-                                                                                    (&#x27;ridge&#x27;,
-                                                                                     Ridge())]))],
+                                                                                    (&#x27;ridgecv&#x27;,
+                                                                                     RidgeCV())]))],
                                                        final_estimator=GradientBoostingRegressor()),
                            transformer=StandardScaler())</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-10" type="checkbox" ><label for="sk-estimator-id-10" class="sk-toggleable__label  sk-toggleable__label-arrow ">regressor: StackingRegressor</label><div class="sk-toggleable__content "><pre>StackingRegressor(estimators=[(&#x27;dnn&#x27;,
                                Pipeline(steps=[(&#x27;columntransformer&#x27;,
@@ -1139,8 +1144,9 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                                                   &#x27;days_to_maturity&#x27;,
                                                                                   &#x27;risk_free_rate&#x27;,
                                                                                   &#x27;dividend_rate&#x27;,
+                                                                                  &#x27;barrier&#x27;,
                                                                                   &#x27;v0&#x27;])])),
-                                               (&#x27;ridge&#x27;, Ridge())]))],
+                                               (&#x27;ridgecv&#x27;, RidgeCV())]))],
                   final_estimator=GradientBoostingRegressor())</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><label>dnn</label></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-11" type="checkbox" ><label for="sk-estimator-id-11" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;columntransformer: ColumnTransformer<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for columntransformer: ColumnTransformer</span></a></label><div class="sk-toggleable__content "><pre>ColumnTransformer(transformers=[(&#x27;numerical&#x27;, StandardScaler(),
                                  [&#x27;spot_price&#x27;, &#x27;strike_price&#x27;,
                                   &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;,
@@ -1150,7 +1156,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                  [&#x27;barrier_type_name&#x27;, &#x27;w&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-12" type="checkbox" ><label for="sk-estimator-id-12" class="sk-toggleable__label  sk-toggleable__label-arrow ">numerical</label><div class="sk-toggleable__content "><pre>[&#x27;spot_price&#x27;, &#x27;strike_price&#x27;, &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;, &#x27;dividend_rate&#x27;, &#x27;kappa&#x27;, &#x27;theta&#x27;, &#x27;rho&#x27;, &#x27;eta&#x27;, &#x27;v0&#x27;, &#x27;barrier&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-13" type="checkbox" ><label for="sk-estimator-id-13" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;StandardScaler<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content "><pre>StandardScaler()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-14" type="checkbox" ><label for="sk-estimator-id-14" class="sk-toggleable__label  sk-toggleable__label-arrow ">categorical</label><div class="sk-toggleable__content "><pre>[&#x27;barrier_type_name&#x27;, &#x27;w&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;OneHotEncoder<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.OneHotEncoder.html">?<span>Documentation for OneHotEncoder</span></a></label><div class="sk-toggleable__content "><pre>OneHotEncoder()</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-16" type="checkbox" ><label for="sk-estimator-id-16" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;MLPRegressor<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.neural_network.MLPRegressor.html">?<span>Documentation for MLPRegressor</span></a></label><div class="sk-toggleable__content "><pre>MLPRegressor()</pre></div> </div></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><label>ridge</label></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-17" type="checkbox" ><label for="sk-estimator-id-17" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;columntransformer: ColumnTransformer<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for columntransformer: ColumnTransformer</span></a></label><div class="sk-toggleable__content "><pre>ColumnTransformer(transformers=[(&#x27;scaling&#x27;, StandardScaler(),
                                  [&#x27;spot_price&#x27;, &#x27;strike_price&#x27;,
                                   &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;,
-                                  &#x27;dividend_rate&#x27;, &#x27;v0&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-18" type="checkbox" ><label for="sk-estimator-id-18" class="sk-toggleable__label  sk-toggleable__label-arrow ">scaling</label><div class="sk-toggleable__content "><pre>[&#x27;spot_price&#x27;, &#x27;strike_price&#x27;, &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;, &#x27;dividend_rate&#x27;, &#x27;v0&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-19" type="checkbox" ><label for="sk-estimator-id-19" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;StandardScaler<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content "><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-20" type="checkbox" ><label for="sk-estimator-id-20" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;Ridge<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.linear_model.Ridge.html">?<span>Documentation for Ridge</span></a></label><div class="sk-toggleable__content "><pre>Ridge()</pre></div> </div></div></div></div></div></div></div></div></div><div class="sk-item"><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><label>final_estimator</label></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-21" type="checkbox" ><label for="sk-estimator-id-21" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;GradientBoostingRegressor<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html">?<span>Documentation for GradientBoostingRegressor</span></a></label><div class="sk-toggleable__content "><pre>GradientBoostingRegressor()</pre></div> </div></div></div></div></div></div></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-22" type="checkbox" ><label for="sk-estimator-id-22" class="sk-toggleable__label  sk-toggleable__label-arrow ">transformer: StandardScaler</label><div class="sk-toggleable__content "><pre>StandardScaler()</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-23" type="checkbox" ><label for="sk-estimator-id-23" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;StandardScaler<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content "><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div></div></div>
+                                  &#x27;dividend_rate&#x27;, &#x27;barrier&#x27;, &#x27;v0&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-18" type="checkbox" ><label for="sk-estimator-id-18" class="sk-toggleable__label  sk-toggleable__label-arrow ">scaling</label><div class="sk-toggleable__content "><pre>[&#x27;spot_price&#x27;, &#x27;strike_price&#x27;, &#x27;days_to_maturity&#x27;, &#x27;risk_free_rate&#x27;, &#x27;dividend_rate&#x27;, &#x27;barrier&#x27;, &#x27;v0&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-19" type="checkbox" ><label for="sk-estimator-id-19" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;StandardScaler<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content "><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-20" type="checkbox" ><label for="sk-estimator-id-20" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;RidgeCV<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.linear_model.RidgeCV.html">?<span>Documentation for RidgeCV</span></a></label><div class="sk-toggleable__content "><pre>RidgeCV()</pre></div> </div></div></div></div></div></div></div></div></div><div class="sk-item"><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><label>final_estimator</label></div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-21" type="checkbox" ><label for="sk-estimator-id-21" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;GradientBoostingRegressor<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html">?<span>Documentation for GradientBoostingRegressor</span></a></label><div class="sk-toggleable__content "><pre>GradientBoostingRegressor()</pre></div> </div></div></div></div></div></div></div></div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-22" type="checkbox" ><label for="sk-estimator-id-22" class="sk-toggleable__label  sk-toggleable__label-arrow ">transformer: StandardScaler</label><div class="sk-toggleable__content "><pre>StandardScaler()</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator  sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-23" type="checkbox" ><label for="sk-estimator-id-23" class="sk-toggleable__label  sk-toggleable__label-arrow ">&nbsp;StandardScaler<a class="sk-estimator-doc-link " rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.StandardScaler.html">?<span>Documentation for StandardScaler</span></a></label><div class="sk-toggleable__content "><pre>StandardScaler()</pre></div> </div></div></div></div></div></div></div></div></div>
 
 
 
@@ -1167,9 +1173,9 @@ print(f"cpu: {runtime}")
 print(f"MAE: {MAE}\nRMSE: {RMSE}")
 ```
 
-    cpu: 735.6314902305603
-    MAE: 12.511288548142378
-    RMSE: 27.843642322902923
+    cpu: 1113.5250306129456
+    MAE: 14.63927855649493
+    RMSE: 25.614615083343658
     
 
 
@@ -1181,6 +1187,57 @@ MAE = np.mean(np.abs(diff))
 print(f"MAE: {MAE}\nRMSE: {RMSE}")
 ```
 
-    MAE: 13.516395392567425
-    RMSE: 20.192655773829227
+    MAE: 18.873331239279793
+    RMSE: 26.805246187930432
     
+
+### versus original
+
+
+```python
+dnn = barrier_trainer.run_dnn(preprocessor, train_X, train_y)
+P = dnn.predict(train_X)
+diff = train_y - P
+RMSE = np.sqrt(np.mean(diff**2))
+MAE = np.mean(np.abs(diff))
+end = time.time()
+runtime = end-train_start
+print(f"cpu: {runtime}")
+print(f"MAE: {MAE}\nRMSE: {RMSE}")
+```
+
+    
+    training...
+    
+    alpha: 0.01
+    hidden_layer_sizes: (13, 13)
+    learning_rate: adaptive
+    learning_rate_init: 0.1
+    solver: sgd
+    early_stopping: False
+    max_iter: 1000
+    warm_start: True
+    tol: 0.0001
+    cpu: 247.42338705062866
+    cpu: 1871.4418482780457
+    MAE: 76.28868957450379
+    RMSE: 111.01984686137716
+    
+
+
+```python
+testP = dnn.predict(test_X)
+diff = test_y - testP
+RMSE = np.sqrt(np.mean(diff**2))
+MAE = np.mean(np.abs(diff))
+print(f"MAE: {MAE}\nRMSE: {RMSE}")
+```
+
+    MAE: 83.79499515814214
+    RMSE: 119.90972174936306
+    
+
+
+```python
+
+```
