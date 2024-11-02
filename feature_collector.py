@@ -43,6 +43,7 @@ def preprocess_data(dataset,development_dates,test_dates,trainer):
     plt.figure()
     plt.plot(testplotx,test_data['spot_price'].values,color='purple',label='out-of-sample')
     plt.plot(trainplotx,train_data['spot_price'].values,color='green',label='in-sample')
+    plt.xticks(rotation=45)
     plt.legend()
     plt.show()
     arrs = trainer.get_train_test_arrays(
