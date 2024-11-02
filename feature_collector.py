@@ -41,7 +41,6 @@ def preprocess_data(dataset,development_dates,test_dates,trainer):
     testplotx = pd.date_range(start=min(test_dates),end=max(test_dates),periods=test_data.shape[0])
 
     plt.figure()
-    plt.xticks(rotation=45)
     plt.plot(testplotx,test_data['spot_price'].values,color='purple',label='out-of-sample')
     plt.plot(trainplotx,train_data['spot_price'].values,color='green',label='in-sample')
     plt.legend()
