@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import pandas as pd
-import modin.pandas as md
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import warnings; warnings.filterwarnings("ignore", message=".*defaulting*")
@@ -15,7 +14,7 @@ def collect_features(datadir,price_name):
     for f in files:
         dfs.append(pd.read_csv(f).iloc[:,1:])
         bar.update(1)
-    dataset = md.concat(dfs,ignore_index=True).dropna().reset_index(drop=True)
+    dataset = pd.concat(dfs,ignore_index=True).dropna().reset_index(drop=True)
     bar.update(1)
     bar.close()
     print()
