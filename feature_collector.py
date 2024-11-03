@@ -1,8 +1,10 @@
 import os
 import numpy as np
 import pandas as pd
+import modin.pandas as md
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import warnings; warnings.filterwarnings("ignore", message=".*defaulting*")
 
 
 def collect_features(datadir,price_name):
@@ -13,9 +15,10 @@ def collect_features(datadir,price_name):
     for f in files:
         dfs.append(pd.read_csv(f).iloc[:,1:])
         bar.update(1)
-    dataset = pd.concat(dfs,ignore_index=True).dropna().reset_index(drop=True)
+    dataset = md.concat(dfs,ignore_index=True).dropna().reset_index(drop=True)
     bar.update(1)
     bar.close()
+    print()
     dataset['calculation_date'] = pd.to_datetime(dataset['calculation_date'],format='mixed')
     try:
         dataset['date'] = pd.to_datetime(dataset['date'],format='mixed')
