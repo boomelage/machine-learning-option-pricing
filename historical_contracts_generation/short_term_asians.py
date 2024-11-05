@@ -24,11 +24,11 @@ filepath = os.path.join(calibrations_dir,file)
 output_dir = os.path.join(root,output_dump)
 computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
 
-calibrations = pd.read_csv(filepath).iloc[computed_outputs:,1:]
+calibrations = pd.read_csv(filepath)
 calibrations = calibrations.rename(columns = {'date':'calculation_date'})
 calibrations['calculation_date'] = pd.to_datetime(calibrations['calculation_date'],format='mixed')
-calibrations = calibrations.sort_values(by='calculation_date',ascending=False)
-
+calibrations = calibrations.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
+calibrations = calibrations.iloc[computed_outputs:,1:]
 
 print(f"\n{calibrations}")
 
