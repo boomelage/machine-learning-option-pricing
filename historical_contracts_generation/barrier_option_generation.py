@@ -106,7 +106,7 @@ def row_generate_barrier_features(row):
     heston_parameters = pd.Series(row[['theta', 'kappa', 'rho', 'eta', 'v0']]).astype(float)
     features[heston_parameters.index] = np.tile(heston_parameters,(features.shape[0],1))
     features['calculation_date'] = calculation_date
-    features['date'] = calculation_date.round('D')
+    features['date'] = calculation_date.floor('D')
     features['barrier_price'] = barp.df_barrier_price(features)
     features.to_csv(os.path.join(output_dir,f'{calculation_date.strftime('%Y-%m-%d_%H%M%S%f')}_{(str(int(s*100))).replace('_','')} SPX barrier options.csv'))
     bar.update(1)
