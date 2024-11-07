@@ -113,7 +113,7 @@ def row_generate_barrier_features(row):
 
 import time
 start = time.time()
-Parallel()(delayed(row_generate_barrier_features)(row) for _, row in df.iterrows())
+df.apply(row_generate_barrier_features,axis=1)
 bar.close()
 end = time.time()
 runtime = end-start
