@@ -28,13 +28,22 @@ calibrations = pd.read_csv(filepath)
 calibrations = calibrations.rename(columns = {'date':'calculation_date'})
 calibrations['calculation_date'] = pd.to_datetime(calibrations['calculation_date'],format='mixed')
 calibrations = calibrations.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
-calibrations = calibrations.iloc[computed_outputs:,1:]
+calibrations = calibrations.iloc[computed_outputs:,1:].copy()
 
 print(f"\n{calibrations}")
 
-bar = tqdm(total = calibrations.shape[0])
 
-def generate_asian_option_features(s,r,g,calculation_date,kappa,theta,rho,eta,v0):
+bar = tqdm(total = calibrations.shape[0])
+def row_generate_asian_option_features(row):
+    s = row['spot_price']
+    r = row['risk_free_rate']
+    g = row['dividend_rate']
+    calculation_date = row['calculation_date']
+    kappa = row['kappa']
+    theta = row['theta']
+    rho = row['rho']
+    eta = row['eta']
+    v0  = row['v0']
     kupper = int(s*(1+0.5))
     klower = int(s*(1-0.5))
     K = np.linspace(klower,kupper,5)
@@ -127,20 +136,6 @@ def generate_asian_option_features(s,r,g,calculation_date,kappa,theta,rho,eta,v0
     features['asian_price'] = aop.df_asian_option_price(features)
     features.to_csv(os.path.join(output_dir,f"{calculation_date.strftime('%Y-%m-%d_%H%M%S%f')}_{(str(int(s*100))).replace('_','')}  {tag} short-term asian options.csv"))
     bar.update(1)
-
-def row_generate_asian_option_features(row):
-    generate_asian_option_features(
-        row['spot_price'],
-        row['risk_free_rate'],
-        row['dividend_rate'],
-        row['calculation_date'],
-        row['kappa'],
-        row['theta'],
-        row['rho'],
-        row['eta'],
-        row['v0']
-    )
-
 
 
 import time
