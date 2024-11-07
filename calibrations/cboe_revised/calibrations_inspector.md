@@ -1,5 +1,6 @@
 ```python
 import pandas as pd
+import matplotlib.pyplot as plt
 pd.set_option('display.float_format', '{:.10f}'.format)
 from calibrations_collector import df
 ```
@@ -12,6 +13,7 @@ from calibrations_collector import df
 
 
 ```python
+V0 = df['v0'].squeeze()
 df['v0'].describe()
 ```
 
@@ -28,6 +30,20 @@ df['v0'].describe()
     max        0.4506142573
     Name: v0, dtype: float64
 
+
+
+
+```python
+plt.figure()
+plt.hist(V0,bins=int(len(V0)**0.5),color='purple')
+plt.title('distribution of observed inital variances') 
+plt.show()
+```
+
+
+    
+![png](output_2_0.png)
+    
 
 
 
