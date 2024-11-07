@@ -1,13 +1,13 @@
 *.csv
 *.xls
 *.xlsx
-*.pkl
 *.h5
 *.zip
 *.vs
 *.pyc
 *.ipynb_checkpoints
 *.virtual_documents
+*.pkl
 replace-text.txt
 general_data_inspection.ipynb
 
