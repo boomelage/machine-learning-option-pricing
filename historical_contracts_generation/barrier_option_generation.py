@@ -46,6 +46,7 @@ if not os.path.exists(output_dir):
 computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
 print(computed_outputs)
 df['calculation_date'] = pd.to_datetime(df['calculation_date'],format='mixed')
+df = df.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
 df = df.iloc[computed_outputs:].copy()
 
 
