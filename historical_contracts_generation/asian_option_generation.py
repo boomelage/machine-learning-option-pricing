@@ -17,6 +17,7 @@ ms.find_root(Path(__file__).resolve())
 ms.collect_spx_calibrations()
 df = ms.spx_calibrations
 df['calculation_date'] = pd.to_datetime(df['calculation_date'],format='mixed')
+df = df.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
 
 tag = underlying_product['calibrations_filetag']
 calibrations_dir = underlying_product['calibrations_dir']
