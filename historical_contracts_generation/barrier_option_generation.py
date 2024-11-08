@@ -15,7 +15,7 @@ from datetime import datetime
 from model_settings import ms
 from quantlib_pricers import barrier_option_pricer
 barp = barrier_option_pricer()
-
+pd.set_option('display.max_columns',None)
 def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     barrier_features = pd.DataFrame(
         product([s], K, barriers, T, [updown], OUTIN, W),
@@ -30,29 +30,31 @@ def generate_barrier_features(s, K, T, barriers, updown, OUTIN, W):
     
     return barrier_features
 
-
+ms.find_root(Path(__file__).resolve())
+ms.collect_spx_calibrations()
 underlying_product = ms.cboe_spx_barriers
+df = ms.spx_calibrations
 
 root_dir = Path(__file__).resolve().parent.parent.parent.parent.absolute()
 datadir =  os.path.join(root_dir,underlying_product['calibrations_dir'])
 file = [f for f in os.listdir(datadir) if f.find(underlying_product['calibrations_filetag'])!=-1][0]
 filepath = os.path.join(datadir,file)
 output_dir = os.path.join(root_dir,underlying_product['dump'])
+
 if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
 print(computed_outputs)
-df = pd.read_csv(filepath)
-df['calculation_date'] = pd.to_datetime(df['calculation_date'],format='%Y-%m-%d %H:%M:%S.%f')
-df = df.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
-df = df.iloc[computed_outputs:,1:].copy()
+df['calculation_date'] = pd.to_datetime(df['calculation_date'],format='mixed')
+df = df.iloc[computed_outputs:].copy()
+
 
 print(f"\n{df}")
 
 bar = tqdm(total=df.shape[0])
 def row_generate_barrier_features(row):
     s = row['spot_price']
-    calculation_date = row['calculation_date']
+    calculation_date = row['calculation_date'] 
     date_print = datetime(
         calculation_date.year,
         calculation_date.month,
@@ -61,8 +63,6 @@ def row_generate_barrier_features(row):
 
     rebate = 0.
     step = 1
-    atm_spread = 1
-    r = 0.04
     K = np.linspace(
         s*0.9,
         s*1.1,

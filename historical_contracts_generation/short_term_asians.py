@@ -7,33 +7,30 @@ from tqdm import tqdm
 from pathlib import Path
 from model_settings import ms
 from quantlib_pricers import asian_option_pricer
+pd.set_option('display.max_columns',None)
+
+
 aop = asian_option_pricer()
 root = Path(__file__).resolve().parent.parent.parent.parent.parent
-
-
-underlying_product = ms.cboe_spx_short_term_asians
+underlying_product = ms.cboe_spx_asians
+ms.find_root(Path(__file__).resolve())
+ms.collect_spx_calibrations()
+df = ms.spx_calibrations
+df['calculation_date'] = pd.to_datetime(df['calculation_date'],format='mixed')
 
 tag = underlying_product['calibrations_filetag']
 calibrations_dir = underlying_product['calibrations_dir']
 output_dump = underlying_product['dump']
 
-calibrations_dir = os.path.join(root,calibrations_dir)
-file = [f for f in os.listdir(calibrations_dir) if f.find(tag)!=-1][0]
-filepath = os.path.join(calibrations_dir,file)
-
 output_dir = os.path.join(root,output_dump)
 computed_outputs = len([f for f in os.listdir(output_dir) if f.endswith('.csv')])
 
-calibrations = pd.read_csv(filepath)
-calibrations = calibrations.rename(columns = {'date':'calculation_date'})
-calibrations['calculation_date'] = pd.to_datetime(calibrations['calculation_date'],format='mixed')
-calibrations = calibrations.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
-calibrations = calibrations.iloc[computed_outputs:,1:].copy()
+df = df.iloc[computed_outputs:].copy()
 
-print(f"\n{calibrations}")
+print(f"\n{df}")
 
 
-bar = tqdm(total = calibrations.shape[0])
+bar = tqdm(total = df.shape[0])
 def row_generate_asian_option_features(row):
     s = row['spot_price']
     r = row['risk_free_rate']
@@ -140,7 +137,7 @@ def row_generate_asian_option_features(row):
 
 import time
 start = time.time()
-calibrations.apply(row_generate_asian_option_features,axis=1)
+df.apply(row_generate_asian_option_features,axis=1)
 bar.close()
 end = time.time()
 runtime = end-start
