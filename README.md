@@ -11,6 +11,8 @@ An empirical approach based on market data
 
 # 1. Introduction
 
+In this paper we will explore a proposed method of pricing exotic options via neural-network-based approximations derived from the simulation of a multidimensional space representing an option's price as a functional form of its features. To achieve this, we calibrate historical Heston (1993) parameters using market observed risk-free and dividend rates accompanied by live options trade data. This paper serves as a framework and demonstration of a generalized estimation process for barrier and Asian options along with a model specification and retraining analysis.
+
 # 2. Pricing Model Specification
 
 To model the logarithmic price of our underlying security, we use the Heston (1993) model, described by the pair of stochastic differential equations:
