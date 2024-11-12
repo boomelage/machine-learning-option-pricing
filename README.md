@@ -12,7 +12,6 @@ An empirical approach based on market data
 # 1. Introduction
 
 # 2. Pricing Model Specification
-## 2.1 Pricing Model
 
 To model the logarithmic price of our underlying security, we use the Heston (1993) model, described by the pair of stochastic differential equations:
 
