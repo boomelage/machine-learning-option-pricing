@@ -71,7 +71,7 @@ where
 - $S$ is a single element set consisting of the underying spot price, <br>
 - $K$ is a set of strikes spread around the spot, <br>
 - $T$ is a set of maturities, <br>
-- $A$ is a set of time frequencies at which the Asian option fixes
+- $A$ is a set of time frequencies at which the Asian option fixes (i.e., a frequency which determines the number of montitoring dates), and
 - $P$ is a set of past fixings which for the purposes of this study is a set consisting of only the element $0$ (zero)
 <br>
 and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product using software like itertools.
