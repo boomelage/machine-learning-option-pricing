@@ -45,20 +45,16 @@ In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a d
 
 ## 3.1 Barrier Options
 
-In the case if barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:
-<br>
+In the case if barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:<br>
 
-$S \times K \times T \times B \times R = \set{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\}$
-
-<br>
-
+$S \times K \times T \times B \times R = \set{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\}$<br>
 where
 - $S$ is a single element set consisting of the underying spot price, <br>
 - $K$ is a set of strikes spread around the spot, <br>
 - $T$ is a set of maturities, <br>
 - $B$ is a set of barrier levels, and <br>
 - $R$ is a set of rebates which for the purposes of this study in a set consisting of only the element $0$ (zero)
-<br>
+
 and duplicating the data for calls/puts, down/in, and up/down option types which can also be achieved by their inclusion in the Cartesian product using software like itertools.
 
 
@@ -66,14 +62,14 @@ and duplicating the data for calls/puts, down/in, and up/down option types which
 For the Asian option counterpart, we perform a similar iteration of our historical data, for each day performing the Cartesian product:
 <br>
 
-$S \times K \times T \times A \times P = \set{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \}$
+$S \times K \times T \times A \times P = \set{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \}$ <br>
 where
 - $S$ is a single element set consisting of the underying spot price, <br>
 - $K$ is a set of strikes spread around the spot, <br>
 - $T$ is a set of maturities, <br>
 - $A$ is a set of time frequencies at which the Asian option fixes (i.e., a frequency which determines the number of montitoring dates), and
 - $P$ is a set of past fixings which for the purposes of this study is a set consisting of only the element $0$ (zero)
-<br>
+
 and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product using software like itertools.
 
 # 4. Testing
