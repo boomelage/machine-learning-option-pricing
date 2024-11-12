@@ -66,7 +66,7 @@ and duplicating the data for calls/puts, down/in, and up/down option types which
 For the Asian option counterpart, we perform a similar iteration of our historical data, for each day performing the Cartesian product:
 <br>
 
-$S \times K \times T \times, A \times P = \set{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \}$
+$S \times K \times T \times A \times P = \set{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \}$
 where
 - $S$ is a single element set consisting of the underying spot price, <br>
 - $K$ is a set of strikes spread around the spot, <br>
