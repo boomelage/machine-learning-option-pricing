@@ -5,7 +5,9 @@ An empirical approach based on market data
 1. [Introduction](#1-introduction)
 2. [Pricing Model](#2-pricing-model)
 3. [Price Estimation](#3-price-estimation)
-4. [Reference List](#4-reference-list)
+      - [Barrier Options](#31-barrier-options)
+      - [Asian Options](#32-asian-options)
+5. [Reference List](#4-reference-list)
 
 
 
@@ -37,6 +39,10 @@ where
 # 3. Price Estimation
 
 In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a development dataset by simulating possible parameter combinations for a given security. Liu et. al. (2019) demonstrate a considerable increase in computational efficiency with retention of low errors for the estimation of implied volatilites via neural networks by considering the relative spot price (i.e., the spot price scaled the strike price $S/K$) and the relative option price (i.e., the option's price divided by its strike $C/K$) of the option as opposed to their levels ($C$ and $S$), a method we will be borrowing for our estimation. Frey et. al. (2022) propose a data generation method via Cartesian product to create a sample space of vanilla option pricing features to estimate the price level ($S$). Testing of this method considering exotic options did not retain the same level of pricing accuracy as evidenced by high partial dependence of the target price in relation to the underlying spot price level $S$ and $v_0$. We therefore propose a new method combining the Carterisan product approach to retain control over feature combinations while conisdering the option's relative price ($C/K$) as well as any other linear features also scaled by the strike price $K$.
+
+## 3.1 Barrier Options
+
+## 3.2 Asian Options
 
 # 4. Reference list
 Blanda, V. (2023). FX Barrier Option Pricing. [online] <br> Available at: https://www.imperial.ac.uk/media/imperial-college/faculty-of-natural-sciences/department-of-mathematics/math-finance/212252650---VALENTIN-BLANDA---BLANDA_VALENTIN_02293988.pdf.
