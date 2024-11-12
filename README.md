@@ -7,7 +7,8 @@ An empirical approach based on market data
 3. [Price Estimation](#3-price-estimation)
       - [Barrier Options](#31-barrier-options)
       - [Asian Options](#32-asian-options)
-5. [Reference List](#4-reference-list)
+4. [Testing](#4-testing)
+5. [Reference List](#5-reference-list)
 
 
 
@@ -57,12 +58,25 @@ where
 - $T$ is a set of maturities, <br>
 - $B$ is a set of barrier levels, and <br>
 - $R$ is a set of rebates which for the purposes of this study in a set consisting of only the element $0$ (zero)
-<br>
-and subsequently pricing the obtained features to generate our target variable (i.e., the barrier option price)
+<br> and duplicating the data for calls/puts, down/in, and up/down option types which can also be achieved by their inclusion in the Cartesian product using software like itertools.
+
 
 ## 3.2 Asian Options
+For the Asian option counterpart, we perform a similar iteration of our historical data, for each day performing the Cartesian product:
+<br>
 
-# 4. Reference list
+$S \times K \times T \times, A \times P = \set{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \}$
+where
+- $S$ is a single element set consisting of the underying spot price, <br>
+- $K$ is a set of strikes spread around the spot, <br>
+- $T$ is a set of maturities, <br>
+- $A$ is a set of time frequencies at which the Asian option fixes
+- $P$ is a set of past fixings which for the purposes of this study is a set consisting of only the element $0$ (zero)
+<br> and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product using software like itertools.
+
+# 4. Testing
+
+# 5. Reference list
 Blanda, V. (2023). FX Barrier Option Pricing. [online] <br> Available at: https://www.imperial.ac.uk/media/imperial-college/faculty-of-natural-sciences/department-of-mathematics/math-finance/212252650---VALENTIN-BLANDA---BLANDA_VALENTIN_02293988.pdf.
 
 Frey, C., Scheuch, C., Voigt , S. and Weiss, P. (2022). Option Pricing via Machine Learning with Python. [online] Tidy Finance. <br> Available at: https://www.tidy-finance.org/python/option-pricing-via-machine-learning.html.
