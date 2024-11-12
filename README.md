@@ -3,8 +3,7 @@ An empirical approach based on market data
 
 # Table of Contents
 1. [Introduction](#1-introduction)
-2. [Pricing Model Specification](#2-pricing-model-specification)
-   - 2.1 [Pricing Model](#21-pricing-model)
+2. [Pricing Model](#2-pricing-model)
 3. [Price Estimation](#3-price-estimation)
 4. [Reference List](#4-reference-list)
 
