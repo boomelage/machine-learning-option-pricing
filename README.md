@@ -44,21 +44,19 @@ In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a d
 
 ## 3.1 Barrier Options
 
-In the case if barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product: <br><br>
+In the case if barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:
+<br>
 
-
+$S \times K \times T \times B \times R = \set{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\}$
 
 <br>
 
-$S \times K \times T \times B \times R = \{(s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\}$
-
-where <br>
+where
 - $S$ is a single element set consisting of the underying spot price, <br>
 - $K$ is a set of strikes spread around the spot, <br>
 - $T$ is a set of maturities, <br>
 - $B$ is a set of barrier levels, and <br>
-- $E$ is a set of rebates which for the purposes of this study in a set consisting of only the element 0 (zero)
-
+- $R$ is a set of rebates which for the purposes of this study in a set consisting of only the element 0 (zero)
 
 ## 3.2 Asian Options
 
