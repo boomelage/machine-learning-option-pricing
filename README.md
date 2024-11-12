@@ -57,6 +57,8 @@ where
 - $T$ is a set of maturities, <br>
 - $B$ is a set of barrier levels, and <br>
 - $R$ is a set of rebates which for the purposes of this study in a set consisting of only the element 0 (zero)
+<br>
+and subsequently pricing the obtained features to generate our target variable (i.e., the barrier option price)
 
 ## 3.2 Asian Options
 
