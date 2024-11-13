@@ -75,16 +75,26 @@ and duplicating the data for calls/puts and arithmetic/geometric averaging which
 # 4. Testing
 
 # 5. Reference list
-Blanda, V. (2023). FX Barrier Option Pricing. [online] <br> Available at: https://www.imperial.ac.uk/media/imperial-college/faculty-of-natural-sciences/department-of-mathematics/math-finance/212252650---VALENTIN-BLANDA---BLANDA_VALENTIN_02293988.pdf.
+Blanda, V. (2023). FX Barrier Option Pricing. [online] <br> 
+Available at: https://www.imperial.ac.uk/media/imperial-college/faculty-of-natural-sciences/department-of-mathematics/math-finance/212252650---VALENTIN-BLANDA---BLANDA_VALENTIN_02293988.pdf.
 
-Frey, C., Scheuch, C., Voigt , S. and Weiss, P. (2022). Option Pricing via Machine Learning with Python. [online] Tidy Finance. <br> Available at: https://www.tidy-finance.org/python/option-pricing-via-machine-learning.html.
+Frey, C., Scheuch, C., Voigt , S. and Weiss, P. (2022). Option Pricing via Machine Learning with Python. [online] Tidy Finance. <br>
+Available at: https://www.tidy-finance.org/python/option-pricing-via-machine-learning.html.
 
-Gavin, H. (2024). The Levenberg-Marquardt algorithm for nonlinear least squares curve-fitting problems. [online] <br> Available at: https://people.duke.edu/~hpgavin/lm.pdf.
+Gavin, H. (2024). The Levenberg-Marquardt algorithm for nonlinear least squares curve-fitting problems. [online] <br> 
+Available at: https://people.duke.edu/~hpgavin/lm.pdf.
 
-Heston, S.L. (1993). A Closed-Form Solution for Options with Stochastic Volatility with Applications to Bond and Currency Options. Review of Financial Studies, 6(2), pp.327–343. <br> doi:https://doi.org/10.1093/rfs/6.2.327.
+Heston, S.L. (1993). A Closed-Form Solution for Options with Stochastic Volatility with Applications to Bond and Currency Options. Review of Financial Studies, 6(2), pp.327–343. <br> 
+doi:https://doi.org/10.1093/rfs/6.2.327.
 
-Liu, S., Oosterlee, C. and Bohte, S. (2019). Pricing Options and Computing Implied Volatilities using Neural Networks. Risks, 7(1), p.16. <br> doi:https://doi.org/10.3390/risks7010016.
+Kruse, R., Sanaz Mostaghim, Borgelt, C., Braune, C. and Steinbrecher, M. (2022). Multi-layer Perceptrons. Texts in computer science, pp.53–124. <br> 
+doi:https://doi.org/10.1007/978-3-030-42227-1_5.
 
-Schönbucher, P.J. (1999). A Market Model for Stochastic Implied Volatility. SSRN Electronic Journal, 21(4). <br> doi:https://doi.org/10.2139/ssrn.182775.
+Liu, S., Oosterlee, C. and Bohte, S. (2019). Pricing Options and Computing Implied Volatilities using Neural Networks. Risks, 7(1), p.16. <br>
+doi:https://doi.org/10.3390/risks7010016.
 
-Van Wieringen, W. (2021). Lecture notes on ridge regression. [online] <br> Available at: https://arxiv.org/pdf/1509.09169.
+Schönbucher, P.J. (1999). A Market Model for Stochastic Implied Volatility. SSRN Electronic Journal, 21(4). <br> 
+doi:https://doi.org/10.2139/ssrn.182775.
+
+Van Wieringen, W. (2021). Lecture notes on ridge regression. [online] <br> 
+Available at: https://arxiv.org/pdf/1509.09169.
