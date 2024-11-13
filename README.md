@@ -14,7 +14,7 @@ An empirical approach based on market data
 
 # 1. Introduction
 
-In this paper we will explore a proposed method of pricing exotic options via multi-layer-perceptron-based approximations derived from the simulation of a multidimensional space representing an option's price as a functional form of its features. To achieve this, we calibrate historical Heston (1993) parameters using market observed risk-free and dividend rates accompanied by live options trade data, allowing for stochastic volatility. This paper serves as a framework and demonstration of a generalized estimation process for barrier and Asian options along with a model specification and retraining analysis of both pricing models. We will explore the estimation of barrier options priced via finite difference as well as Asian options priced via Monte Carlo.
+In this paper we will explore a proposed method of pricing exotic options via multi-layer-perceptron-based approximations derived from the simulation of a multidimensional space representing an option's price as a functional form of its features. To achieve this, we calibrate historical Heston (1993) parameters using market observed risk-free and dividend rates accompanied by live options trade data, allowing for stochastic volatility while retaining market information in the data. This paper serves as a framework and demonstration of a generalized estimation process for barrier and Asian options along with a model specification and retraining analysis of both pricing models. We will explore the estimation of barrier options priced via finite difference as well as Asian options priced via Monte Carlo.
 
 # 2. Pricing Model
 
