@@ -1,5 +1,5 @@
 **Machine Learning Option Pricing:**  
-An empirical approach based on market data
+An empirical approach based on SPX options trade data
 
 # Table of Contents
 1. [Introduction](#1-introduction)
