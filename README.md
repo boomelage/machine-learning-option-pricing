@@ -55,7 +55,7 @@ where
 - $B$ is a set of barrier levels, and <br>
 - $R$ is a set of rebates which for the purposes of this study in a set consisting of only the element $0$ (zero)
 
-and duplicating the data for calls/puts, down/in, and up/down option types which can also be achieved by their inclusion in the Cartesian product using software like itertools.
+and duplicating the data for calls/puts, down/in, and up/down option types which can also be achieved by their inclusion in the Cartesian product as string categories using software like itertools.
 
 
 ## 3.2 Asian Options
@@ -70,7 +70,7 @@ where
 - $A$ is a set of time frequencies at which the Asian option fixes (i.e., a frequency which determines the number of montitoring dates), and
 - $P$ is a set of past fixings which for the purposes of this study is a set consisting of only the element $0$ (zero)
 
-and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product using software like itertools.
+and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product as string categories using software like itertools.
 
 # 4. Testing
 
