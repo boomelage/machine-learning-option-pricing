@@ -37,7 +37,7 @@ where
 - $\eta$ is the volatility of the variance process, and 
 - $B_t$ , $W_t$ are continuous random walks. 
 
-The implementation of stochastic volatility of the underlying log price is imperative to the functionality of our model as we are aiming to estimate the prices of path-dependent options which may require discrete monitoring of the spot price.
+The implementation of stochastic volatility of the underlying log price is imperative to the functionality of our model as we are aiming to estimate the prices of path-dependent options which may require discrete monitoring of the spot price throughout the contracts' tenors.
 
 # 3. Data Generation
 
