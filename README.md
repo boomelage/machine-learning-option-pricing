@@ -4,9 +4,9 @@ An empirical approach based on market data
 # Table of Contents
 1. [Introduction](#1-introduction)
 2. [Pricing Model](#2-pricing-model)
-3. [Data Generation](#3-data-generation)
-      - [Barrier Options](#31-barrier-options)
-      - [Asian Options](#32-asian-options)
+3. [Data Generation](#3-data-generation)<br>
+   [Barrier Options](#31-barrier-options)<br>
+   [Asian Options](#32-asian-options)
 4. [Model Training](#4-model-training)
 5. [Model Testing](#5-model-testing)
 6. [Reference List](#6-reference-list)
@@ -49,7 +49,7 @@ In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a d
 In the case of barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:
 
 $$
-S \times K \times T \times B \times R = \set{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\} \quad (3.1)
+S \times K \times T \times B \times R = \{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\} \quad (3.1)
 $$
 
 where
@@ -66,7 +66,7 @@ and duplicating the data for calls/puts, down/in, and up/down option types which
 For the Asian option counterpart, we perform a similar iteration of our historical data, for each day performing the Cartesian product:
 
 $$
-S \times K \times T \times A \times P = \set{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \} \quad (3.2)
+S \times K \times T \times A \times P = \{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \} \quad (3.2)
 $$
 
 where
@@ -95,16 +95,16 @@ Gavin, H. (2024). The Levenberg-Marquardt algorithm for nonlinear least squares 
 Available at: https://people.duke.edu/~hpgavin/lm.pdf.
 
 Heston, S.L. (1993). A Closed-Form Solution for Options with Stochastic Volatility with Applications to Bond and Currency Options. Review of Financial Studies, 6(2), pp.327–343. <br> 
-doi:https://doi.org/10.1093/rfs/6.2.327.
+doi: https://doi.org/10.1093/rfs/6.2.327.
 
 Kruse, R., Sanaz Mostaghim, Borgelt, C., Braune, C. and Steinbrecher, M. (2022). Multi-layer Perceptrons. Texts in computer science, pp.53–124. <br> 
-doi:https://doi.org/10.1007/978-3-030-42227-1_5.
+doi: https://doi.org/10.1007/978-3-030-42227-1_5.
 
 Liu, S., Oosterlee, C. and Bohte, S. (2019). Pricing Options and Computing Implied Volatilities using Neural Networks. Risks, 7(1), p.16. <br>
-doi:https://doi.org/10.3390/risks7010016.
+doi: https://doi.org/10.3390/risks7010016.
 
 Schönbucher, P.J. (1999). A Market Model for Stochastic Implied Volatility. SSRN Electronic Journal, 21(4). <br> 
-doi:https://doi.org/10.2139/ssrn.182775.
+doi: https://doi.org/10.2139/ssrn.182775.
 
 Van Wieringen, W. (2021). Lecture notes on ridge regression. [online] <br> 
 Available at: https://arxiv.org/pdf/1509.09169.
