@@ -22,11 +22,11 @@ In this paper we will explore a proposed method of pricing exotic options via mu
 To model the logarithmic price of our underlying security, we use the Heston (1993) model, described by the pair of stochastic differential equations:
 
 $$
-dX_t = \left( r - \frac{v_t}{2} \right) dt + \sqrt{v_t} \left( \rho dW_t + \sqrt{1 - \rho^2} dB_t \right) \quad (1)
+dX_t = \left( r - \frac{v_t}{2} \right) dt + \sqrt{v_t} \left( \rho dW_t + \sqrt{1 - \rho^2} dB_t \right) \quad (2.1)
 $$
 
 $$
-\hspace{1.9cm}  dv_t = \kappa (\theta - v_t) dt + \eta \sqrt{v_t} dW_t \hspace{1.8cm} \quad (1.1)
+\hspace{1.9cm}  dv_t = \kappa (\theta - v_t) dt + \eta \sqrt{v_t} dW_t \hspace{1.8cm} \quad (2.2)
 $$
 
 
