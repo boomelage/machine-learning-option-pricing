@@ -7,8 +7,9 @@ An empirical approach based on market data
 3. [Data Generation](#3-data-generation)
       - [Barrier Options](#31-barrier-options)
       - [Asian Options](#32-asian-options)
-4. [Testing](#4-testing)
-5. [Reference List](#5-reference-list)
+4. [Model Training](#4-model-training)
+5. [Model Testing](#5-model-testing)
+6. [Reference List](#6-reference-list)
 
 
 
@@ -41,11 +42,11 @@ The implementation of stochastic volatility of the underlying log price is imper
 
 # 3. Data Generation
 
-In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a development dataset by simulating possible parameter combinations for a given security. Liu et. al. (2019) demonstrate a considerable increase in computational efficiency with retention of low errors for the estimation of implied volatilites via artificial neural networks by considering the relative spot price (i.e., the spot price scaled the strike price $S/K$) and the relative option price (i.e., the option's price divided by its strike $C/K$) of the option as opposed to their levels ($C$ and $S$), a method we will be borrowing for our estimation. Frey et. al. (2022) propose a data generation method via Cartesian product to create a sample space of vanilla option pricing features to estimate the price level ($S$). Testing of this method considering exotic options did not retain the same level of pricing accuracy as evidenced by high partial dependence of the target price in relation to the underlying spot price level $S$ and the initial variance $v_0$. We therefore propose a new method combining the Carterisan product approach to retain control over feature combinations while conisdering the option's relative price ($C/K$) as well as any other linear features also scaled by the strike price $K$.
+In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a development dataset by simulating possible parameter combinations for a given security. Liu et. al. (2019) demonstrate a considerable increase in computational efficiency with retention of low errors for the estimation of implied volatilites via artificial neural networks by considering the relative spot price (i.e., the spot price $S$ divided by the strike price $K$) and the relative option price (i.e., the option's price $C$ divided by its strike $K$) of the option as opposed to their levels, a method we will be borrowing for our estimation. Frey et. al. (2022) propose a data generation method via Cartesian product to create a sample space of vanilla option pricing features to estimate the price level ($S$) using a multi-layer perceptron model. Testing of this method considering exotic options did not retain pricing accuracy as evidenced by high Root Mean Squared Error (RMSE), high Mean Absolute Error (MSE), and high partial dependence of the target price in relation to the underlying spot price level $S$ and the initial variance $v_0$. We therefore propose a new method combining the Carterisan product approach to retain control over feature combinations while conisdering the option's relative price ($C/K$) as well as any other linear features also scaled by the strike price $K$.
 
 ## 3.1 Barrier Options
 
-In the case if barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:<br>
+In the case of barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:<br>
 
 $S \times K \times T \times B \times R = \set{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\}$<br>
 where
@@ -72,9 +73,13 @@ where
 
 and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product as string categories using software like itertools.
 
-# 4. Testing
+# 4. Model Training
 
-# 5. Reference list
+![Graph of model specification](README/MLP.png)
+
+# 5. Model Testing
+
+# 6. Reference list
 Blanda, V. (2023). FX Barrier Option Pricing. [online] <br> 
 Available at: https://www.imperial.ac.uk/media/imperial-college/faculty-of-natural-sciences/department-of-mathematics/math-finance/212252650---VALENTIN-BLANDA---BLANDA_VALENTIN_02293988.pdf.
 
