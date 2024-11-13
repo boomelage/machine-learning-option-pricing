@@ -7,8 +7,9 @@ An empirical approach based on market data
 3. [Data Generation](#3-data-generation)
       - [Barrier Options](#31-barrier-options)
       - [Asian Options](#32-asian-options)
-4. [Testing](#4-testing)
-5. [Reference List](#5-reference-list)
+4. [Model Training](#4-model-training)
+5. [Model Testing](#5-model-testing)
+6. [Reference List](#6-reference-list)
 
 
 
@@ -72,9 +73,13 @@ where
 
 and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product as string categories using software like itertools.
 
-# 4. Testing
+# 4. Model Training
 
-# 5. Reference list
+![Graph of model specification](README/MLP.png)
+
+# 5. Model Testing
+
+# 6. Reference list
 Blanda, V. (2023). FX Barrier Option Pricing. [online] <br> 
 Available at: https://www.imperial.ac.uk/media/imperial-college/faculty-of-natural-sciences/department-of-mathematics/math-finance/212252650---VALENTIN-BLANDA---BLANDA_VALENTIN_02293988.pdf.
 
