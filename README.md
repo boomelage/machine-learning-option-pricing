@@ -3,13 +3,15 @@ An empirical approach based on market data
 
 # Table of Contents
 1. [Introduction](#1-introduction)
-2. [Pricing Model](#2-pricing-model)
-3. [Data Generation](#3-data-generation)<br>
+2. [Pricing Model](#2-pricing-model)<br>
+   2.1. [Specification](#21-specification)<br>
+   2.2. [Historical Parameter Retrieval](#22-historical-parameter-retrieval)
+4. [Data Generation](#3-data-generation)<br>
    3.1. [Barrier Options](#31-barrier-options)<br>
    3.2. [Asian Options](#32-asian-options)
-4. [Model Training](#4-model-training)
-5. [Model Testing](#5-model-testing)
-6. [Reference List](#6-reference-list)
+5. [Model Training](#4-model-training)
+6. [Model Testing](#5-model-testing)
+7. [Reference List](#6-reference-list)
 
 
 
@@ -18,6 +20,8 @@ An empirical approach based on market data
 In this paper we will explore a proposed method of pricing exotic options via multi-layer-perceptron-based approximations derived from the simulation of a multidimensional space representing an option's price as a functional form of its features. To achieve this, we calibrate historical Heston (1993) parameters using market observed risk-free and dividend rates accompanied by live options trade data, thereby effectively simulating, in the case of this paper, the SPX index options market. This paper serves as a framework and demonstration of a generalized estimation process for barrier and Asian options along with a model specification and retraining analysis of both pricing models. We will explore the estimation of barrier options priced via finite difference as well as Asian options priced via Monte Carlo.
 
 # 2. Pricing Model
+
+## 2.1. Specification
 
 To model the logarithmic price of our underlying security, we use the Heston (1993) model, described by the pair of stochastic differential equations:
 
@@ -39,6 +43,8 @@ where
 - $B_t$ , $W_t$ are continuous random walks. 
 
 The implementation of stochastic volatility of the underlying log price is imperative to the functionality of our model as we are aiming to estimate the prices of path-dependent options which may require discrete monitoring of the spot price throughout the contracts' tenors.
+
+## 2.2. Historical Parameter Retrieval
 
 # 3. Data Generation
 
