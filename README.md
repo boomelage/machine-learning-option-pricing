@@ -5,8 +5,8 @@ An empirical approach based on market data
 1. [Introduction](#1-introduction)
 2. [Pricing Model](#2-pricing-model)
 3. [Data Generation](#3-data-generation)<br>
-   [Barrier Options](#31-barrier-options)<br>
-   [Asian Options](#32-asian-options)
+   3.1. [Barrier Options](#31-barrier-options)<br>
+   3.2. [Asian Options](#32-asian-options)
 4. [Model Training](#4-model-training)
 5. [Model Testing](#5-model-testing)
 6. [Reference List](#6-reference-list)
@@ -44,7 +44,7 @@ The implementation of stochastic volatility of the underlying log price is imper
 
 In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a development dataset by simulating possible parameter combinations for a given security. Liu et. al. (2019) demonstrate a considerable increase in computational efficiency with retention of low errors for the estimation of implied volatilites via artificial neural networks by considering the relative spot price (i.e., the spot price $S$ divided by the strike price $K$) and the relative option price (i.e., the option's price $C$ divided by its strike $K$) of the option as opposed to their levels, a method we will be borrowing for our estimation. Frey et. al. (2022) propose a data generation method via Cartesian product to create a sample space of vanilla option pricing features to estimate the price level ($S$) using a multi-layer perceptron model. Testing of this method considering exotic options did not retain pricing accuracy as evidenced by high Root Mean Squared Error (RMSE), high Mean Absolute Error (MSE), and high partial dependence of the target price in relation to the underlying spot price level $S$ and the initial variance $v_0$. We therefore propose a new method combining the Carterisan product approach to retain control over feature combinations while conisdering the option's relative price ($C/K$) as well as any other linear features also scaled by the strike price $K$.
 
-## 3.1 Barrier Options
+## 3.1. Barrier Options
 
 In the case of barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:
 
@@ -62,7 +62,7 @@ where
 and duplicating the data for calls/puts, down/in, and up/down option types which can also be achieved by their inclusion in the Cartesian product as string categories using software like itertools.
 
 
-## 3.2 Asian Options
+## 3.2. Asian Options
 For the Asian option counterpart, we perform a similar iteration of our historical data, for each day performing the Cartesian product:
 
 $$
