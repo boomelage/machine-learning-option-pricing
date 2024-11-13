@@ -55,7 +55,7 @@ where
 - $B$ is a set of barrier levels, and <br>
 - $R$ is a set of rebates which for the purposes of this study in a set consisting of only the element $0$ (zero)
 
-and duplicating the data for calls/puts, down/in, and up/down option types which can also be achieved by their inclusion in the Cartesian product as string categories using software like itertools.
+and duplicating the data for calls/puts, down/in, and up/down option types which can also be achieved by their inclusion in the Cartesian product as string categories using software like itertools. It is to be noted that barrier option features must be separated into two categorices: up and down. This is due to the condition that the strike price must be lower than the spot for down options
 
 
 ## 3.2 Asian Options
