@@ -49,7 +49,7 @@ In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a d
 In the case of barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:
 
 $$
-S \times K \times T \times B \times R = \{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\} \quad (3.1)
+S \times K \times T \times B \times R = \set{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\} \quad (3.1)
 $$
 
 where
@@ -66,7 +66,7 @@ and duplicating the data for calls/puts, down/in, and up/down option types which
 For the Asian option counterpart, we perform a similar iteration of our historical data, for each day performing the Cartesian product:
 
 $$
-S \times K \times T \times A \times P = \{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \} \quad (3.2)
+S \times K \times T \times A \times P = \set{ (s,k,t,a,p) | \ s \in S, \ k \in K, \ t \in T, \ a \in A, \text{and} \ p \in P \} \quad (3.2)
 $$
 
 where
