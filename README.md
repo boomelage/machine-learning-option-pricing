@@ -45,7 +45,7 @@ In the spirit of Liu et. al. (2019) and Frey et. al. (2022) we will generate a d
 
 ## 3.1 Barrier Options
 
-In the case if barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:<br>
+In the case of barrier options, we begin generating the development dataset by iterating through the historical spot prices and volatility parameters and for each trading day, performing the Cartesian product:<br>
 
 $S \times K \times T \times B \times R = \set{ (s, k, t, b, r_{\text{rebate}}) | \ s \in S, \ k \in K, \ t \in T, \ b \in B, \ \text{and} \ r_{\text{rebate}} \in R\}$<br>
 where
