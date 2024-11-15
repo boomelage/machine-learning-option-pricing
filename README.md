@@ -9,8 +9,7 @@ An empirical approach based on SPX options trade data
 3. [Data Generation](#3-data-generation)<br>
    3.1. [Barrier Options](#31-barrier-options)<br>
    3.2. [Asian Options](#32-asian-options)
-5. [Model Training](#5-model-training)
-6. [Reference List](#6-reference-list)
+5. [Reference List](#6-reference-list)
 
 
 
@@ -43,9 +42,9 @@ where
 
 Heston (1993) famously derives the above model as an extension of the previously established Black and Scholes (1973) model for pricing options while lifting the well-known assumption of constant volatility. The addition of an auxiliary variance process replacing the otherwise assumed constant volatility parameter $\sigma$ in the renowned Black-Scholes formula allows for time-dependent, discretely measurable volatility. Consequently, implementation of the Heston (1993) model for governing the underlying log price is imperative to the functionality of our model as we are aiming to estimate prices of path-dependent options which may require discrete monitoring of the spot price throughout a contract's tenor.
 
-We aim to create a dataset of historical parameter sets in order to simulate a market with minimal to no assumptions relating to the bounds, dispersion, or any other statistical feature of the data. Synthetic sample generation is typically more popular and has been explored in detail by Liu et. al. (2019) in estimating implied volatility using artificial neural networks. However, by exploiting relatively small amounts amount of live trades data, one is able to attempt the automated reconstruction of volatility surfaces via discretization of the data and logic applied to trade times and volumes. One such proprietary method permitted the extraction of c. 1600 individual calibrations for as many unique live underlying spot prices from 2012 to 2024, which is far beyond the requirements for an accurate model as described by our specifications. The time continuity of the data is not necessarily guaranteed, however, for the purposes of our approximation we are more concerned with ensuring each calibration surface contains enough skew in the form of multiple strikes spread both above and below the corresponding underlying price. In our method, this is accounted for by disregarding all reconstructed surfaces which do not have at least two strikes on each side of the spot price with a minimum of five contracts as needed to calibrate the Heston (1993) stochastic volatility model. The optimization algorithm of choice in our study is that of the Levenberg-Marquard algorithm as described in detail by Gavin (2024) and implemented via QuantLib's Heston Model Calibration Helper.
-
 ## 2.2. Historical Parameter Retrieval
+
+We aim to create a dataset of historical parameter sets in order to simulate a market with minimal to no assumptions relating to the bounds, dispersion, or any other statistical feature of the data. Synthetic sample generation is typically more popular and has been explored in detail by Liu et. al. (2019) in estimating implied volatility using artificial neural networks. However, by exploiting relatively small amounts amount of live trades data, one is able to attempt the automated reconstruction of volatility surfaces via discretization of the data and logic applied to trade times and volumes. One such proprietary method permitted the extraction of c. 1600 individual calibrations for as many unique live underlying spot prices from 2012 to 2024, which is far beyond the requirements for an accurate model as described by our specifications. The time continuity of the data is not necessarily guaranteed, however, for the purposes of our approximation we are more concerned with ensuring each calibration surface contains enough skew in the form of multiple strikes spread both above and below the corresponding underlying price. In our method, this is accounted for by disregarding all reconstructed surfaces which do not have at least two strikes on each side of the spot price with a minimum of five contracts as needed to calibrate the Heston (1993) stochastic volatility model. The optimization algorithm of choice in our study is that of the Levenberg-Marquard algorithm as described in detail by Gavin (2024) and implemented via QuantLib's Heston Model Calibration Helper.
 
 # 3. Data Generation
 
