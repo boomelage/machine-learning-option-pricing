@@ -6,12 +6,11 @@ An empirical approach based on SPX options trade data
 2. [Pricing Model](#2-pricing-model)<br>
    2.1. [Specification](#21-specification)<br>
    2.2. [Historical Parameter Retrieval](#22-historical-parameter-retrieval)
-4. [Data Generation](#3-data-generation)<br>
+3. [Data Generation](#3-data-generation)<br>
    3.1. [Barrier Options](#31-barrier-options)<br>
    3.2. [Asian Options](#32-asian-options)
-5. [Model Training](#4-model-training)
-6. [Model Testing](#5-model-testing)
-7. [Reference List](#6-reference-list)
+5. [Model Training](#5-model-training)
+6. [Reference List](#6-reference-list)
 
 
 
@@ -88,7 +87,6 @@ and duplicating the data for calls/puts and arithmetic/geometric averaging which
 
 ![Graph of model specification](README/MLP.png)
 
-# 5. Model Testing
 
 # 6. Reference list
 Blanda, V. (2023). FX Barrier Option Pricing. [online] <br> 
