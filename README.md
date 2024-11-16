@@ -65,9 +65,6 @@ where
 - $B$ is a set of barrier levels, and <br>
 - $R$ is a set of rebates which for the purposes of this study in a set consisting of only the element $0$ (zero)
 
-and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product as string categories using software like itertools. The above Cartesian product will produce the initial option feature variable matrix $X$ and by pricing all contracts via finite difference, we obtain the target variable vector $Y$. The resulting $X$ matrix will have a dimension equal to five (for the number of features) by the product of all variable vector lengths. It is to be noted that the only feasible combinations are Down 'options' with $b<s$ and and 'Up' options with $b>s$ due to the shape of the payoff function.
-
-
 ## 3.2. Asian Options
 For the Asian option counterpart, we perform a similar iteration of our historical data, for each observation performing the Cartesian product:
 
@@ -81,8 +78,6 @@ where
 - $T$ is a set of maturities, <br>
 - $A$ is a set of time frequencies at which the Asian option fixes (i.e., a frequency which determines the number of monitoring dates), and
 - $P$ is a set of past fixings which for the purposes of this study is a set consisting of only the element $0$ (zero)
-
-and duplicating the data for calls/puts and arithmetic/geometric averaging which can similarly be achieved by their inclusion in the Cartesian product as string categories using software like itertools. The resulting set will be the basis of our Asian option feature dataset (i.e., the $X$ variable matrix) and will have a dimension equal to five (for the number of features) by the product of all variable vector lengths. We then proceed by pricing all options via Monte Carlo simulation to generate our target variable vector $Y$ (i.e., the Asian option price)
 
 # 4. Model Training
 
