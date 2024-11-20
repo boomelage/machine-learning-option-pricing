@@ -62,6 +62,7 @@ preprocessing
 """
 
 dataset = df.copy()
+dataset = dataset[dataset]
 dataset['calculation_date'] = pd.to_datetime(dataset['calculation_date'],format='mixed')
 dataset['date'] = dataset['calculation_date'].dt.floor('D')
 dates = dataset['date'].drop_duplicates().reset_index(drop=True)
@@ -97,9 +98,6 @@ def build_and_compile_model(norm):
         norm,
         layers.Dense(n_features, activation='relu'),
         layers.Dense(n_features, activation='relu'),
-        layers.Dense(n_features, activation='relu'),
-        layers.Dense(n_features, activation='relu'),
-        layers.Dense(n_features, activation='relu'),
         layers.Dense(1, activation='linear')
     ])
     model.compile(
@@ -113,8 +111,8 @@ mlp = build_and_compile_model(normalizer)
 history = mlp.fit(
     train_X,
     train_y,
-    validation_split=0.1,
-    verbose=1, epochs=50)
+    validation_split=0.05,
+    verbose=1, epochs=500)
 
 hist = pd.DataFrame(history.history)
 hist['epoch'] = history.epoch
