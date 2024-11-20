@@ -62,7 +62,6 @@ preprocessing
 """
 
 dataset = df.copy()
-dataset = dataset[dataset]
 dataset['calculation_date'] = pd.to_datetime(dataset['calculation_date'],format='mixed')
 dataset['date'] = dataset['calculation_date'].dt.floor('D')
 dates = dataset['date'].drop_duplicates().reset_index(drop=True)
