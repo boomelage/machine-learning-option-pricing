@@ -1,7 +1,7 @@
 """
 https://www.tensorflow.org/tutorials/keras/regression
 https://www.tensorflow.org/guide/keras/preprocessing_layers
-
+https://keras.io/api/optimizers/sgd/
 
 sns.pairplot(train_dataset[['relative_spot','kappa', 'theta', 'rho', 'eta', 'v0',]], diag_kind='kde')
 """
@@ -69,7 +69,7 @@ dataset.tail()
 dataset = dataset.dropna()
 dataset = pd.get_dummies(dataset, columns=['w','averaging_type'], prefix='', prefix_sep='')
 
-development_dates = dates.iloc[:100]
+development_dates = dates.iloc[:200]
 test_dates = dates[~dates.isin(development_dates)]
 train_data = dataset[dataset['date'].isin(development_dates)].copy()
 test_data = dataset[dataset['date'].isin(test_dates)].copy()
@@ -82,55 +82,66 @@ train_y = train_data[target]
 test_y = test_data[target]
 
 
-"""
-mlp
-"""
+# """
+# mlp
+# """
+
+# normalizer = tf.keras.layers.Normalization(axis=-1)
+# normalizer.adapt(np.array(test_X))
+
+# n_features = len(cats)+len(nums)
+
+# def build_and_compile_model(scaler):
+#     model = keras.Sequential([
+#         scaler,
+#         layers.Dense(n_features, activation='relu'),
+#         layers.Dense(n_features, activation='relu'),
+#         layers.Dense(n_features, activation='relu'),
+#         layers.Dense(n_features, activation='relu'),
+#         layers.Dense(n_features, activation='relu'),
+#         layers.Dense(1, activation='linear')
+#     ])
+#     model.compile(
+#         loss='mean_squared_error',
+#         optimizer=tf.keras.optimizers.SGD(
+#             learning_rate=0.01,
+#             )
+#     )
+#     return model
+
+# mlp = build_and_compile_model(normalizer)
+
+# history = mlp.fit(
+#     train_X,
+#     train_y,
+#     validation_split=0.05,
+#     verbose=1, epochs=100)
+
+# hist = pd.DataFrame(history.history)
+# hist['epoch'] = history.epoch
+# hist.tail()
+# loss = hist.iloc[:,:-1]
+
+# """
+# testing
+# """
 
 
-normalizer = tf.keras.layers.Normalization(axis=-1)
-normalizer.adapt(np.array(test_X))
+# test_results = {}
+# test_results['mlp'] = mlp.evaluate(test_X, test_y, verbose=0)
 
-n_features = len(cats)+len(nums)
+# insample_prediction = mlp.predict(train_X).flatten()
+# insample_error = train_y-insample_prediction
 
-def build_and_compile_model(norm):
-    model = keras.Sequential([
-        norm,
-        layers.Dense(n_features, activation='relu'),
-        layers.Dense(n_features, activation='relu'),
-        layers.Dense(1, activation='linear')
-    ])
-    model.compile(
-        loss='mean_squared_error',
-        optimizer=tf.keras.optimizers.SGD(learning_rate=0.01)
-    )
-    return model
+# plt.figure()
+# plt.hist(insample_error,bins = 50)
+# plt.show()
+# plt.figure()
+# plt.plot(loss)
+# plt.show()
+# print(train_X.describe().T)
+# print('errors:')
+# print(insample_error.describe())
 
-mlp = build_and_compile_model(normalizer)
 
-history = mlp.fit(
-    train_X,
-    train_y,
-    validation_split=0.05,
-    verbose=1, epochs=500)
-
-hist = pd.DataFrame(history.history)
-hist['epoch'] = history.epoch
-hist.tail()
-loss = hist.iloc[:,:-1]
-
-test_results = {}
-test_results['mlp'] = mlp.evaluate(test_X, test_y, verbose=0)
-
-insample_prediction = mlp.predict(train_X).flatten()
-insample_error = train_y-insample_prediction
-
-plt.figure()
-plt.hist(insample_error,bins = 50)
-plt.show()
-plt.figure()
-plt.plot(loss)
-plt.show()
-print(train_X.describe().T)
-print(insample_error.describe())
-
-tictoc = time()-tic
+# tictoc = time()-tic
