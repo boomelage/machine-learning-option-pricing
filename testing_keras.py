@@ -82,66 +82,65 @@ train_y = train_data[target]
 test_y = test_data[target]
 
 
-# """
-# mlp
-# """
+"""
+mlp
+"""
 
-# normalizer = tf.keras.layers.Normalization(axis=-1)
-# normalizer.adapt(np.array(test_X))
+normalizer = tf.keras.layers.Normalization(axis=-1)
+normalizer.adapt(np.array(test_X))
 
-# n_features = len(cats)+len(nums)
+n_features = len(cats)+len(nums)
 
-# def build_and_compile_model(scaler):
-#     model = keras.Sequential([
-#         scaler,
-#         layers.Dense(n_features, activation='relu'),
-#         layers.Dense(n_features, activation='relu'),
-#         layers.Dense(n_features, activation='relu'),
-#         layers.Dense(n_features, activation='relu'),
-#         layers.Dense(n_features, activation='relu'),
-#         layers.Dense(1, activation='linear')
-#     ])
-#     model.compile(
-#         loss='mean_squared_error',
-#         optimizer=tf.keras.optimizers.SGD(
-#             learning_rate=0.01,
-#             )
-#     )
-#     return model
+def build_and_compile_model(scaler):
+    model = keras.Sequential([
+        scaler,
+        layers.Dense(n_features, activation='relu'),
+        layers.Dense(n_features, activation='relu'),
+        layers.Dense(n_features, activation='relu'),
+        layers.Dense(n_features, activation='relu'),
+        layers.Dense(n_features, activation='relu'),
+        layers.Dense(1, activation='linear')
+    ])
+    model.compile(
+        loss='mean_squared_error',
+        optimizer=tf.keras.optimizers.SGD(
+            learning_rate=0.01,
+            )
+    )
+    return model
 
-# mlp = build_and_compile_model(normalizer)
+mlp = build_and_compile_model(normalizer)
+history = mlp.fit(
+    train_X,
+    train_y,
+    validation_split=0.05,
+    verbose=1, epochs=100)
 
-# history = mlp.fit(
-#     train_X,
-#     train_y,
-#     validation_split=0.05,
-#     verbose=1, epochs=100)
+hist = pd.DataFrame(history.history)
+hist['epoch'] = history.epoch
+hist.tail()
+loss = hist.iloc[:,:-1]
 
-# hist = pd.DataFrame(history.history)
-# hist['epoch'] = history.epoch
-# hist.tail()
-# loss = hist.iloc[:,:-1]
-
-# """
-# testing
-# """
-
-
-# test_results = {}
-# test_results['mlp'] = mlp.evaluate(test_X, test_y, verbose=0)
-
-# insample_prediction = mlp.predict(train_X).flatten()
-# insample_error = train_y-insample_prediction
-
-# plt.figure()
-# plt.hist(insample_error,bins = 50)
-# plt.show()
-# plt.figure()
-# plt.plot(loss)
-# plt.show()
-# print(train_X.describe().T)
-# print('errors:')
-# print(insample_error.describe())
+"""
+testing
+"""
 
 
-# tictoc = time()-tic
+test_results = {}
+test_results['mlp'] = mlp.evaluate(test_X, test_y, verbose=0)
+
+insample_prediction = mlp.predict(train_X).flatten()
+insample_error = train_y-insample_prediction
+
+plt.figure()
+plt.hist(insample_error,bins = 50)
+plt.show()
+plt.figure()
+plt.plot(loss)
+plt.show()
+print(train_X.describe().T)
+print('errors:')
+print(insample_error.describe())
+
+
+tictoc = time()-tic
