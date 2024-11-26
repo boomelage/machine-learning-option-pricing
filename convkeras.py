@@ -38,18 +38,14 @@ class convkeras:
 		)
 
 
-# ck = convkeras()
-# layers = [
-# 	layers.Dense(13, activation='relu'),
-# 	layers.Dense(13, activation='relu'),
-# 	layers.Dense(13, activation='relu'),
-# 	layers.Dense(13, activation='relu'),
-# 	layers.Dense(13, activation='relu'),
-# 	layers.Dense(1, activation='linear')
-# ]
-# from testing_keras import train_X, train_y, test_X, train_y
-# ck.train_X = train_X
-# ck.specify_model(layers)
-# ck.layers = layers
-# ck.train_y = train_y
-# ck.fit_model(epochs=10)
+ck = convkeras()
+layers = [
+	layers.Dense(13, activation='relu'),
+	layers.Dense(1, activation='linear')
+]
+from testing_keras import train_X, train_y, test_X, train_y
+ck.train_X = train_X
+ck.specify_model(layers)
+ck.layers = layers
+ck.train_y = train_y
+ck.fit_model(epochs=10)
