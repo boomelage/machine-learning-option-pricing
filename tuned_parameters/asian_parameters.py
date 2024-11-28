@@ -1,0 +1,1 @@
+tuned_params = {'hidden_layer_sizes': (10, 10), 'random_state': 1312, 'early_stopping': True, 'learning_rate': 'constant', 'learning_rate_init': 0.01, 'max_iter': 200, 'n_iter_no_change': 20, 'power_t': 0.5, 'tol': 0.0001}
