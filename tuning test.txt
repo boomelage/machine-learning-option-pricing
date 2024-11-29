@@ -1,0 +1,38 @@
+asian options:   tuned:
+        in sample:
+             RMSE: 0.005899031380735942
+             MAE: 0.003501190174076559
+        
+        out of sample:
+             RMSE: 0.1908061210509304
+             MAE: 0.07711552063611175
+    
+    
+    untuned:
+        in sample:
+             RMSE: 0.009288629782224028
+             MAE: 0.005846852922664114
+        
+        out of sample:
+             RMSE: 0.6921939073586933
+             MAE: 0.39170248820968917
+    
+    
+barrier options:
+    tuned:
+        in sample:
+             RMSE: 0.021261180286359337
+             MAE: 0.01339095866189147
+        
+        out of sample:
+             RMSE: 0.06918528695231267
+             MAE: 0.034019214902323146
+        
+    untuned:
+        in sample:
+             RMSE: 0.025376469048032653
+             MAE: 0.0148349278785858
+        
+        out of sample:
+             RMSE: 0.38061763029798557
+             MAE: 0.23818551447337868
