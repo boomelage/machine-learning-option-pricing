@@ -1,4 +1,7 @@
-asian options:   tuned:
+(10,10)
+
+asian options:   
+    tuned:
         in sample:
              RMSE: 0.005899031380735942
              MAE: 0.003501190174076559
