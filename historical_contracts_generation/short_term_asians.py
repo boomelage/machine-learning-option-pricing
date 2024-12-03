@@ -99,36 +99,6 @@ def row_generate_asian_option_features(row):
                 ]
             )
             feature_list.append(df)
-
-    for f in fixing_frequencies:
-        feature_list.append(
-            pd.DataFrame(
-                product(
-                    [s],
-                    K,
-                    [f],
-                    [1],
-                    [f],
-                    [0],
-                    ['geometric','arithmetic'],
-                    ['call','put'],
-                    [r],
-                    [g],
-                    [calculation_date],
-                    [kappa],
-                    [theta],
-                    [rho],
-                    [eta],
-                    [v0]
-                ),
-                columns = [
-                    'spot_price','strike_price','days_to_maturity',
-                    'n_fixings','fixing_frequency','past_fixings','averaging_type','w',
-                    'risk_free_rate','dividend_rate','calculation_date',
-                    'kappa','theta','rho','eta','v0'
-                ]
-            )
-        )
     features = pd.concat(feature_list,ignore_index=True)
     features['date'] = calculation_date.floor('D')
     features['asian_price'] = aop.df_asian_option_price(features)
