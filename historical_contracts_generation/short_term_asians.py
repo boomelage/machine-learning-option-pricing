@@ -12,13 +12,12 @@ pd.set_option('display.max_columns',None)
 
 aop = asian_option_pricer()
 root = Path(__file__).resolve().parent.parent.parent.parent.parent
-underlying_product = ms.cboe_spx_short_term_asians
+underlying_product = ms.cboe_spx_asians
 ms.find_root(Path(__file__).resolve())
 ms.collect_spx_calibrations()
 df = ms.spx_calibrations
 df['calculation_date'] = pd.to_datetime(df['calculation_date'],format='mixed')
 df = df.sort_values(by='calculation_date',ascending=False).reset_index(drop=True)
-
 tag = underlying_product['calibrations_filetag']
 calibrations_dir = underlying_product['calibrations_dir']
 output_dump = underlying_product['dump']
@@ -31,7 +30,9 @@ df = df.iloc[computed_outputs:].copy()
 print(f"\n{df}")
 
 
-bar = tqdm(total = df.shape[0])
+
+
+
 def row_generate_asian_option_features(row):
     s = row['spot_price']
     r = row['risk_free_rate']
@@ -101,7 +102,6 @@ def row_generate_asian_option_features(row):
     features['date'] = calculation_date.floor('D')
     features['asian_price'] = aop.df_asian_option_price(features)
     features.to_csv(os.path.join(output_dir,f"{calculation_date.strftime('%Y-%m-%d_%H%M%S%f')}_{(str(int(s*100))).replace('_','')}  {tag} short-term asian options.csv"))
-    bar.update(1)
 
 
 import time
