@@ -68,7 +68,7 @@ def row_generate_barrier_features(row):
         s*0.9,
         s*1.1,
         9
-        )
+    )
     T = [
         60,
         90,

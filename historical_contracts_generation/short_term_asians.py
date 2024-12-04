@@ -42,9 +42,7 @@ def row_generate_asian_option_features(row):
     rho = row['rho']
     eta = row['eta']
     v0  = row['v0']
-    kupper = int(s*(1+0.5))
-    klower = int(s*(1-0.5))
-    K = np.linspace(klower,kupper,5)
+    K = np.linspace(s*0.7,s*1.3,9)
 
     W = [
         'call',
