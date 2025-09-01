@@ -1,0 +1,21 @@
+
+\section*{Summation Form of the Heston Model}
+
+Given the discretized stochastic equations:
+
+\begin{align*}
+	S_{i+1} &= S_i + \mu S_i \Delta t + \sqrt{v_i} S_i \sqrt{\Delta t} Z_1^{(i)} \\
+	v_{i+1} &= v_i + \kappa (\theta - v_i) \Delta t + \sigma \sqrt{v_i} \sqrt{\Delta t} Z_2^{(i)}
+\end{align*}
+
+With correlated noise:
+\[
+Z_2^{(i)} = \rho Z_1^{(i)} + \sqrt{1 - \rho^2} \, \varepsilon^{(i)}, \quad \varepsilon^{(i)} \sim \mathcal{N}(0,1)
+\]
+
+The cumulative summation forms from step \( 0 \) to \( n \) are:
+
+\begin{align*}
+	S_n &= S_0 + \sum_{i=0}^{n-1} \left( \mu S_i \Delta t + \sqrt{v_i} S_i \sqrt{\Delta t} Z_1^{(i)} \right) \\
+	v_n &= v_0 + \sum_{i=0}^{n-1} \left( \kappa (\theta - v_i) \Delta t + \sigma \sqrt{v_i} \sqrt{\Delta t} Z_2^{(i)} \right)
+\end{align*}

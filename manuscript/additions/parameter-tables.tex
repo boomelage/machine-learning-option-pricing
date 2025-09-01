@@ -1,0 +1,112 @@
+\begin{minipage}{0.45\textwidth}
+	\subsection{Asian Option Network}
+	\label{sections:AsianNet}
+	\centering
+	\begin{tabular}{ll}
+		\toprule
+		feature & transformation \\
+		\midrule
+		days\_to\_maturity & StandardScaler \\
+		fixing\_frequency & StandardScaler \\
+		past\_fixings & StandardScaler \\
+		risk\_free\_rate & StandardScaler \\
+		dividend\_rate & StandardScaler \\
+		kappa & StandardScaler \\
+		theta & StandardScaler \\
+		rho & StandardScaler \\
+		eta & StandardScaler \\
+		v0 & StandardScaler \\
+		relative\_spot & StandardScaler \\
+		averaging\_type & OneHotEncoder \\
+		w & OneHotEncoder \\
+		\bottomrule
+	\end{tabular}
+	
+	\vspace{0.5em}
+	\begin{tabular}{ll}
+		\toprule
+		parameter & specification \\
+		\midrule
+		activation & relu \\
+		solver & sgd \\
+		alpha & 0.0001 \\
+		batch_size & auto \\
+		learning_rate & adaptive \\
+		learning_rate_{t}nit & 0.1 \\
+		power_t & 0.5 \\
+		max_{t}ter & 500 \\
+		loss & squared_error \\
+		hidden_layer_sizes & (20,) \\
+		shuffle & True \\
+		random_state & 710 \\
+		tol & 0.0001 \\
+		verbose & False \\
+		warm_start & False \\
+		momentum & 0.9 \\
+		nesterovs_momentum & True \\
+		early_stopping & True \\
+		validation_fraction & 0.1 \\
+		beta_1 & 0.9 \\
+		beta_2 & 0.999 \\
+		epsilon & 1e-08 \\
+		n_{t}ter_no_change & 20 \\
+		max_fun & 15000 \\
+		\bottomrule
+	\end{tabular}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+	\subsection{Barrier Option Network}
+	\label{sections:barrierNet}
+	\centering
+	\begin{tabular}{ll}
+		\toprule
+		feature & transformation \\
+		\midrule
+		days_to_maturity & StandardScaler \\
+		dividend_rate & StandardScaler \\
+		risk_free_rate & StandardScaler \\
+		theta & StandardScaler \\
+		kappa & StandardScaler \\
+		rho & StandardScaler \\
+		eta & StandardScaler \\
+		v0 & StandardScaler \\
+		relative_spot & StandardScaler \\
+		relative_barrier & StandardScaler \\
+		relative_rebate & StandardScaler \\
+		barrier_type_name & OneHotEncoder \\
+		w & OneHotEncoder \\
+		\bottomrule
+	\end{tabular}
+	\vspace{0.5em}
+	
+	\begin{tabular}{ll}
+		\toprule
+		parameter & specification \\
+		\midrule
+		activation & relu \\
+		solver & sgd \\
+		alpha & 0.0001 \\
+		batch_size & auto \\
+		learning_rate & adaptive \\
+		learning_rate_{t}nit & 0.1 \\
+		power_t & 0.5 \\
+		max_{t}ter & 500 \\
+		loss & squared_error \\
+		hidden_layer_sizes & (10,) \\
+		shuffle & True \\
+		random_state & 710 \\
+		tol & 0.0001 \\
+		verbose & False \\
+		warm_start & False \\
+		momentum & 0.9 \\
+		nesterovs_momentum & True \\
+		early_stopping & True \\
+		validation_fraction & 0.1 \\
+		beta_1 & 0.9 \\
+		beta_2 & 0.999 \\
+		epsilon & 1e-08 \\
+		n_{t}ter_no_change & 20 \\
+		max_fun & 15000 \\
+		\bottomrule
+	\end{tabular}
+\end{minipage}

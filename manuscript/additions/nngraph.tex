@@ -1,0 +1,41 @@
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+	every node/.style={font=\Large},
+	input/.style={draw, ellipse, minimum width=2.2cm, align=center},
+	hidden/.style={draw, ellipse, minimum width=4.5cm, align=center},
+	output/.style={draw, ellipse, minimum width=7.5cm, align=center},
+	arrow/.style={-{Latex[length=2.5mm]}, thick}
+	]
+	
+	% Input layer (spread vertically)
+	\node[input,ellipse,minimum width=2.5cm] (x1) {$X_{i,1}$};
+	\node (dots1) [below=0.4cm of x1] {$\hdots$};
+	\node[input,ellipse,minimum width=2.5cm] (xm) [below=0.4cm of dots1] {$X_{i,m}$};
+	\node[input,ellipse,minimum width=2.5cm] (x1p) [below=0.4cm of xm] {$X_{i,m+1}$};
+	\node (dots2) [below=0.4cm of x1p] {$\hdots$};
+	\node[input,ellipse,minimum width=2.5cm] (xt) [below=0.4cm of dots2] {$X_{i,m+\tilde{m}}$};
+	
+	% Hidden layer (centered horizontally and vertically)
+	\node[hidden, right=2.5cm of xm, yshift=1.5cm] (h1) {$\varphi(L_{\text{input}} \times \bar{w}_{1,1})$};
+	\node (hdots1) [below=0.4cm of h1] {$\hdots$};
+	\node[hidden, below=0.4cm of hdots1] (hi) {$\varphi(L_{\text{input}} \times \bar{w}_{1,i})$};
+	\node (hdots2) [below=0.4cm of hi] {$\hdots$};
+	\node[hidden, below=0.4cm of hdots2] (hh) {$\varphi(L_{\text{input}} \times \bar{w}_{1,h})$};
+	
+	% Output layer (centered vertically relative to hidden layer)
+	\node[output, right=1cm of hi] (out) 
+	{$F(\bar{w}_{1},\bar{w}_{2}) = \varphi(L_{\text{hidden}} \times \bar{w}_{2})$};
+	
+	% Connections (curved)
+	\foreach \i in {x1, xm, x1p, xt} {
+		\draw[arrow] (\i.east) to[out=0,in=180] (h1.west);
+		\draw[arrow] (\i.east) to[out=0,in=180] (hi.west);
+		\draw[arrow] (\i.east) to[out=0,in=180] (hh.west);
+	}
+	
+	\draw[arrow] (h1.east) -- (out.north);
+	\draw[arrow] (hi.east) -- (out.west);
+	\draw[arrow] (hh.east) -- (out.south);
+	
+\end{tikzpicture}
+}

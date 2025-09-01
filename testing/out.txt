@@ -1,0 +1,53 @@
+barrier options:
+
+identity:
+in sample
+   RMSE:
+      0.03567570143523971
+   MAE:
+      0.018901401869370525
+out of sample
+   RMSE:
+      0.16944026280005478
+   MAE:
+      0.1019815827451113
+
+relu:
+in sample
+   RMSE:
+      0.035339765022527767
+   MAE:
+      0.017637652670245137
+out of sample
+   RMSE:
+      0.07820328393422625
+   MAE:
+      0.034364032591863436
+
+%%%%%%%%%%%%%%%%%%%
+
+
+asian options:
+identity:
+in sample
+   RMSE:
+      0.005038507274035199
+   MAE:
+      0.003040082877120672
+out of sample
+   RMSE:
+      0.05114941358661329
+   MAE:
+      0.03269348023657448
+
+relu:
+in sample
+   RMSE:
+      0.005036100109108606
+   MAE:
+      0.00299173319064644
+out of sample
+   RMSE:
+      0.0353026686355799
+   MAE:
+      0.016282666365836203
