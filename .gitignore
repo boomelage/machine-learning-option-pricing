@@ -20,6 +20,8 @@
 *.snm
 *.DS_Store
 
+calculated
+
 replace-text.txt
 general_data_inspection.ipynb
 
