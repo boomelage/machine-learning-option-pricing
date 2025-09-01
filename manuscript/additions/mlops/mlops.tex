@@ -14,6 +14,9 @@
 \usepackage{mathtools}
 \usepackage{fontspec}
 \usepackage{unicode-math}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+
 \graphicspath{{./images/}}
 
 \setbeamertemplate{navigation symbols}{}
@@ -65,45 +68,35 @@
 	\section{Introduction}
 	%------------------------------------------------
 	
-		\begin{frame}{Financial Derivatives}
-			What are financial derivatives?
+		\begin{frame}{Issue}
+			How can option pricing be accelerated?
 			\begin{figure}[h]
 				\centering
-				\includegraphics[width=0.4\textwidth]{../manuscript/images/surface.png}
+				\includegraphics[width=0.4\textwidth]{../../images/surface.png}
 			\end{figure}
 		\end{frame}
 		
 %		\begin{frame}{Financial Derivatives}
-%			What are time series?
-%			\begin{figure}[h]
-%				\centering
-%				\includegraphics[width=0.35\textwidth]{paleolithics.png}
-%				\caption[Paleoceanography]{Paleoceanography, Volume: 19, Issue: 3, First published: 21 September 2004, DOI: (10.1029/2004PA001030) 
-%				}
-%			\end{figure}
+%			We can begin thinking about the problem by advancing on the illustrious concept of the Myron Black and Fischer Scholes pricing model for European call options.
+%			\begin{align}
+%				C_{t} &= S_{t} N(d_{1}) - K e^{-r(T-t)} N(d_{2})
+%			\end{align} where
+%			\begin{align}
+%				d_{1} &= \frac{\ln(\frac{S}{K}) + (r+\frac{\sigma^{2}}{2})(T-t)}{\sigma\sqrt{T-t}} \; \; \text{and} \\
+%				d_{2} &= d_{1} - \sigma \sqrt{T-t}
+%			\end{align}
 %		\end{frame}
-		
-		\begin{frame}{Financial Derivatives}
-			We can begin thinking about the problem by advancing on the illustrious concept of the Myron Black and Fischer Scholes pricing model for European call options.
-			\begin{align}
-				C_{t} &= S_{t} N(d_{1}) - K e^{-r(T-t)} N(d_{2})
-			\end{align} where
-			\begin{align}
-				d_{1} &= \frac{\ln(\frac{S}{K}) + (r+\frac{\sigma^{2}}{2})(T-t)}{\sigma\sqrt{T-t}} \; \; \text{and} \\
-				d_{2} &= d_{1} - \sigma \sqrt{T-t}
-			\end{align}
-		\end{frame}
-		
-		\begin{frame}{Financial Derivatives}
-			Problems with the classical Black-Scholes model (as presented):
-			\begin{enumerate}
-				\item{Constant volatility}
-				\item{Arbitrage free}
-				\item{Instantaneous returns}
-				\item{No dividends}
-				\item{Cannot price complex financial derivatives}
-			\end{enumerate}
-		\end{frame}
+%		
+%		\begin{frame}{Financial Derivatives}
+%			Problems with the classical Black-Scholes model (as presented):
+%			\begin{enumerate}
+%				\item{Constant volatility}
+%				\item{Arbitrage free}
+%				\item{Instantaneous returns}
+%				\item{No dividends}
+%				\item{Cannot price complex financial derivatives}
+%			\end{enumerate}
+%		\end{frame}
 		
 	%------------------------------------------------
 	\section{Pricing Model}
@@ -130,7 +123,7 @@
 	
 	\section{Exotic Payoff Specifications}
 	
-		\begin{frame}{Applications}
+		\begin{frame}{Application -- Asian Options}
 		Calibration of the Heston (1993) model permits usage of more sophisticated pricing algorithms in determining a correct asset price. We are able to leverage path-dependent dynamics of the underlying price to create more sophisticated financial derivative products. One such example is the \textit{Asian} option:
 			\begin{align}
 				\label{eq:asianPayoff}
@@ -139,7 +132,7 @@
 			where $S_{T}^{\text{avg}}$ is the average price of the underlying spot price
 		\end{frame}
 		
-		\begin{frame}{Applications}
+		\begin{frame}{Application -- Asian Options}
 			\begin{align}
 				C^{\text{Asian}} = F_{t}(S_0, \kappa, \theta, \rho, \eta, v_{0}, r, g, K, n, P, D^{\text{call/put}}, D^{\text{Arithmetic/Geometric}}) \label{eq:Casian}
 			\end{align}
@@ -162,8 +155,7 @@
 			\end{enumerate}
 		\end{frame}
 		
-		\begin{frame}{Applications}
-		\large{\textbf{Barrier Options}} \\
+		\begin{frame}{Application}
 		An even less trivial application could be pricing of barrier options.
 			\begin{align}
 				\begin{aligned}
@@ -204,17 +196,16 @@
 	
 		\begin{frame}{Model Specification}
 			\begin{center}
-				\includegraphics[width=0.5\linewidth]{../manuscript/images/MLP.png}
+				\includegraphics[width=0.5\linewidth]{../../images/MLP.png}
 			\end{center}
 		\end{frame}
 	
 		\begin{frame}{Model Specification}
-			\begin{center}
-				\large \textbf{Multilayer Perceptron Specification}
-			\end{center}
-			\begin{center}
-				\includegraphics[width=\linewidth]{../manuscript/images/elip.png}
-			\end{center}
+			\input{../nngraph.tex}
+			\[ \min_{w_{1}, w_{2}} \, \frac{1}{N} \sum_{i=1}^{N} \left(F_{t}(w_{1}, w_{2}) - y_{t}\right)^{2} \]
+%			\begin{center}
+%				\includegraphics[width=\linewidth]{../manuscript/images/elip.png}
+%			\end{center}
 		\end{frame}
 		
 	\section{Challenges}
@@ -235,27 +226,32 @@
 	\section{Appendix}
 		\begin{frame}{References}
 			\begin{thebibliography}{9}
-				\bibitem{briciu2025} Briciu, Radu (2025). \emph{Neural Networks for Exotic Option Pricing}. \url{https://doi.org/10.2139/ssrn.5104328}
 				
-				\bibitem{boomelage2024a} boomelage (2024). \emph{sklearn convencience wrappers ``convsklearn''}. \\ \url{https://github.com/boomelage/convsklearn}
+				\bibitem{boomelage2025a} boomelage (2025). \emph{Machine Learning Option Pricing}. \\
+				\url{https://github.com/boomelage/machine-learning-option-pricing}
+				
+				\bibitem{boomelage2024a} boomelage (2024). \emph{Option Generator}. \\
+				\url{https://github.com/boomelage/OptionGenerator}
 				
 				\bibitem{boomelage2024b} boomelage (2024). \emph{quantlib pricers}. \\
 				\url{https://github.com/boomelage/quantlib_pricers}
 				
-				\bibitem{boomelage2024c} boomelage (2024). \emph{Option Generator}. \\
-				\url{https://github.com/boomelage/OptionGenerator}
+				\bibitem{boomelage2024c} boomelage (2024). \emph{sklearn convencience wrappers ``convsklearn''}. \\ 
+				\url{https://github.com/boomelage/convsklearn}
 				
-				\bibitem{boomelage2024d} boomelage (2024). \emph{Worked directory}. \\
-				\url{https://github.com/boomelage/machine-learning-option-pricing}
+				\bibitem{briciu2025} Briciu, Radu (2025). \emph{Neural Networks for Exotic Option Pricing}. 
+				\url{https://doi.org/10.2139/ssrn.5104328}
 				
-				\bibitem{quantlib} QuatLib Pricing Library \url{https://www.quantlib.org}
+				\bibitem{quantlib} \emph{QuantLib Pricing Library} \\ 
+				\url{https://www.quantlib.org}
 				
 			\end{thebibliography}
 		\end{frame}
 		
 		
 		\begin{frame}
-			\Huge{\centerline{\textbf{The End}}}
+			\centering
+			\Huge{\textbf{The End}}
 		\end{frame}
 	
 \end{document}
