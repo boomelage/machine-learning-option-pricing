@@ -1,6 +1,5 @@
+
 *.csv
-*.xls
-*.xlsx
 *.h5
 *.zip
 *.vs
@@ -8,6 +7,18 @@
 *.ipynb_checkpoints
 *.virtual_documents
 *.pkl
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+
 replace-text.txt
 general_data_inspection.ipynb
 

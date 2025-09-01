@@ -1,0 +1,30 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{parskip}
+\pagenumbering{gobble}
+
+
+\title{\textbf{Discretization of the Heston Functional}}
+\author{\small Radu Briciu \vspace{-0.5em}  \\ \tiny BSc Finance, PgDip Quantitative Finance}
+\date{\today}
+
+\begin{document}
+	
+	\begin{titlepage}
+		\maketitle
+		\vfill
+		\begin{abstract}
+			In this paper, we explore a discretization of the Heston (1993) Stochastic Differential Equations (SDEs) for a mean reverting process with arbitrary correlation between level and volatility. We derive an analytical solution whose computation can be proxied via the trapezoidal properties of an the integrated function.
+		\end{abstract}
+		\vfill
+	\end{titlepage}
+	
+	\input{sections/analytical-derivation}
+	
+%	\newpage
+%	\appendix
+%	\input{sections/summation-form}
+	
+\end{document}

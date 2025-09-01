@@ -1,0 +1,51 @@
+digraph {
+	dpi=600 nodesep=0 rankdir=LR ranksep=0.5
+	edge [arrowsize=0.3]
+	"01Di1" [label=<<font face="Times" point-size="20"><i>X<sub>i,1</sub></i></font>> fixedsize=true width=1.2]
+	"02elip" [label=" . . . " shape=plaintext]
+	"03Dim" [label=<<font face="Times" point-size="20"><i>X<sub>i,m</sub></i></font>> fixedsize=true width=1.2]
+	"04F1Di" [label=<<font face="Times" point-size="20"><i>X<sub>i,m+1</sub></i></font>> fixedsize=true width=1.2]
+	"05elip" [label=" . . . " shape=plaintext]
+	"06Fmtildi" [label=<<font face="Times" point-size="20"><i>X<sub>i,m+m&#x303;</sub></i></font>> fixedsize=true width=1.2]
+	"00hidden1elip" [label=" . . . " shape=plaintext]
+	"01hidden1" [label=<<font face="Times" point-size="20"><i>𝛗(L<sub>input</sub> &times; w̅<sub>1,i</sub>)</i></font>>]
+	"02hidden1elip" [label=" . . . " shape=plaintext]
+	"03hidden1" [label=<<font face="Times" point-size="20"><i>𝛗(L<sub>input</sub> &times; w̅<sub>1,h</sub>)</i></font>>]
+	"04hidden1" [label=<<font face="Times" point-size="20"><i>𝛗(L<sub>input</sub> &times; w̅<sub>1,1</sub>)</i></font>>]
+	"01Di1" -> "00hidden1elip" [style=invis]
+	"01Di1" -> "01hidden1"
+	"01Di1" -> "02hidden1elip" [style=invis]
+	"01Di1" -> "03hidden1"
+	"01Di1" -> "04hidden1"
+	"02elip" -> "00hidden1elip" [style=invis]
+	"02elip" -> "01hidden1" [style=invis]
+	"02elip" -> "02hidden1elip" [style=invis]
+	"02elip" -> "03hidden1" [style=invis]
+	"02elip" -> "04hidden1" [style=invis]
+	"03Dim" -> "00hidden1elip" [style=invis]
+	"03Dim" -> "01hidden1"
+	"03Dim" -> "02hidden1elip" [style=invis]
+	"03Dim" -> "03hidden1"
+	"03Dim" -> "04hidden1"
+	"04F1Di" -> "00hidden1elip" [style=invis]
+	"04F1Di" -> "01hidden1"
+	"04F1Di" -> "02hidden1elip" [style=invis]
+	"04F1Di" -> "03hidden1"
+	"04F1Di" -> "04hidden1"
+	"05elip" -> "00hidden1elip" [style=invis]
+	"05elip" -> "01hidden1" [style=invis]
+	"05elip" -> "02hidden1elip" [style=invis]
+	"05elip" -> "03hidden1" [style=invis]
+	"05elip" -> "04hidden1" [style=invis]
+	"06Fmtildi" -> "00hidden1elip" [style=invis]
+	"06Fmtildi" -> "01hidden1"
+	"06Fmtildi" -> "02hidden1elip" [style=invis]
+	"06Fmtildi" -> "03hidden1"
+	"06Fmtildi" -> "04hidden1"
+	output [label=<<font face="Times" point-size="20"><i>F(w̅<sub>1</sub>,w̅<sub>2</sub>) = 𝛗(L<sub>hidden</sub> &times; w̅<sub>2</sub>)</i></font>>]
+	"00hidden1elip" -> output [style=invis]
+	"01hidden1" -> output
+	"02hidden1elip" -> output [style=invis]
+	"03hidden1" -> output
+	"04hidden1" -> output
+}
