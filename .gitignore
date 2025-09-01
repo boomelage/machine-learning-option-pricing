@@ -18,6 +18,7 @@
 *.toc
 *.nav
 *.snm
+*.DS_Store
 
 replace-text.txt
 general_data_inspection.ipynb
