@@ -1,7 +1,8 @@
-
 # Neural Networks for Exotic Option Pricing  
 **Radu Briciu**  
 *BSc Finance, PgDip Quantitative Finance*  
+
+See testing results in the [example outputs direcotry](testing/example_outs)
 
 ---
 
@@ -13,8 +14,8 @@ In this paper we will explore a proposed data generation method which will const
 ## Table of Contents
 - [Introduction](#introduction)  
 - [Pricing Model](#pricing-model)  
-<!-- - [Data Generation Method](#data-generation-method)  
-- [Application to Path-Dependent Options](#application-of-data-generation-method-to-path-dependent-index-options) -->
+- [Data Generation Method](#data-generation-method)  
+- [Application to Path-Dependent Options](#application-of-data-generation-method-to-path-dependent-index-options)
 - [Model Training](#model-training)  
 - [Model Testing](#model-testing)  
 - [Concluding Remarks](#concluding-remarks)  
@@ -66,33 +67,34 @@ Filtering ensures each volatility surface has strikes both above and below the s
 ![Calibrated Heston parameters](./manuscript/images/calibrations.png)  
 
 ---
-<!--
+
 ## Data Generation Method
 We start with an initial feature matrix $\mathcal{D}$:
 
 $$
 \mathcal{D} =
 \begin{bmatrix}
-D_{1,1} & D_{1,2} & \cdots & D_{1,m} \\
-D_{2,1} & D_{2,2} & \cdots & D_{2,m} \\
+\mathcal{D}_{1,1} & \mathcal{D}_{1,2} & \cdots & \mathcal{D}_{1,m} \\
+\mathcal{D}_{2,1} & \mathcal{D}_{2,2} & \cdots & \mathcal{D}_{2,m} \\
 \vdots & \vdots & \ddots & \vdots \\
-D_{n,1} & D_{n,2} & \cdots & D_{n,m}
+\mathcal{D}_{n,1} & \mathcal{D}_{n,2} & \cdots & \mathcal{D}_{n,m}
 \end{bmatrix}
 $$
 
-For each row $t$, construct sets of possible feature values:
+For each row $t$, we construct sets of possible feature values by augmenting the observed entries with auxiliary variables:
 
 $$
-H_t = \{ \left[\mathcal{D}_{t,1}\left], \ldots, [\mathcal{D}_{t,m}], F^{(1)}_{\mathcal{D}_t}, \ldots, F^{(\tilde{m})}_{\mathcal{D}_t} \}
+H_t^{(0)} = \left\{ \mathcal{D}_{t,1}, \ldots, \mathcal{D}_{t,m} \right\}, \qquad
+H_t^{(j)} = F^{(j)}_{\mathcal{D}_t} \quad \text{for } j = 1, \ldots, \tilde{m}.
 $$
 
-Feature matrix $X_t$ is the Cartesian product:
+The Cartesian product of these candidate values produces the row-specific feature block:
 
 $$
-X_t = \{ (H_t^{(1)}, \ldots, H_t^{(k)}) \mid H_t^{(j)} \in H_t^{(j)} \}
+X_t = H_t^{(0)} \times H_t^{(1)} \times \cdots \times H_t^{(\tilde{m})}.
 $$
 
-The final feature matrix $X$ is obtained by combining all $X_t$ across $n$ observations.
+Stacking every $X_t$ across the $n$ observations yields the final feature matrix $X$.
 
 ---
 
@@ -173,7 +175,7 @@ In order to simulate the multidimensional space representing a Barrier option's 
 $$
 \begin{aligned}
 F_{\mathcal{D}_{t}}^{(1)} &= K_{S} = \left[ k_1, \ldots, k_j, \ldots, k_h \right], \quad  k_1 < S < k_h, \quad k_{\tilde{j}} < k_j \, \forall \, \tilde{j} < j, \\
-F_{\mathcal{D}_{t}}^{(2)} &= T = \left[ \tau_1, \ldots, \tau_{t}, \ldots, \tau_h \right], \\
+F_{\mathcal{D}_{t}}^{(2)} &= T = \left[ \tau_1, \ldots, \tau_{j}, \ldots, \tau_h \right], \\
 F_{\mathcal{D}_{t}}^{(3)} &= B = \left[ B_1, \ldots, B_j, \ldots, B_h \right], \quad  B_1 < S < B_h, \quad B_{\tilde{j}} < B_j \, \forall \, \tilde{j} < j, \\
 F_{\mathcal{D}_{t}}^{(4)} &= R = \left[0\right], \\
 F_{\mathcal{D}_{t}}^{(5)} &= F^{\text{call/put}} = \left[ D^{\text{call}}, D^{\text{put}} \right], \\
@@ -190,7 +192,7 @@ where
 5. $F^{\text{call/put}}$ is a set of categorical variables representing the type of underlying European option, and  
 6. $F^{\text{Out/In}}$ is a set of categorical variables representing the Barrier option type payoff.  
 
-It is to be noted that the only feasible combinations are *Down* options with $B<S$ and *Up* options with $B>S$, where $B$ is the barrier level and $S$ is the underlying $S_{t}$ at time $i$.  
+It is to be noted that the only feasible combinations are *Down* options with $B<S$ and *Up* options with $B>S$, where $B$ is the barrier level and $S$ is the underlying $S_{t}$ at time $t$.  
 
 The subset feature matrix $X^{\text{Barrier}}_{t}$ will subsequently be defined as:
 
@@ -199,11 +201,11 @@ X^{\text{Barrier}}_{t} =
 \begin{bmatrix}
 S_{t} & \kappa_{t} & \theta_{t} & \rho_{t} & \eta_{t} & v_{t} & r_{t} & g_{t} & k_{1} & \tau_{1} & b_{1} & r^{\text{rebate}}_{1} & D^{\text{call/put}}_{1} & D^{\text{barrier type}}_{1} \\
 \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-S_{t} & \kappa_{t} & \theta_{t} & \rho_{t} & \eta_{t} & v_{t} & r_{t} & g_{t} & k_{s} & t_{s} & n_{s} & r^{\text{rebate}}_{s} & D^{\text{call/put}}_{s} & D^{\text{barrier type}}_{s}
+S_{t} & \kappa_{t} & \theta_{t} & \rho_{t} & \eta_{t} & v_{t} & r_{t} & g_{t} & k_{s} & \tau_{s} & b_{s} & r^{\text{rebate}}_{s} & D^{\text{call/put}}_{s} & D^{\text{barrier type}}_{s}
 \end{bmatrix} 
 $$
 
-This essentially allows us to generate $k$ contracts at every observation across the rows (discrete observations in time) of our initial feature matrix $\mathcal{D}^{\text{Heston}}$, where the features carried over into $H_{t}$ from $\mathcal{D}_{t}$ are constant.
+This essentially allows us to generate $k$ contracts at every observation across the rows (discrete observations in time) of our initial feature matrix $\mathcal{D}^{\text{Heston}}$, while the features carried over into $H_{t}$ from $\mathcal{D}_{t}$ are held constant.
 
 
 ---
@@ -216,12 +218,12 @@ $$
 T^{\text{Asian}} = \left[ \tau_1, \ldots, \tau_{i}, \ldots, \tau_{h} \right]
 $$
 
-which will precede the creation of $\dim{(T)}$ subsets within $X_{t}$ (eq.~\ref{eq:Xt}). Subsequently, every subset is generated by considering the $H^{(i)}_{t}$ (eq.~\ref{eq:Ht}) feature set with auxiliary variables $F_{\mathcal{D}_{t}}^{(j)}$ defined as:
+which precedes the creation of $\dim(T)$ subsets within $X_{t}$. Subsequently, every subset is generated by considering $H^{(i)}_{t}$ with auxiliary variables $F_{\mathcal{D}_{t}}^{(j)}$ defined as:
 
 $$
 \begin{aligned}
 F_{\mathcal{D}_{t}}^{(1)} &= T = \left[ \tau_{i} \right], \\
-F_{\mathcal{D}_{t}}^{(2)} &= K_{S} = \left[ k_1, \ldots, k_{i}, \ldots, k_{h} \right], \quad  k_1 < S < k_t, \quad k_{\tilde{j}} < k_j \, \forall \, \tilde{j} < j, \\
+F_{\mathcal{D}_{t}}^{(2)} &= K_{S} = \left[ k_1, \ldots, k_{i}, \ldots, k_{h} \right], \quad  k_1 < S < k_i, \quad k_{\tilde{j}} < k_j \, \forall \, \tilde{j} < j, \\
 F_{\mathcal{D}_{t}}^{(3)} &= A_{\tau} = \left[ a_1, \ldots, a_{i}, \ldots, a_{h} \right], \quad a_{h} \leq \tau \, \forall \, i, \\
 F_{\mathcal{D}_{t}}^{(4)} &= P = \left[ 0 \right], \\
 F_{\mathcal{D}_{t}}^{(5)} &= F^{\text{call/put}} = \left[ D^{\text{call}}, D^{\text{put}} \right], \\
@@ -231,7 +233,7 @@ $$
 
 where
 
-1. $\tau$ is the iterated maturity in $T^{\text{Asian}}$ (eq.~\ref{eq:asianmats}),  
+1. $\tau$ is the iterated maturity in $T^{\text{Asian}}$,  
 2. $K_{S}$ is a set of strikes spread around the spot price $S$,  
 3. $A_{\tau}$ are factors of $\tau$ which will determine the number of fixing dates applicable to the contract,  
 4. $P$ is a set of past fixings, which for the purposes of this study is a set consisting of only the element $0$ (zero),  
@@ -243,8 +245,7 @@ where
 The subset feature matrix $X^{\text{Asian}}_{t}$ will subsequently be defined as:
 
 $$
-X^{\text{Asian}}_{t} = 
-
+X^{\text{Asian}}_{t} =
 \left[
 \begin{array}{cccccccccccccc}
 S_{t} & \kappa_{t} & \theta_{t} & \rho_{t} & \eta_{t} & v_{t} & r_{t} & g_{t} & k_{1} & \tau_{1} & a_{1} & p_{1} & D^{\text{call/put}}_{1} & D^{\text{arithmetic/geometric}}_{1} \\
@@ -254,11 +255,7 @@ S_{t} & \kappa_{t} & \theta_{t} & \rho_{t} & \eta_{t} & v_{t} & r_{t} & g_{t} & 
 \right]
 $$
 
-essentially allowing us to generate $s$ contracts at every observation across the rows (discrete observations in time) of our initial feature matrix $\mathcal{D}^{\text{Heston}}$ where the features carried over into $H_{t}$  from $\mathcal{D}_{t}$ are constant.
-
-
----
--->
+essentially allowing us to generate $s$ contracts at every observation across the rows (discrete observations in time) of our initial feature matrix $\mathcal{D}^{\text{Heston}}$, while the features carried over into $H_{t}$ from $\mathcal{D}_{t}$ are held constant.
 
 ## Model Training
 We train a multi-layer perceptron (MLP) on the feature matrix $X$ and target $y$.  
@@ -276,6 +273,8 @@ Hyperparameter tuning across 6480 configurations ensures in-sample error ~0.5% a
 ---
 
 ## Model Testing
+
+See testing results in the [example outputs direcotry](testing/example_outs)
 
 The model was tested with a negligible amount of data and tested for over 10 years of out of sample data.
 
