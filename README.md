@@ -84,7 +84,7 @@ $$
 For each row $t$, we construct sets of possible feature values by augmenting the observed entries with auxiliary variables:
 
 $$
-H_t^{(0)} = \left\{ \mathcal{D}_{t,1}, \ldots, \mathcal{D}_{t,m} \right\}, \qquad
+H_t^{(0)} = \{ \mathcal{D}_{t,1}, \ldots, \mathcal{D}_{t,m} \}, \qquad
 H_t^{(j)} = F^{(j)}_{\mathcal{D}_t} \quad \text{for } j = 1, \ldots, \tilde{m}.
 $$
 
