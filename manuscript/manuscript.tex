@@ -80,31 +80,37 @@
 \newcommand{\D}{\mathcal{D}}
 
 
-\title{\small \textbf{Neural Networks for Exotic Option Pricing}}
-\author{
-	\small Radu Briciu \\ \vspace{-1em} \tiny BSc Finance, PgDip Quantitative Finance
-}
-\date{}
+\title{Neural Networks for Exotic Option Pricing}
+\author{Radu Briciu}
+\date{\today}
 
 
 \begin{document}
 
-\pagenumbering{gobble}
+\pagenumbering{roman}
 \begin{titlepage}
-	\maketitle
-	\vspace{-1em}
+	\vfill
+	\begin{center}
+		\Large Neural Networks for Exotic Option Pricing \\ \vspace{1em}
+		\small Radu Briciu \\ \tiny BSc Finance, PgDip Quantitative Finance
+	\end{center}
+	\vfill
 	\begin{abstract}
 	\noindent
 	In this paper we will explore a proposed data generation method which will construct the feature matrix for a multi-layer perceptron model designed to estimate the pricing functional of path-dependent financial derivatives. We will explore the theoretical framework and specifications for barrier and Asian option feature generation along with their respective multi-layer perceptron architectures and model performance metrics. We will demonstrate how the proposed models can retain pricing errors below one percent while reducing the computation time by up to 99.8\%.
 	\end{abstract}
-	
+	\vfill
+	\thispagestyle{empty}
+	\vfill
 	\begingroup
 	\small
 	\tableofcontents
 	\endgroup
 \end{titlepage}
+
+\clearpage
 \pagenumbering{arabic}
-\setcounter{page}{1}
+
 
 \section{Introduction}
 	In this paper we will explore a proposed method of pricing path-dependent index options via multi-layer perceptron approximations derived from the simulation of a multidimensional space representing a contract's price as a functional form of its features. Index options can generally be defined as financial derivative contracts facilitating a contingent claim on the value of a stock market index which is designed to aggregate performance across a sector or economy. It is therefore a complicated matter to evaluate the price of path-dependent option counterparts which introduce further non-linearities in their pricing functions. Path-dependent options often require statistical simulation to obtain the most accurate price, resulting in long computation times. We propose a method to generate possible values of a function which will proceed the optimization of a multi-layer perceptron model, effectively proxying the stochastic non-linear functional form between the output and it's input features. To generate a representative sample space, we calibrate historical Heston \cite{heston_1993_a} parameters using market observed risk-free and dividend rates accompanied by live options trade data, thereby effectively simulating, in the case of this paper, the SPX index options market. The use of Heston's \cite{heston_1993_a} stochastic volatility model as a pricing function for the underlying index allows for discreet monitoring of volatility and pricing of various market scenarios and contract types. This paper serves as a framework and demonstration of a generalized estimation process for barrier and Asian options along with a model specifications and retraining analyses. We will explore the estimation of Barrier and Asian options priced via finite difference and Monte Carlo simulation, respectively.
@@ -426,28 +432,8 @@
 	In this study, we explored a data generation routine that yields parsimonious training sets for the estimation of non-linear stochastic functions. We first looked into generating training sets for barrier and Asian options priced using advection and Monte Carlo respectively.
 	\par
 	In essence, what we have achieved is the numerical approximation of a solution to the Heston~\cite{heston_1993_a} pricing model using a dense neural network. The numerical approximation can have an increase in computational efficiency of up to 99.8\% with in-sample errors below one percent.
-	
-\vfill
-\section{Software Repositories}
-	\begin{enumerate}
-		
-		\item \emph{Machine Learning Option Pricing}. \\
-		\url{https://github.com/boomelage/machine-learning-option-pricing}
-		
-		\item \emph{Option Generator}. \\
-		\url{https://github.com/boomelage/OptionGenerator}
-		
-		\bibitem{quantlib} \emph{QuantLib Pricing Library}. \\ 
-		\url{https://www.quantlib.org}
-		
-		\item \emph{quantlib pricers}. \\
-		\url{https://github.com/boomelage/quantlib_pricers}
-		
-		\item \emph{sklearn convencience wrappers ``convsklearn''}. \\ 
-		\url{https://github.com/boomelage/convsklearn}
-		
-	\end{enumerate}
-\vfill
+	\par
+	The complete procedure is made possible with three separate software packages~\cite{optionGenerator2024}~\cite{quantlibPricers2024}~\cite{convsklearn2024}. 
 
 \newpage
 \addcontentsline{toc}{section}{References}
