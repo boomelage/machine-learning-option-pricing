@@ -1,9 +1,9 @@
 \documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{mathtools}
 \usepackage{fontspec}
 \usepackage{unicode-math}
-\usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{biblatex}
@@ -11,24 +11,27 @@
 \usepackage{array}
 \usepackage{underscore}
 \usepackage{ragged2e}
-\usepackage[colorlinks=true, linkcolor=black, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage[
+	colorlinks=true, 
+	linkcolor=black, 
+	citecolor=blue, 
+	urlcolor=blue
+]{hyperref}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{soul} % For highlighting
 \sethlcolor{lightgray} % Set highlight color to light gray
 \usepackage[most]{tcolorbox}
 \usepackage{authblk}
-\geometry{a4paper,margin=1in}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning, shapes.geometric}
 
 \nocite{*}
 
-% Define subdued colors for academic styling
+
 \definecolor{background}{HTML}{F7F7F7} % Light gray background, almost white
 \definecolor{keyword}{HTML}{003366}    % Dark blue for keywords
-\definecolor{string}{HTML}{800000}     % Dark red for strings
-\definecolor{comment}{HTML}{666666}    % Medium gray for comments
+\definecolor{string}{HTML}{800000}     % Dark red for strings%\definecolor{comment}{HTML}{666666} % Medium gray for comments
 \definecolor{identifier}{HTML}{005500} % Dark green for identifiers
 \definecolor{plain}{HTML}{000000}      % Black text for normal content
 
