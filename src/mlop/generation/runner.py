@@ -3,7 +3,7 @@
 Loading calibrations is isolated here because it depends on ``model_settings``,
 which carries global state; the contract builders and resume logic do not.
 
-Pricing comes from the ``pricing`` package, which replaced ``quantlib_pricers``.
+Pricing comes from the ``qlpricing`` package, which replaced ``quantlib_pricers``.
 The ``df_*`` methods return a float array per contract, so assigning the result
 to a column gives numbers; the ``quantlib_pricers`` equivalents returned
 ``{'asian_price': ..., 'asian_cpu': ...}`` dicts, which every earlier dataset
@@ -52,7 +52,7 @@ class _AsianPricer:
     column = 'asian_price'
 
     def __call__(self, features):
-        from pricing import asian_pricer
+        from qlpricing import asian_pricer
 
         return asian_pricer().df_asian_price(features)
 
@@ -61,7 +61,7 @@ class _BarrierPricer:
     column = 'barrier_price'
 
     def __call__(self, features):
-        from pricing import barrier_pricer
+        from qlpricing import barrier_pricer
 
         return barrier_pricer().df_barrier_price(features)
 

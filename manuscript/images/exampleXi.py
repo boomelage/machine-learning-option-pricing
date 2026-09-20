@@ -79,7 +79,7 @@ for i,t in enumerate(maturities):
 Xi = pd.concat(feature_list,ignore_index=True)
 
 Xi['n_fixings'] = Xi['days_to_maturity']//Xi['fixing_frequency']
-from pricing import asian_pricer
+from qlpricing import asian_pricer
 Xi['asian_price'] = asian_pricer().df_asian_price(Xi)
 Xi = Xi.drop(columns='n_fixings')
 k = 8

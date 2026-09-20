@@ -21,7 +21,7 @@ dependencies = [
     # Replaces quantlib_pricers, which is retired: it priced Asian options on an inverted
     # fixing schedule and returned dicts from its df_* methods. Uncomment and pin by SHA once
     # the repository is pushed; until then install the local checkout with `pip install -e`.
-    # "pricing @ git+https://github.com/boomelage/pricing@<sha>",
+    # "qlpricing @ git+https://github.com/boomelage/qlpricing@<sha>",
     "convsklearn @ git+https://github.com/boomelage/convsklearn@3aa4a5057b15e6ead39d55f7214c98deff0565f4",
     "model_settings @ git+https://github.com/boomelage/model_settings@260684cf15c36a6cf647853cb58e12af8fb11625",
     # Cited in the manuscript but not imported anywhere in this repository.
