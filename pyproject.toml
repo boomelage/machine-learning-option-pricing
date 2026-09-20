@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlop"
+version = "0.1.0"
+description = "Contract generation and machine learning approximation of option prices"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "boomelage", email = "163606270+boomelage@users.noreply.github.com" }]
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "tqdm",
+    "joblib",
+    # First-party packages, pinned by commit for reproducibility.
+    "quantlib_pricers @ git+https://github.com/boomelage/quantlib_pricers@bb3b93430c99b7ed6565b5ba69c64ede40f9b235",
+    "convsklearn @ git+https://github.com/boomelage/convsklearn@3aa4a5057b15e6ead39d55f7214c98deff0565f4",
+    "model_settings @ git+https://github.com/boomelage/model_settings@260684cf15c36a6cf647853cb58e12af8fb11625",
+    # Cited in the manuscript but not imported anywhere in this repository.
+    "OptionGenerator @ git+https://github.com/boomelage/OptionGenerator@89d8125e6f7e288c774ba5e544bba7cb2dca19f9",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
