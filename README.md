@@ -329,6 +329,6 @@ We proposed a data generation routine to produce parsimonious training sets for 
 ## Software Repositories
 
 1. [convsklearn](https://github.com/boomelage/convsklearn)  
-2. [QuantLib Pricers](https://github.com/boomelage/quantlib_pricers)  
+2. [pricing](https://github.com/boomelage/pricing)  
 3. [Option Generator](https://github.com/boomelage/OptionGenerator)
 -->

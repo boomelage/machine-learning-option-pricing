@@ -32,27 +32,32 @@ def output_filename(calculation_date, spot_price, suffix: str) -> str:
     return f'{stamp}_{spot_tag} {suffix}.csv'
 
 
-def completed_dates(output_dir: Path) -> set[pd.Timestamp]:
+def completed_dates(output_dir: Path, suffix: str | None = None) -> set[pd.Timestamp]:
     """Return the calculation dates already written to ``output_dir``.
 
     Files that do not carry a parseable stamp are ignored rather than counted,
-    so stray CSVs cannot shift the resume point.
+    so stray CSVs cannot shift the resume point. ``suffix`` restricts the scan
+    to one contract type: without it, an Asian output and a barrier output for
+    the same date are indistinguishable, and pointing both generators at one
+    directory makes the second silently skip every date the first has done.
     """
     output_dir = Path(output_dir)
     if not output_dir.is_dir():
         return set()
 
+    pattern = '*.csv' if suffix is None else f'*{suffix}.csv'
     done = set()
-    for path in output_dir.glob('*.csv'):
+    for path in output_dir.glob(pattern):
         match = _STAMP.match(path.name)
         if match:
             done.add(pd.to_datetime(match.group(1), format=_STAMP_FORMAT))
     return done
 
 
-def pending(calibrations: pd.DataFrame, output_dir: Path) -> pd.DataFrame:
+def pending(calibrations: pd.DataFrame, output_dir: Path,
+            suffix: str | None = None) -> pd.DataFrame:
     """Rows of ``calibrations`` with no corresponding output file yet."""
-    done = completed_dates(output_dir)
+    done = completed_dates(output_dir, suffix)
     if not done:
         return calibrations.copy()
     remaining = calibrations[~calibrations['calculation_date'].isin(done)]

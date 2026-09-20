@@ -2,6 +2,12 @@
 
 Loading calibrations is isolated here because it depends on ``model_settings``,
 which carries global state; the contract builders and resume logic do not.
+
+Pricing comes from the ``pricing`` package, which replaced ``quantlib_pricers``.
+The ``df_*`` methods return a float array per contract, so assigning the result
+to a column gives numbers; the ``quantlib_pricers`` equivalents returned
+``{'asian_price': ..., 'asian_cpu': ...}`` dicts, which every earlier dataset
+recorded verbatim in the price column.
 """
 
 from pathlib import Path
@@ -30,7 +36,7 @@ def _generate(calibrations, output_dir, build, price, suffix, spec):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    todo = pending(calibrations, output_dir)
+    todo = pending(calibrations, output_dir, suffix)
     for _, row in tqdm(todo.iterrows(), total=len(todo), desc=suffix):
         features = build(row, spec)
         features['date'] = pd.Timestamp(row['calculation_date']).floor('D')
@@ -46,18 +52,18 @@ class _AsianPricer:
     column = 'asian_price'
 
     def __call__(self, features):
-        from quantlib_pricers import asian_option_pricer
+        from pricing import asian_pricer
 
-        return asian_option_pricer().df_asian_option_price(features)
+        return asian_pricer().df_asian_price(features)
 
 
 class _BarrierPricer:
     column = 'barrier_price'
 
     def __call__(self, features):
-        from quantlib_pricers import barrier_option_pricer
+        from pricing import barrier_pricer
 
-        return barrier_option_pricer().df_barrier_price(features)
+        return barrier_pricer().df_barrier_price(features)
 
 
 def generate_asians(calibrations, output_dir, tag='SPX', short_term=False):
