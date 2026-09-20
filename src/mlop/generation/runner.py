@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from .contracts import asian_contracts, barrier_contracts
 from .resume import output_filename, pending
-from .spec import ASIAN, BARRIER, SHORT_TERM_ASIAN
+from ..spec import ASIAN, BARRIER, SHORT_TERM_ASIAN
 
 
 def load_spx_calibrations(root: Path) -> pd.DataFrame:

@@ -10,19 +10,15 @@ from itertools import product
 import numpy as np
 import pandas as pd
 
-from .spec import ASIAN, BARRIER, HESTON_PARAMETERS, AsianSpec, BarrierSpec
-
-ASIAN_COLUMNS = [
-    'spot_price', 'strike_price', 'days_to_maturity',
-    'n_fixings', 'fixing_frequency', 'past_fixings', 'averaging_type', 'w',
-    'risk_free_rate', 'dividend_rate', 'calculation_date',
-    'kappa', 'theta', 'rho', 'eta', 'v0',
-]
-
-BARRIER_COLUMNS = [
-    'spot_price', 'strike_price', 'barrier', 'days_to_maturity',
-    'updown', 'outin', 'w',
-]
+from ..spec import (
+    ASIAN,
+    ASIAN_COLUMNS,
+    BARRIER,
+    BARRIER_COLUMNS,
+    HESTON_PARAMETERS,
+    AsianSpec,
+    BarrierSpec,
+)
 
 
 def _asian_block(spot, strikes, maturity, n_fixings, frequency, spec, row):

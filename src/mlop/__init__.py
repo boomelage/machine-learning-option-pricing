@@ -1,13 +1,7 @@
-"""Machine learning option pricing: contract generation."""
+"""Machine learning approximation of option prices.
 
-from .contracts import asian_contracts, barrier_contracts
-from .resume import completed_dates, pending
-from .runner import generate_asians, generate_barriers, load_spx_calibrations
-from .spec import ASIAN, BARRIER, SHORT_TERM_ASIAN, AsianSpec, BarrierSpec
+Stages live in subpackages; importing this one pulls in nothing heavy. Use
+``from mlop.generation import generate_asians`` and so on.
+"""
 
-__all__ = [
-    'ASIAN', 'BARRIER', 'SHORT_TERM_ASIAN', 'AsianSpec', 'BarrierSpec',
-    'asian_contracts', 'barrier_contracts',
-    'completed_dates', 'pending',
-    'generate_asians', 'generate_barriers', 'load_spx_calibrations',
-]
+__version__ = '0.1.0'

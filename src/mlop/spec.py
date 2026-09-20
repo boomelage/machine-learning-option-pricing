@@ -75,3 +75,19 @@ class BarrierSpec:
 BARRIER = BarrierSpec()
 
 HESTON_PARAMETERS = ('kappa', 'theta', 'rho', 'eta', 'v0')
+
+#: Column order of the generated Asian dataset, as written to disk. Downstream
+#: stages read these files back, so the schema lives here rather than in the
+#: builder that happens to emit it.
+ASIAN_COLUMNS = [
+    'spot_price', 'strike_price', 'days_to_maturity',
+    'n_fixings', 'fixing_frequency', 'past_fixings', 'averaging_type', 'w',
+    'risk_free_rate', 'dividend_rate', 'calculation_date',
+    'kappa', 'theta', 'rho', 'eta', 'v0',
+]
+
+#: Column order of the barrier grid before the derived columns are appended.
+BARRIER_COLUMNS = [
+    'spot_price', 'strike_price', 'barrier', 'days_to_maturity',
+    'updown', 'outin', 'w',
+]
