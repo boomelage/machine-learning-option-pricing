@@ -75,7 +75,7 @@
 
 \setlength{\parindent}{0pt}
 
-\addbibresource{MachineOptions.bib}
+\addbibresource{refs-mlop.bib}
 \graphicspath{{./images/}}
 
 \raggedbottom
@@ -435,12 +435,13 @@
 	In this study, we explored a data generation routine that yields parsimonious training sets for the estimation of non-linear stochastic functions. We first looked into generating training sets for barrier and Asian options priced using advection and Monte Carlo respectively.
 	\par
 	In essence, what we have achieved is the numerical approximation of a solution to the Heston~\cite{heston_1993_a} pricing model using a dense neural network. The numerical approximation can have an increase in computational efficiency of up to 99.8\% with in-sample errors below one percent.
-	\par
-	The complete procedure is made possible with three separate software packages~\cite{optionGenerator2024}~\cite{quantlibPricers2024}~\cite{convsklearn2024}. 
+%	\par
+%	The complete procedure is made possible with three separate software packages~\cite{optionGenerator2024}~\cite{quantlibPricers2024}~\cite{convsklearn2024}. 
 
-\newpage
+\vfill
 \addcontentsline{toc}{section}{References}
 \printbibliography
+\vfill
 \newpage
 \input{additions/appendix.tex}
 \end{document}
