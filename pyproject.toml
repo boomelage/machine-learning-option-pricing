@@ -14,17 +14,15 @@ authors = [{ name = "boomelage", email = "163606270+boomelage@users.noreply.gith
 dependencies = [
     "numpy",
     "pandas",
+    # Becomes a direct import once the convsklearn wrappers are vendored into src/;
+    # they are used only here, so an external package bought nothing.
     "scikit-learn",
     "tqdm",
     "joblib",
-    # First-party packages, pinned by commit for reproducibility.
-    # Replaces quantlib_pricers, which is retired: it priced Asian options on an inverted
-    # fixing schedule and returned dicts from its df_* methods.
+    # First-party, pinned by commit for reproducibility. Replaces quantlib_pricers,
+    # which is retired: it priced Asian options on an inverted fixing schedule and
+    # returned dicts from its df_* methods.
     "qlpricing @ git+https://github.com/boomelage/qlpricing@4705d695dff787c88004c8061d591543ccc7cc35",
-    "convsklearn @ git+https://github.com/boomelage/convsklearn@3aa4a5057b15e6ead39d55f7214c98deff0565f4",
-    "model_settings @ git+https://github.com/boomelage/model_settings@260684cf15c36a6cf647853cb58e12af8fb11625",
-    # Cited in the manuscript but not imported anywhere in this repository.
-    "OptionGenerator @ git+https://github.com/boomelage/OptionGenerator@89d8125e6f7e288c774ba5e544bba7cb2dca19f9",
 ]
 
 [tool.setuptools.packages.find]

@@ -1,7 +1,8 @@
 """Generation drivers.
 
-Loading calibrations is isolated here because it depends on ``model_settings``,
-which carries global state; the contract builders and resume logic do not.
+Calibrations are read from a CSV produced by the heston-calibration repository.
+This replaced ``model_settings``, whose loader searched for files by walking up to
+a project root and assumed a directory layout that no longer exists.
 
 Pricing comes from the ``qlpricing`` package, which replaced ``quantlib_pricers``.
 The ``df_*`` methods return a float array per contract, so assigning the result
@@ -19,15 +20,23 @@ from .contracts import asian_contracts, barrier_contracts
 from .resume import output_filename, pending
 from ..spec import ASIAN, BARRIER, SHORT_TERM_ASIAN
 
+#: The calibration file this repository generates against, produced by the
+#: heston-calibration repository. Resolved from this file rather than the working
+#: directory, so the default holds wherever the generator is run from. Note that
+#: .gitignore excludes ``*.csv``, so it is NOT tracked -- a fresh clone has to obtain
+#: it separately or pass ``path``.
+CALIBRATIONS_CSV = (
+    Path(__file__).resolve().parents[3] / 'data' / 'price_dynamics' / 'heston_calibrations.csv'
+)
 
-def load_spx_calibrations(root: Path) -> pd.DataFrame:
-    """Load SPX Heston calibrations, newest first."""
-    from model_settings import ms
 
-    ms.find_root(Path(root).resolve())
-    ms.collect_spx_calibrations()
+def load_spx_calibrations(path: Path | None = None) -> pd.DataFrame:
+    """Load SPX Heston calibrations, newest first.
 
-    df = ms.spx_calibrations.copy()
+    Every row in the shipped file is an accepted calibration, so nothing is filtered
+    here; pass ``path`` to read a different file, which may not hold to that.
+    """
+    df = pd.read_csv(CALIBRATIONS_CSV if path is None else Path(path))
     df['calculation_date'] = pd.to_datetime(df['calculation_date'], format='mixed')
     return df.sort_values('calculation_date', ascending=False).reset_index(drop=True)
 
