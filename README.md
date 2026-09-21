@@ -1,29 +1,33 @@
+
 # Neural Networks for Exotic Option Pricing  
+
 **Radu Briciu**  
 *BSc Finance, PgDip Quantitative Finance*  
-
-See testing results in the [example outputs direcotry](testing/example_outs)
 
 ---
 
 ## Abstract
+
 In this paper we will explore a proposed data generation method which will construct the feature matrix for a multi-layer perceptron model designed to estimate the pricing functional of path-dependent financial derivatives. We will explore the theoretical framework and specifications for barrier and Asian option feature generation along with their respective multi-layer perceptron architectures and model performance metrics. We will demonstrate how the proposed models can retain pricing errors below one percent while reducing the computation time by up to 99.8%.
 
 ---
 
 ## Table of Contents
+
 - [Introduction](#introduction)  
 - [Pricing Model](#pricing-model)  
 - [Data Generation Method](#data-generation-method)  
 - [Application to Path-Dependent Options](#application-of-data-generation-method-to-path-dependent-index-options)
+<!--
 - [Model Training](#model-training)  
 - [Model Testing](#model-testing)  
 - [Concluding Remarks](#concluding-remarks)  
-- [Software Repositories](#software-repositories)    
-
+- [Software Repositories](#software-repositories)
+-->
 ---
 
 ## Introduction
+
 In this paper we will explore a proposed method of pricing path-dependent index options via multi-layer perceptron approximations derived from the simulation of a multidimensional space representing a contract's price as a functional form of its features. Index options can generally be defined as financial derivative contracts facilitating a contingent claim on the value of a stock market index which is designed to aggregate performance across a sector or economy.  
 
 It is therefore a complicated matter to evaluate the price of path-dependent option counterparts which introduce further non-linearities in their pricing functions. Path-dependent options often require statistical simulation to obtain the most accurate price, resulting in long computation times.  
@@ -37,6 +41,7 @@ The use of Heston’s stochastic volatility model as a pricing function for the 
 ## Pricing Model
 
 ### Specification
+
 We use the Heston (1993) model to describe the log-price of the underlying, via the SDE system:
 
 $$
@@ -44,10 +49,11 @@ dS_t = \left( r - \frac{v_t}{2} \right) dt + \sqrt{v_t} \left( \rho dW_t + \sqrt
 $$
 
 $$
-dv_t = \kappa (\theta - v_t) dt + \eta \sqrt{v_t} dW_t 
+dv_t = \kappa (\theta - v_t) dt + \eta \sqrt{v_t} dW_t
 $$
 
 where
+
 1. $v_0$ = initial variance,  
 2. $\theta$ = long-run variance,  
 3. $\rho$ = correlation between log-price and variance process,  
@@ -57,18 +63,22 @@ where
 
 Heston (1993) extends Black-Scholes (1973) by allowing stochastic volatility, making it suitable for pricing path-dependent options.
 
+<!--
 ---
 
 ### Historical Parameter Retrieval
+
 We construct a dataset of historical parameter sets by calibrating to live SPX options trades. This calibration yields ~1600 sets between 2012–2024.  
 
 Filtering ensures each volatility surface has strikes both above and below the spot price (at least 2 each side, with ≥5 contracts) to allow reliable Heston calibration. Calibration is performed using the **Levenberg–Marquardt** algorithm as implemented in **QuantLib**.  
 
 ![Calibrated Heston parameters](./manuscript/images/calibrations.png)  
+-->
 
 ---
 
 ## Data Generation Method
+
 We start with an initial feature matrix $\mathcal{D}$:
 
 $$
@@ -101,6 +111,7 @@ Stacking every $X_t$ across the $n$ observations yields the final feature matrix
 ## Application of Data Generation Method to Path-Dependent Index Options
 
 ### Market Condition Matrix
+
 Based on $n$ Heston calibrations:
 
 $$
@@ -113,6 +124,7 @@ $$
 $$
 
 ### Barrier Option Price Functional
+
 A Barrier option modifies the European call payoff $(S_T-K)^+$ with a barrier condition:
 
 $$
@@ -135,6 +147,7 @@ Benchmark pricing is via Monte Carlo with control variates; finite-difference me
 ---
 
 ### Asian Option Price Functional
+
 The payoff is based on the average of the underlying over fixing dates:
 
 Arithmetic average payoff:
@@ -166,7 +179,6 @@ C^{\text{Asian}} = F_{t}(S_0, \kappa, \theta, \rho, \eta, v_{0}, r, g, K, n, P, 
 $$
 
 ---
-
 
 ### Constructing $X^{\text{Barrier}}$
 
@@ -202,11 +214,10 @@ X^{\text{Barrier}}_{t} =
 S_{t} & \kappa_{t} & \theta_{t} & \rho_{t} & \eta_{t} & v_{t} & r_{t} & g_{t} & k_{1} & \tau_{1} & b_{1} & r^{\text{rebate}}_{1} & D^{\text{call/put}}_{1} & D^{\text{barrier type}}_{1} \\
 \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
 S_{t} & \kappa_{t} & \theta_{t} & \rho_{t} & \eta_{t} & v_{t} & r_{t} & g_{t} & k_{s} & \tau_{s} & b_{s} & r^{\text{rebate}}_{s} & D^{\text{call/put}}_{s} & D^{\text{barrier type}}_{s}
-\end{bmatrix} 
+\end{bmatrix}
 $$
 
 This essentially allows us to generate $k$ contracts at every observation across the rows (discrete observations in time) of our initial feature matrix $\mathcal{D}^{\text{Heston}}$, while the features carried over into $H_{t}$ from $\mathcal{D}_{t}$ are held constant.
-
 
 ---
 
@@ -257,7 +268,9 @@ $$
 
 essentially allowing us to generate $s$ contracts at every observation across the rows (discrete observations in time) of our initial feature matrix $\mathcal{D}^{\text{Heston}}$, while the features carried over into $H_{t}$ from $\mathcal{D}_{t}$ are held constant.
 
+<!--
 ## Model Training
+
 We train a multi-layer perceptron (MLP) on the feature matrix $X$ and target $y$.  
 
 ![MLP](./manuscript/images/MLP.png)
@@ -274,12 +287,9 @@ Hyperparameter tuning across 6480 configurations ensures in-sample error ~0.5% a
 
 ## Model Testing
 
-See testing results in the [example outputs direcotry](testing/example_outs)
-
 The model was tested with a negligible amount of data and tested for over 10 years of out of sample data.
 
 ### Performance
-
 
 ![Barrier errors](./manuscript/images/barrier%20errors.png)
 
@@ -292,6 +302,7 @@ Figure: Asian options out-of-sample errors
 Errors increase without retraining, due to unseen parameter combinations.
 
 ### Distribution Matching
+
 The neural network preserves distributional shapes of option prices vs Heston parameters:
 
 ![Shapely Barriers](./manuscript/images/Shapely%20Barriers.png)
@@ -305,6 +316,7 @@ Figure: Asian option price/parameter joint distribution
 ---
 
 ## Concluding Remarks
+
 We proposed a data generation routine to produce parsimonious training sets for exotic option pricing.  
 
 - Barrier options priced via advection (approximate).  
@@ -315,7 +327,8 @@ We proposed a data generation routine to produce parsimonious training sets for 
 ---
 
 ## Software Repositories
-1. [convsklearn](https://github.com/boomelage/convsklearn)  
-2. [QuantLib Pricers](https://github.com/boomelage/quantlib_pricers)  
-3. [Option Generator](https://github.com/boomelage/OptionGenerator)
 
+1. [convsklearn](https://github.com/boomelage/convsklearn)  
+2. [qlpricing](https://github.com/boomelage/qlpricing)  
+3. [Option Generator](https://github.com/boomelage/OptionGenerator)
+-->

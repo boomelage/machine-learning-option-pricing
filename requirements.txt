@@ -1,0 +1,38 @@
+# The exact environment mlop was last run in: CPython 3.12.7 on Windows.
+#
+# This file is a receipt; pyproject.toml is the contract. pyproject declares what
+# mlop *tolerates* -- deliberately loose, so the package stays installable next to
+# anything else. This file records what it was actually *run with*, so the datasets
+# under data/ and the figures under manuscript/ can be reproduced rather than
+# approximated. A scikit-learn or pandas bump can move a fitted model's output, and
+# "whatever pip resolved that day" is not a reproducible claim.
+#
+#     pip install -r requirements.txt
+#
+# Regenerate after any intentional upgrade; do not hand-edit a version here without
+# installing it.
+
+# ---- Direct imports ----
+numpy==1.26.4
+pandas==2.2.3
+joblib==1.4.2
+tqdm==4.67.0
+
+# Nothing imports sklearn yet. It is pinned because the convsklearn wrappers are being
+# vendored into src/ rather than installed, which makes this a direct dependency.
+scikit-learn==1.5.2
+
+# ---- Pulled in transitively, pinned because they move results ----
+scipy==1.14.1          # via qlpricing
+QuantLib==1.35         # via qlpricing -- the pricing engines themselves
+threadpoolctl==3.5.0   # via scikit-learn
+python-dateutil==2.9.0.post0
+pytz==2024.2
+tzdata==2024.2
+six==1.16.0
+
+# ---- First-party, pinned by commit because it is not on PyPI ----
+# Replaces quantlib_pricers, which is retired: it priced Asian options on an inverted
+# fixing schedule and returned dicts from its df_* methods. Installed here from a local
+# editable checkout at E:\git\qlpricing whose HEAD equals this pin.
+qlpricing @ git+https://github.com/boomelage/qlpricing@4705d695dff787c88004c8061d591543ccc7cc35
